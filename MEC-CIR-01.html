@@ -13,25 +13,93 @@
   "freq": "高",
   "difficulty": 3,
   "version": "v0.2",
-  "related": ["MEC-ENG 机械能守恒", "MEC-PRJ 脱轨后斜抛", "MEC-MOM 最低点碰撞"],
-  "tags": ["竖直面圆周运动", "最高点临界条件", "机械能守恒", "绳模型 vs 杆模型", "脱轨判断"],
+  "related": [
+    "MEC-ENG 机械能守恒",
+    "MEC-PRJ 脱轨后斜抛",
+    "MEC-MOM 最低点碰撞"
+  ],
+  "tags": [
+    "竖直面圆周运动",
+    "最高点临界条件",
+    "机械能守恒",
+    "绳模型 vs 杆模型",
+    "脱轨判断"
+  ],
   "problem": {
     "stem": "质量 m = {m} 的小球位于半径 R = {R} 的{constraint}最低点。给小球一个水平初速度 v₀ = {v0}。问：① 小球能否通过最高点？② 最高点、最低点轨道对小球的弹力各多大？③ 若不能通过，小球在哪里离开轨道，或升到多高后返回？",
     "note": "g 取 10 m/s²。",
     "params": [
-      {"key": "mode", "sym": "约束", "label": "约束类型", "type": "choice", "def": "rope",
-       "options": [
-         {"value": "rope", "label": "绳 / 轨道内侧", "text": "竖直光滑圆轨道内侧"},
-         {"value": "rod", "label": "杆 / 圆管", "text": "竖直光滑圆管内"}
-       ]},
-      {"key": "v0", "sym": "v₀", "label": "最低点初速度", "unit": "m/s", "def": 5, "min": 0, "max": 10, "step": 0.01, "dec": 2},
-      {"key": "R", "sym": "R", "label": "轨道半径", "unit": "m", "def": 0.5, "min": 0.2, "max": 2, "step": 0.05, "dec": 2},
-      {"key": "m", "sym": "m", "label": "小球质量", "unit": "kg", "def": 0.2, "min": 0.1, "max": 2, "step": 0.05, "dec": 2},
-      {"key": "mu", "sym": "μ", "label": "动摩擦因数（仅演示）", "unit": "", "def": 0, "min": 0, "max": 0.3, "step": 0.005, "dec": 3}
+      {
+        "key": "mode",
+        "sym": "约束",
+        "label": "约束类型",
+        "type": "choice",
+        "def": "rope",
+        "options": [
+          {
+            "value": "rope",
+            "label": "绳 / 轨道内侧",
+            "text": "竖直光滑圆轨道内侧"
+          },
+          {
+            "value": "rod",
+            "label": "杆 / 圆管",
+            "text": "竖直光滑圆管内"
+          }
+        ]
+      },
+      {
+        "key": "v0",
+        "sym": "v₀",
+        "label": "最低点初速度",
+        "unit": "m/s",
+        "def": 5,
+        "min": 0,
+        "max": 10,
+        "step": 0.01,
+        "dec": 2
+      },
+      {
+        "key": "R",
+        "sym": "R",
+        "label": "轨道半径",
+        "unit": "m",
+        "def": 0.5,
+        "min": 0.2,
+        "max": 2,
+        "step": 0.05,
+        "dec": 2
+      },
+      {
+        "key": "m",
+        "sym": "m",
+        "label": "小球质量",
+        "unit": "kg",
+        "def": 0.2,
+        "min": 0.1,
+        "max": 2,
+        "step": 0.05,
+        "dec": 2
+      },
+      {
+        "key": "mu",
+        "sym": "μ",
+        "label": "动摩擦因数（仅演示）",
+        "unit": "",
+        "def": 0,
+        "min": 0,
+        "max": 0.3,
+        "step": 0.005,
+        "dec": 3
+      }
     ]
   },
   "boundary": {
-    "conditions": ["轨道光滑（无摩擦、无空气阻力）", "完整圆轨道，小球从最低点出发", "单一过程（不含脱轨后的斜抛落点计算）"],
+    "conditions": [
+      "轨道光滑（无摩擦、无空气阻力）",
+      "完整圆轨道，小球从最低点出发",
+      "单一过程（不含脱轨后的斜抛落点计算）"
+    ],
     "fallback": [
       "能量：½mv₁² + mgh₁ = ½mv₂² + mgh₂（有摩擦时加 −W_f）",
       "向心：沿半径方向合力 = mv²/R",
@@ -39,75 +107,319 @@
     ]
   },
   "presets": [
-    {"label": "下半圆来回摆", "load": {"mode": "rope", "v0": 2.74, "R": 0.5, "m": 0.2, "mu": 0}},
-    {"label": "上半圆脱轨", "load": {"mode": "rope", "v0": 4, "R": 0.5, "m": 0.2, "mu": 0}},
-    {"label": "恰好过最高点", "load": {"mode": "rope", "v0": 5, "R": 0.5, "m": 0.2, "mu": 0}},
-    {"label": "杆：最高点速度为 0", "load": {"mode": "rod", "v0": 4.4721, "R": 0.5, "m": 0.2, "mu": 0}},
-    {"label": "有摩擦转几圈", "load": {"mode": "rod", "v0": 8.37, "R": 0.5, "m": 0.2, "mu": 0.03}}
+    {
+      "label": "v₀ < √(2gR)：下半圆往复",
+      "note": "最高点低于圆心，N 始终指向圆心，不会脱轨，像单摆一样来回摆。",
+      "load": {
+        "mode": "rope",
+        "R": 0.5,
+        "m": 0.2,
+        "mu": 0,
+        "v0": 2.2
+      }
+    },
+    {
+      "label": "v₀ ≈ √(2gR)：恰到圆心高度",
+      "note": "下半圆与上半圆的分界：到圆心高度时速度和弹力同时减到 0，再大一点就会进入上半圆。",
+      "load": {
+        "mode": "rope",
+        "R": 0.5,
+        "m": 0.2,
+        "mu": 0,
+        "v0": 3.16
+      }
+    },
+    {
+      "label": "√(2gR) < v₀ < √(5gR)：上半圆脱轨",
+      "note": "进入上半圆后 N 先减为 0，小球在 h = (v₀² + gR)/(3g) 处离开轨道做斜抛。",
+      "load": {
+        "mode": "rope",
+        "R": 0.5,
+        "m": 0.2,
+        "mu": 0,
+        "v0": 4
+      }
+    },
+    {
+      "label": "v₀ = √(5gR)：恰好过最高点",
+      "note": "最高点 N = 0，只靠重力提供向心力，v顶 = √(gR)。",
+      "load": {
+        "mode": "rope",
+        "R": 0.5,
+        "m": 0.2,
+        "mu": 0,
+        "v0": 5
+      }
+    },
+    {
+      "label": "v₀ > √(5gR)：完整圆周",
+      "note": "最高点 N > 0，轨道压着小球；N底 − N顶 = 6mg。",
+      "load": {
+        "mode": "rope",
+        "R": 0.5,
+        "m": 0.2,
+        "mu": 0,
+        "v0": 6
+      }
+    },
+    {
+      "label": "v₀ < 2√(gR)：到不了最高点",
+      "note": "杆不让球脱离，但速度在最高点前减为 0，球沿圆周来回摆。",
+      "load": {
+        "mode": "rod",
+        "R": 0.5,
+        "m": 0.2,
+        "mu": 0,
+        "v0": 4
+      }
+    },
+    {
+      "label": "v₀ = 2√(gR)：恰好停在最高点",
+      "note": "到最高点速度恰为 0，杆对球推力等于 mg（不稳定平衡）。",
+      "load": {
+        "mode": "rod",
+        "R": 0.5,
+        "m": 0.2,
+        "mu": 0,
+        "v0": 4.4721
+      }
+    },
+    {
+      "label": "2√(gR) < v₀ < √(5gR)：过顶时杆推球",
+      "note": "能转过最高点，但 v顶 < √(gR)，最高点 N 背离圆心（杆推球）。注意看最高点 N 箭头的方向。",
+      "load": {
+        "mode": "rod",
+        "R": 0.5,
+        "m": 0.2,
+        "mu": 0,
+        "v0": 4.8
+      }
+    },
+    {
+      "label": "v₀ = √(5gR)：最高点杆无作用力",
+      "note": "v顶 = √(gR)，最高点杆对球作用力为 0，这是推与拉的分界。",
+      "load": {
+        "mode": "rod",
+        "R": 0.5,
+        "m": 0.2,
+        "mu": 0,
+        "v0": 5
+      }
+    },
+    {
+      "label": "v₀ > √(5gR)：过顶时杆拉球",
+      "note": "v顶 > √(gR)，最高点 N 指向圆心（杆拉球）。",
+      "load": {
+        "mode": "rod",
+        "R": 0.5,
+        "m": 0.2,
+        "mu": 0,
+        "v0": 6
+      }
+    },
+    {
+      "label": "有摩擦：圈数逐渐减少",
+      "note": "摩擦力随 N 变化，机械能逐圈减少，最后在下半圆往复（仅演示）。",
+      "load": {
+        "mode": "rod",
+        "R": 0.5,
+        "m": 0.2,
+        "mu": 0.03,
+        "v0": 8.37
+      }
+    }
   ],
   "conclusions": [
-    {"id": "C1", "title": "绳模型：能过最高点的最小速度", "formula": "v顶 ≥ √(gR)",
-     "derivation": "最高点，绳或轨道只能提供向下的力，N ≥ 0。\n向心方程 mg + N = mv²/R，令 N = 0 得 v顶 = √(gR)。"},
-    {"id": "C2", "title": "绳模型：在最低点做完整圆周所需最小速度", "formula": "v₀ ≥ √(5gR)",
-     "derivation": "最低点到最高点能量守恒，½mv₀² = ½mv顶² + mg·2R。\n代入 v顶 ≥ √(gR)，得 v₀² ≥ gR + 4gR = 5gR。"},
-    {"id": "C3", "title": "杆模型：在最低点做完整圆周所需速度", "formula": "v₀ > 2√(gR)；取等号时恰好停在最高点",
-     "derivation": "杆或圆管可推可拉，只要到达最高点时速度不为 0，就能越过最高点。\n½mv₀² = ½mv顶² + mg·2R，要求 v顶 > 0，得 v₀ > 2√(gR)。\n取等号时 v顶 = 0，杆对球推力等于 mg，小球停在最高点（不稳定平衡），理论上转不过去。"},
-    {"id": "C4", "title": "光滑完整圆周时，最低点与最高点弹力之差", "formula": "N底 − N顶 = 6mg（N 以指向圆心为正）",
-     "derivation": "取指向圆心为正。最低点 N底 − mg = mv₀²/R；最高点 N顶 + mg = mv顶²/R。\n两式相减：N底 − N顶 = 2mg + m(v₀² − v顶²)/R。\n能量守恒 v₀² − v顶² = 4gR，代入得 N底 − N顶 = 6mg。\n推导没有用到 N 的正负限制，所以杆模型同样成立；N顶 < 0 表示杆推球。"},
-    {"id": "C5", "title": "绳模型不脱轨的两种情况", "formula": "v₀ ≤ √(2gR) 或 v₀ ≥ √(5gR)",
-     "derivation": "v₀ ≤ √(2gR) 时，上升高度 h = v₀²/(2g) ≤ R，小球只在下半圆运动。下半圆中重力沿半径的分量背离圆心，N > 0 恒成立，不脱轨。\nv₀ ≥ √(5gR) 时由 C2 可做完整圆周。"},
-    {"id": "C6", "title": "绳模型脱轨高度（√(2gR) < v₀ < √(5gR)）", "formula": "h = (v₀² + gR) / (3g)",
-     "derivation": "设脱轨处与圆心连线和竖直向上方向夹角为 α，高度 h = R + R cos α。\n脱轨时 N = 0，重力沿半径的分量提供向心力：mg cos α = mv²/R。\n能量：v² = v₀² − 2gh。\n联立：g(h − R) = v₀² − 2gh，得 h = (v₀² + gR)/(3g)。"},
-    {"id": "C7", "title": "杆模型最高点杆对球的力", "formula": "v顶 > √(gR) 拉；= √(gR) 无力；< √(gR) 推",
-     "derivation": "最高点 F + mg = mv顶²/R（F 以指向圆心为正）。\nF = m(v顶²/R − g)：v顶 > √(gR) 时 F > 0，杆拉球；相等时 F = 0；小于时 F < 0，杆推球。"}
+    {
+      "id": "C1",
+      "title": "绳模型：能过最高点的最小速度",
+      "formula": "v顶 ≥ √(gR)",
+      "derivation": "最高点，绳或轨道只能提供向下的力，N ≥ 0。\n向心方程 mg + N = mv²/R，令 N = 0 得 v顶 = √(gR)。"
+    },
+    {
+      "id": "C2",
+      "title": "绳模型：在最低点做完整圆周所需最小速度",
+      "formula": "v₀ ≥ √(5gR)",
+      "derivation": "最低点到最高点能量守恒，½mv₀² = ½mv顶² + mg·2R。\n代入 v顶 ≥ √(gR)，得 v₀² ≥ gR + 4gR = 5gR。"
+    },
+    {
+      "id": "C3",
+      "title": "杆模型：在最低点做完整圆周所需速度",
+      "formula": "v₀ > 2√(gR)；取等号时恰好停在最高点",
+      "derivation": "杆或圆管可推可拉，只要到达最高点时速度不为 0，就能越过最高点。\n½mv₀² = ½mv顶² + mg·2R，要求 v顶 > 0，得 v₀ > 2√(gR)。\n取等号时 v顶 = 0，杆对球推力等于 mg，小球停在最高点（不稳定平衡），理论上转不过去。"
+    },
+    {
+      "id": "C4",
+      "title": "光滑完整圆周时，最低点与最高点弹力之差",
+      "formula": "N底 − N顶 = 6mg（N 以指向圆心为正）",
+      "derivation": "取指向圆心为正。最低点 N底 − mg = mv₀²/R；最高点 N顶 + mg = mv顶²/R。\n两式相减：N底 − N顶 = 2mg + m(v₀² − v顶²)/R。\n能量守恒 v₀² − v顶² = 4gR，代入得 N底 − N顶 = 6mg。\n推导没有用到 N 的正负限制，所以杆模型同样成立；N顶 < 0 表示杆推球。"
+    },
+    {
+      "id": "C5",
+      "title": "绳模型不脱轨的两种情况",
+      "formula": "v₀ ≤ √(2gR) 或 v₀ ≥ √(5gR)",
+      "derivation": "v₀ ≤ √(2gR) 时，上升高度 h = v₀²/(2g) ≤ R，小球只在下半圆运动。下半圆中重力沿半径的分量背离圆心，N > 0 恒成立，不脱轨。\nv₀ ≥ √(5gR) 时由 C2 可做完整圆周。"
+    },
+    {
+      "id": "C6",
+      "title": "绳模型脱轨高度（√(2gR) < v₀ < √(5gR)）",
+      "formula": "h = (v₀² + gR) / (3g)",
+      "derivation": "设脱轨处与圆心连线和竖直向上方向夹角为 α，高度 h = R + R cos α。\n脱轨时 N = 0，重力沿半径的分量提供向心力：mg cos α = mv²/R。\n能量：v² = v₀² − 2gh。\n联立：g(h − R) = v₀² − 2gh，得 h = (v₀² + gR)/(3g)。"
+    },
+    {
+      "id": "C7",
+      "title": "杆模型最高点杆对球的力",
+      "formula": "v顶 > √(gR) 拉；= √(gR) 无力；< √(gR) 推",
+      "derivation": "最高点 F + mg = mv顶²/R（F 以指向圆心为正）。\nF = m(v顶²/R − g)：v顶 > √(gR) 时 F > 0，杆拉球；相等时 F = 0；小于时 F < 0，杆推球。"
+    }
   ],
   "variants": [
-    {"id": "V1", "title": "求最小初速度", "cs": ["C2"], "source": "改编自 2026 届闵行区二模 二-2",
-     "stem": "竖直光滑圆轨道半径 R = 0.5 m，小球从最低点出发，恰好能通过最高点，求最低点初速度。",
-     "answer": "v₀ = 5 m/s",
-     "analysis": "恰好过最高点，N顶 = 0，mg = mv顶²/R，v顶² = gR = 5 m²/s²。能量守恒 v₀² = v顶² + 4gR = 25 m²/s²，v₀ = 5 m/s。",
-     "load": {"mode": "rope", "v0": 5, "R": 0.5, "m": 0.2, "mu": 0}},
-    {"id": "V2", "title": "求两点弹力", "cs": ["C4"], "source": "原创，未改编自具体真题",
-     "stem": "m = 0.2 kg，R = 0.5 m，v₀ = 6 m/s，求最高点和最低点轨道对小球的弹力。",
-     "answer": "N顶 = 4.4 N，N底 = 16.4 N",
-     "analysis": "v顶² = v₀² − 4gR = 16 m²/s²，v顶 = 4 m/s。N顶 = m(v顶²/R − g) = 0.2 kg × 22 m/s² = 4.4 N；N底 = m(g + v₀²/R) = 0.2 kg × 82 m/s² = 16.4 N。差值 12 N = 6mg，与 C4 一致。",
-     "load": {"mode": "rope", "v0": 6, "R": 0.5, "m": 0.2, "mu": 0}},
-    {"id": "V3", "title": "求脱轨位置", "cs": ["C5", "C6"], "source": "原创，未改编自具体真题",
-     "stem": "R = 0.5 m，v₀ = 4 m/s，判断小球能否过最高点；若不能，求脱轨处高度和速度。",
-     "answer": "不能过最高点；h = 0.7 m，v = √2 m/s ≈ 1.41 m/s",
-     "analysis": "2gR = 10 m²/s²，5gR = 25 m²/s²，v₀² = 16 m²/s² 介于两者之间，会脱轨。h = (v₀² + gR)/(3g) = 21 m²/s² ÷ 30 m/s² = 0.7 m。v² = v₀² − 2gh = 2 m²/s²。校核：cos α = (h − R)/R = 0.4，gR cos α = 2 m²/s²，一致。",
-     "load": {"mode": "rope", "v0": 4, "R": 0.5, "m": 0.2, "mu": 0}},
-    {"id": "V4", "title": "由最低点压力判断能否过顶", "cs": ["C2", "C4"], "source": "原创，未改编自具体真题",
-     "stem": "小球在最低点对轨道的压力为 7mg，能否通过最高点？若能，最高点压力多大？",
-     "answer": "能通过；最高点压力为 mg",
-     "analysis": "由牛顿第三定律，N底 = 7mg。N底 − mg = mv₀²/R，得 v₀² = 6gR ≥ 5gR，能通过。由 C4，N顶 = N底 − 6mg = mg。",
-     "load": {"mode": "rope", "v0": 5.48, "R": 0.5, "m": 0.2, "mu": 0}},
-    {"id": "V5", "title": "杆模型最高点受力", "cs": ["C7"], "source": "原创，未改编自具体真题",
-     "stem": "轻杆长 R = 0.5 m，小球 m = 0.2 kg，在竖直面内转动，经过最高点时速度 1 m/s，求杆对球的作用力。",
-     "answer": "杆对球推力 1.6 N，竖直向上",
-     "analysis": "以指向圆心为正，F = m(v顶²/R − g) = 0.2 kg × (2 m/s² − 10 m/s²) = −1.6 N，负号表示背离圆心，即杆推球。对应最低点 v₀² = v顶² + 4gR = 21 m²/s²，v₀ ≈ 4.58 m/s。",
-     "load": {"mode": "rod", "v0": 4.58, "R": 0.5, "m": 0.2, "mu": 0}}
+    {
+      "id": "V1",
+      "title": "求最小初速度",
+      "cs": [
+        "C2"
+      ],
+      "source": "改编自 2026 届闵行区二模 二-2",
+      "stem": "竖直光滑圆轨道半径 R = 0.5 m，小球从最低点出发，恰好能通过最高点，求最低点初速度。",
+      "answer": "v₀ = 5 m/s",
+      "analysis": "恰好过最高点，N顶 = 0，mg = mv顶²/R，v顶² = gR = 5 m²/s²。能量守恒 v₀² = v顶² + 4gR = 25 m²/s²，v₀ = 5 m/s。",
+      "load": {
+        "mode": "rope",
+        "v0": 5,
+        "R": 0.5,
+        "m": 0.2,
+        "mu": 0
+      }
+    },
+    {
+      "id": "V2",
+      "title": "求两点弹力",
+      "cs": [
+        "C4"
+      ],
+      "source": "原创，未改编自具体真题",
+      "stem": "m = 0.2 kg，R = 0.5 m，v₀ = 6 m/s，求最高点和最低点轨道对小球的弹力。",
+      "answer": "N顶 = 4.4 N，N底 = 16.4 N",
+      "analysis": "v顶² = v₀² − 4gR = 16 m²/s²，v顶 = 4 m/s。N顶 = m(v顶²/R − g) = 0.2 kg × 22 m/s² = 4.4 N；N底 = m(g + v₀²/R) = 0.2 kg × 82 m/s² = 16.4 N。差值 12 N = 6mg，与 C4 一致。",
+      "load": {
+        "mode": "rope",
+        "v0": 6,
+        "R": 0.5,
+        "m": 0.2,
+        "mu": 0
+      }
+    },
+    {
+      "id": "V3",
+      "title": "求脱轨位置",
+      "cs": [
+        "C5",
+        "C6"
+      ],
+      "source": "原创，未改编自具体真题",
+      "stem": "R = 0.5 m，v₀ = 4 m/s，判断小球能否过最高点；若不能，求脱轨处高度和速度。",
+      "answer": "不能过最高点；h = 0.7 m，v = √2 m/s ≈ 1.41 m/s",
+      "analysis": "2gR = 10 m²/s²，5gR = 25 m²/s²，v₀² = 16 m²/s² 介于两者之间，会脱轨。h = (v₀² + gR)/(3g) = 21 m²/s² ÷ 30 m/s² = 0.7 m。v² = v₀² − 2gh = 2 m²/s²。校核：cos α = (h − R)/R = 0.4，gR cos α = 2 m²/s²，一致。",
+      "load": {
+        "mode": "rope",
+        "v0": 4,
+        "R": 0.5,
+        "m": 0.2,
+        "mu": 0
+      }
+    },
+    {
+      "id": "V4",
+      "title": "由最低点压力判断能否过顶",
+      "cs": [
+        "C2",
+        "C4"
+      ],
+      "source": "原创，未改编自具体真题",
+      "stem": "小球在最低点对轨道的压力为 7mg，能否通过最高点？若能，最高点压力多大？",
+      "answer": "能通过；最高点压力为 mg",
+      "analysis": "由牛顿第三定律，N底 = 7mg。N底 − mg = mv₀²/R，得 v₀² = 6gR ≥ 5gR，能通过。由 C4，N顶 = N底 − 6mg = mg。",
+      "load": {
+        "mode": "rope",
+        "v0": 5.48,
+        "R": 0.5,
+        "m": 0.2,
+        "mu": 0
+      }
+    },
+    {
+      "id": "V5",
+      "title": "杆模型最高点受力",
+      "cs": [
+        "C7"
+      ],
+      "source": "原创，未改编自具体真题",
+      "stem": "轻杆长 R = 0.5 m，小球 m = 0.2 kg，在竖直面内转动，经过最高点时速度 1 m/s，求杆对球的作用力。",
+      "answer": "杆对球推力 1.6 N，竖直向上",
+      "analysis": "以指向圆心为正，F = m(v顶²/R − g) = 0.2 kg × (2 m/s² − 10 m/s²) = −1.6 N，负号表示背离圆心，即杆推球。对应最低点 v₀² = v顶² + 4gR = 21 m²/s²，v₀ ≈ 4.58 m/s。",
+      "load": {
+        "mode": "rod",
+        "v0": 4.58,
+        "R": 0.5,
+        "m": 0.2,
+        "mu": 0
+      }
+    }
   ],
   "reskins": [
-    {"id": "R1", "title": "斜面滑入圆轨道", "map": "mgh = ½mv₀²，代入 C2", "anim": true, "source": "原创，未改编自具体真题",
-     "stem": "小球从光滑斜面高 h 处由静止滑下，进入半径 R 的竖直光滑圆轨道。h 至少多大，小球才能通过圆轨道最高点？",
-     "answer": "h ≥ 2.5R",
-     "analysis": "斜面底端即圆轨道最低点，mgh = ½mv₀²，v₀² = 2gh。由 C2，v₀² ≥ 5gR，得 h ≥ 2.5R。"},
-    {"id": "R2", "title": "电场中的等效最高点", "map": "用等效重力 g' 替代 g", "anim": true, "source": "原创，未改编自具体真题",
-     "stem": "带电小球（m，q > 0）用长 R = 0.4 m 的绝缘细绳系于 O 点，在竖直面内做圆周运动，空间有水平向右的匀强电场，qE = ¾mg。求小球能做完整圆周运动时在「等效最高点」的最小速度。",
-     "answer": "√5 m/s ≈ 2.24 m/s",
-     "analysis": "mg' = √((mg)² + (qE)²) = 5/4 mg，g' = 12.5 m/s²，方向与竖直方向成 37° 偏右下。等效最高点在 O 点沿 g' 反方向（左上方偏离竖直 37°）。把 C1 中的 g 换成 g'：v ≥ √(g'R) = √(12.5 m/s² × 0.4 m) = √5 m/s。"},
-    {"id": "R3", "title": "汽车过凸形桥", "map": "小球在轨道外侧，约束方向反过来", "anim": false, "source": "原创，未改编自具体真题",
-     "stem": "汽车以速度 v 通过半径 R 的凸形桥顶，v 多大时车对桥面无压力？",
-     "answer": "v = √(gR)",
-     "analysis": "桥顶 mg − N = mv²/R，令 N = 0，v = √(gR)。与 C1 是同一临界，但外侧轨道要求 v ≤ √(gR) 才不离开，内侧轨道要求 v ≥ √(gR) 才不脱离。"}
+    {
+      "id": "R1",
+      "title": "斜面滑入圆轨道",
+      "map": "mgh = ½mv₀²，代入 C2",
+      "anim": true,
+      "source": "原创，未改编自具体真题",
+      "stem": "小球从光滑斜面高 h 处由静止滑下，进入半径 R 的竖直光滑圆轨道。h 至少多大，小球才能通过圆轨道最高点？",
+      "answer": "h ≥ 2.5R",
+      "analysis": "斜面底端即圆轨道最低点，mgh = ½mv₀²，v₀² = 2gh。由 C2，v₀² ≥ 5gR，得 h ≥ 2.5R。"
+    },
+    {
+      "id": "R2",
+      "title": "电场中的等效最高点",
+      "map": "用等效重力 g' 替代 g",
+      "anim": true,
+      "source": "原创，未改编自具体真题",
+      "stem": "带电小球（m，q > 0）用长 R = 0.4 m 的绝缘细绳系于 O 点，在竖直面内做圆周运动，空间有水平向右的匀强电场，qE = ¾mg。求小球能做完整圆周运动时在「等效最高点」的最小速度。",
+      "answer": "√5 m/s ≈ 2.24 m/s",
+      "analysis": "mg' = √((mg)² + (qE)²) = 5/4 mg，g' = 12.5 m/s²，方向与竖直方向成 37° 偏右下。等效最高点在 O 点沿 g' 反方向（左上方偏离竖直 37°）。把 C1 中的 g 换成 g'：v ≥ √(g'R) = √(12.5 m/s² × 0.4 m) = √5 m/s。"
+    },
+    {
+      "id": "R3",
+      "title": "汽车过凸形桥",
+      "map": "小球在轨道外侧，约束方向反过来",
+      "anim": false,
+      "source": "原创，未改编自具体真题",
+      "stem": "汽车以速度 v 通过半径 R 的凸形桥顶，v 多大时车对桥面无压力？",
+      "answer": "v = √(gR)",
+      "analysis": "桥顶 mg − N = mv²/R，令 N = 0，v = √(gR)。与 C1 是同一临界，但外侧轨道要求 v ≤ √(gR) 才不离开，内侧轨道要求 v ≥ √(gR) 才不脱离。"
+    }
   ],
   "sources": [
-    {"src": "2025 上海等级考 4.1–4.3", "desc": "光滑竖直圆轨道：时间分布、弹力冲量、求 R 与重力功率"},
-    {"src": "2026 届闵行区二模 二-2、二-4", "desc": "弹珠机恰好过最高点，碰挡板后平抛"},
-    {"src": "2026 届黄浦区一模 4-5", "desc": "旋转气嘴灯：最低点弹力与最小角速度"},
-    {"src": "2024 上海等级考 4.1(2)", "desc": "摆到最低点后弹性碰撞再平抛"},
-    {"src": "2023 上海等级考 第 20 题（回忆版）", "desc": "单摆最低点与滑块弹性碰撞"}
+    {
+      "src": "2025 上海等级考 4.1–4.3",
+      "desc": "光滑竖直圆轨道：时间分布、弹力冲量、求 R 与重力功率"
+    },
+    {
+      "src": "2026 届闵行区二模 二-2、二-4",
+      "desc": "弹珠机恰好过最高点，碰挡板后平抛"
+    },
+    {
+      "src": "2026 届黄浦区一模 4-5",
+      "desc": "旋转气嘴灯：最低点弹力与最小角速度"
+    },
+    {
+      "src": "2024 上海等级考 4.1(2)",
+      "desc": "摆到最低点后弹性碰撞再平抛"
+    },
+    {
+      "src": "2023 上海等级考 第 20 题（回忆版）",
+      "desc": "单摆最低点与滑块弹性碰撞"
+    }
   ]
 }
 </script>
@@ -137,14 +449,15 @@
   --g:#ff7d71; --n:#52d39c; --v:#93acff; --track:#c3ccd8; --warn:#f0a35a; --ok:#52d39c;
   --shadow:0 1px 0 rgba(0,0,0,.25),0 12px 30px -20px rgba(0,0,0,.7); color-scheme:dark}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.7;
   background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
   background-size:28px 28px;background-position:-1px -1px}
-.wrap{max-width:1160px;margin:0 auto;padding-inline:16px;padding-block:28px 64px;display:flex;flex-direction:column;gap:22px}
+.wrap{max-width:1160px;margin:0 auto;padding-inline:16px;padding-block:16px 56px;display:flex;flex-direction:column;gap:16px}
 h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;font-weight:800}
 p{margin:0}
 .mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
-.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;min-width:0;display:flex;flex-direction:column;gap:16px;box-shadow:var(--shadow)}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 22px;min-width:0;display:flex;flex-direction:column;gap:10px;box-shadow:var(--shadow)}
 @media (max-width:520px){.panel{padding:16px;border-radius:12px}}
 .sh{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
 .sh h2{font-size:20px;letter-spacing:.02em}
@@ -156,10 +469,10 @@ p{margin:0}
 /* 题头：标题 + 图纸标题栏 */
 .top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px 28px;align-items:end;padding-bottom:6px}
 @media (max-width:760px){.top{grid-template-columns:1fr}}
-.brand{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);margin-bottom:10px}
+.brand{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);margin-bottom:6px}
 .seal{font-family:var(--f-display);font-weight:800;font-size:13px;color:var(--card);background:var(--ink);padding:2px 8px;border-radius:3px;letter-spacing:.18em}
-.top h1{font-size:clamp(26px,4.6vw,40px);line-height:1.2;letter-spacing:.01em}
-.top .sub{margin-top:8px;color:var(--muted)}
+.top h1{font-size:clamp(22px,3vw,30px);line-height:1.2;letter-spacing:.01em}
+.top .sub{margin-top:4px;color:var(--muted);font-size:14px}
 .tb{border-collapse:collapse;font-size:13px;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:var(--shadow);min-width:0}
 .tb th,.tb td{border:1px solid var(--hair);padding:6px 12px;text-align:left;white-space:nowrap}
 .tb th{color:var(--faint);font-weight:500;font-size:12px;letter-spacing:.06em;background:var(--sunk)}
@@ -168,13 +481,13 @@ p{margin:0}
 .tbwrap{overflow-x:auto;max-width:100%}
 
 /* 母题 */
-.problem{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,15em);gap:22px;align-items:start}
-@media (max-width:760px){.problem{grid-template-columns:1fr}}
-.lead{font-family:var(--f-display);font-size:clamp(17px,2vw,19px);line-height:1.9;font-weight:600}
+.problem{display:flex;flex-direction:column;gap:10px;min-width:0}
+.lead{font-family:var(--f-display);font-size:clamp(16px,1.7vw,17px);line-height:1.8;font-weight:600}
 .num{font-family:var(--f-mono);font-weight:600;font-size:.92em;color:var(--ink);white-space:nowrap;
   background:linear-gradient(transparent 55%,var(--mark) 55%);padding:0 2px;transition:background-color .2s}
-.asks{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
-.asks li{display:grid;grid-template-columns:1.9em minmax(0,1fr);gap:8px;align-items:baseline}
+.asks{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 26px}
+.asks li{display:flex;gap:8px;align-items:baseline;min-width:0}
+.asks li b{flex:none}
 .asks li b{display:inline-grid;place-items:center;width:1.6em;height:1.6em;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-family:var(--f-mono);font-size:13px}
 .given{background:var(--sunk);border:1px solid var(--hair);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
 .given dl{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;font-size:14px}
@@ -182,7 +495,7 @@ p{margin:0}
 .given dd{margin:0;font-family:var(--f-mono);font-variant-numeric:tabular-nums;text-align:right}
 
 /* 考点 + 边界 */
-.row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:22px;align-items:stretch}
+.row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:28px;align-items:start}
 @media (max-width:860px){.row2{grid-template-columns:1fr}}
 .tags{display:flex;flex-wrap:wrap;gap:8px}
 .tag{font-size:14px;border:1px solid var(--line);background:var(--sunk);padding:4px 12px;border-radius:999px}
@@ -193,10 +506,21 @@ p{margin:0}
 .bnd .ok li::before{content:"✓";color:var(--ok);font-weight:700}
 .bnd .back li::before{content:"→";color:var(--accent);font-weight:700}
 
+/* 选项卡 */
+.board{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);min-width:0;overflow:hidden}
+.tabs{display:flex;gap:2px;padding:0 10px;border-bottom:1px solid var(--line);background:var(--sunk);overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{border:none;border-radius:0;background:none;padding:13px 14px 11px;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap;font-size:15px}
+.tab:hover{color:var(--ink);border-color:transparent;border-bottom-color:var(--line)}
+.tab[aria-selected="true"]{color:var(--ink);font-weight:700;border-bottom-color:var(--accent)}
+.tab .n{font-family:var(--f-mono);font-size:11px;color:var(--faint);margin-left:5px;font-weight:500}
+.pane{padding:16px 22px 22px;display:flex;flex-direction:column;gap:16px;min-width:0}
+@media (max-width:520px){.pane{padding:16px}}
+.hint{font-size:13px;color:var(--muted)}
+
 /* 动画区 */
-.lab{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:26px;align-items:start}
-@media (max-width:900px){.lab{grid-template-columns:1fr}}
-.stage{display:flex;flex-direction:column;gap:12px;min-width:0}
+.lab{display:flex;flex-wrap:wrap;gap:22px 28px;align-items:flex-start}
+.stage{flex:0 1 auto;width:min(100%,max(300px,calc(100vh - 430px)),640px);display:flex;flex-direction:column;gap:10px;min-width:0}
 .canvas-box{position:relative;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card)}
 canvas{width:100%;max-width:100%;aspect-ratio:1/1;display:block}
 .status{position:absolute;left:12px;top:12px;max-width:calc(100% - 24px);display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;
@@ -204,25 +528,32 @@ canvas{width:100%;max-width:100%;aspect-ratio:1/1;display:block}
 .status::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--faint);flex:none}
 .status.warn{color:var(--warn)} .status.warn::before{background:var(--warn)}
 .status.ok{color:var(--ok)} .status.ok::before{background:var(--ok)}
-.bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px}
-.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--muted)}
-.legend i{display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:5px;border-radius:2px}
+.legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--muted)}
+.legend i{display:inline-block;width:16px;height:3px;vertical-align:middle;margin-right:6px;border-radius:2px}
 .readout{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card)}
 .ro{padding:7px 12px;min-width:0;box-shadow:1px 0 0 var(--hair),0 1px 0 var(--hair)}
 .ro span{display:block;font-size:12px;color:var(--faint)}
 .ro b{font-family:var(--f-mono);font-weight:600;font-variant-numeric:tabular-nums;font-size:15px;overflow-wrap:anywhere}
 .btns{display:flex;flex-wrap:wrap;gap:8px}
-button{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:7px 16px;border-radius:999px;cursor:pointer;transition:border-color .15s,background-color .15s}
+button{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:7px 16px;border-radius:999px;cursor:pointer;transition:border-color .15s,background-color .15s,color .15s}
 button:hover{border-color:var(--accent)}
 button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 button.primary{background:var(--accent);color:var(--card);border-color:var(--accent);font-weight:700;padding-inline:22px}
-.ctrl{display:flex;flex-direction:column;gap:18px;min-width:0}
+.ctrl{flex:1 1 300px;display:flex;flex-direction:column;gap:18px;min-width:0}
+.side{display:flex;flex-direction:column;gap:12px;min-width:0}
 .group{display:flex;flex-direction:column;gap:10px}
 .field{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"l o" "r r";gap:2px 10px;align-items:baseline}
 .field label{grid-area:l;font-size:14px}
 .field label .s{font-family:var(--f-mono);font-weight:600;margin-right:6px}
 .field label .note{font-size:12px}
-.field output{grid-area:o;font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:14px;font-weight:600;color:var(--accent)}
+.numin{grid-area:o;display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:8px;padding:1px 8px 1px 2px;background:var(--sunk)}
+.numin:focus-within{border-color:var(--accent)}
+.numin input{width:6.2em;border:none;background:transparent;color:var(--accent);font:600 14px var(--f-mono);font-variant-numeric:tabular-nums;text-align:right;padding:3px 2px;outline:none;-moz-appearance:textfield}
+.numin input::-webkit-outer-spin-button,.numin input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.numin .u{font:500 12px var(--f-mono);color:var(--muted);min-width:1.5em}
+.presets button[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:700}
+.pnote{font-size:13px;color:var(--muted);border-left:2px solid var(--accent-soft);padding:2px 0 2px 10px}
+.pnote b{color:var(--ink);font-weight:600}
 .field input{grid-area:r}
 input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
 .seg{display:flex;padding:3px;gap:3px;border-radius:999px;background:var(--sunk);border:1px solid var(--line)}
@@ -286,77 +617,76 @@ footer{font-size:12px;color:var(--faint);text-align:center}
   <section class="panel">
     <div class="sh"><h2>母题</h2><small>题干数字随动画参数实时变化</small></div>
     <div class="problem">
-      <div>
-        <p class="lead" id="stem"></p>
-        <ol class="asks" id="asks"></ol>
-      </div>
-      <aside class="given">
-        <div class="label">已知量</div>
-        <dl id="given"></dl>
-        <p class="note" id="stemNote"></p>
-      </aside>
+      <p class="lead" id="stem"></p>
+      <ol class="asks" id="asks"></ol>
+      <p class="note" id="stemNote"></p>
     </div>
   </section>
 
-  <div class="row2">
-    <section class="panel">
-      <div class="sh"><h2>核心考点</h2></div>
-      <div class="tags" id="tags"></div>
-    </section>
-    <section class="panel">
-      <div class="sh"><h2>适用边界</h2></div>
-      <div class="bnd">
-        <div><div class="label">结论成立条件</div><ul class="ok" id="bCond"></ul></div>
-        <div><div class="label">超出边界时回到</div><ul class="back" id="bBack"></ul></div>
-      </div>
-    </section>
-  </div>
+  <div class="board">
+    <nav class="tabs" role="tablist" aria-label="母题内容">
+      <button class="tab" role="tab" id="tab-lab" aria-controls="pane-lab" data-pane="pane-lab">动画实验</button>
+      <button class="tab" role="tab" id="tab-scope" aria-controls="pane-scope" data-pane="pane-scope">考点与边界</button>
+      <button class="tab" role="tab" id="tab-concl" aria-controls="pane-concl" data-pane="pane-concl">结论<span class="n" id="nConcl"></span></button>
+      <button class="tab" role="tab" id="tab-var" aria-controls="pane-var" data-pane="pane-var">变式<span class="n" id="nVar"></span></button>
+      <button class="tab" role="tab" id="tab-skin" aria-controls="pane-skin" data-pane="pane-skin">换皮题<span class="n" id="nSkin"></span></button>
+      <button class="tab" role="tab" id="tab-src" aria-controls="pane-src" data-pane="pane-src">题源<span class="n" id="nSrc"></span></button>
+    </nav>
 
-  <section class="panel" id="labPanel">
-    <div class="sh"><h2>动画实验</h2><small>先自己预判，再点发射对答案</small></div>
-    <div class="lab">
-      <div class="stage">
-        <div class="canvas-box">
-          <canvas id="cv" aria-label="母题动画画布"></canvas>
-          <div class="status" id="status" role="status">准备就绪</div>
-        </div>
-        <div class="bar">
+    <section class="pane" role="tabpanel" id="pane-lab" aria-labelledby="tab-lab">
+      <div class="lab">
+        <div class="stage">
+          <div class="legend" id="legend"></div>
+          <div class="canvas-box">
+            <canvas id="cv" aria-label="母题动画画布"></canvas>
+            <div class="status" id="status" role="status">准备就绪</div>
+          </div>
           <div class="btns">
             <button class="primary" id="play">▶ 发射</button>
             <button id="reset">重置</button>
             <button id="slow">慢放 ×0.25</button>
           </div>
-          <div class="legend" id="legend"></div>
         </div>
-        <div class="readout" id="readout"></div>
+        <div class="ctrl">
+          <div class="group"><div class="label">参数</div><div id="params" class="group"></div></div>
+          <div class="group"><div class="label">预设情形 <span id="presetMode"></span></div><div class="presets" id="presets"></div><p class="pnote" id="pnote" hidden></p></div>
+          <div class="group"><div class="label">理论预判</div><div class="verdict" id="verdict"></div></div>
+        </div>
       </div>
-      <div class="ctrl">
-        <div class="group"><div class="label">参数</div><div id="params" class="group"></div></div>
-        <div class="group"><div class="label">预设情形</div><div class="presets" id="presets"></div></div>
-        <div class="group"><div class="label">理论预判</div><div class="verdict" id="verdict"></div></div>
+      <div class="group"><div class="label">实时读数</div><div class="readout" id="readout"></div></div>
+    </section>
+
+    <section class="pane" role="tabpanel" id="pane-scope" aria-labelledby="tab-scope" hidden>
+      <div class="row2">
+        <div class="group"><div class="label">核心考点</div><div class="tags" id="tags"></div></div>
+        <div class="group"><div class="label">适用边界</div>
+          <div class="bnd">
+            <div><div class="hint">结论成立条件</div><ul class="ok" id="bCond"></ul></div>
+            <div><div class="hint">超出边界时回到</div><ul class="back" id="bBack"></ul></div>
+          </div>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="panel">
-    <div class="sh"><h2>结论</h2><small>点开看推导</small></div>
-    <div class="cl" id="concl"></div>
-  </section>
+    <section class="pane" role="tabpanel" id="pane-concl" aria-labelledby="tab-concl" hidden>
+      <p class="hint">点开每条结论看推导。</p>
+      <div class="cl" id="concl"></div>
+    </section>
 
-  <section class="panel">
-    <div class="sh"><h2>变式</h2><small>同骨架，换条件或问法</small></div>
-    <div class="qs" id="variants"></div>
-  </section>
+    <section class="pane" role="tabpanel" id="pane-var" aria-labelledby="tab-var" hidden>
+      <p class="hint">同一骨架，换条件或问法。点「加载到动画」可直接在动画里验证。</p>
+      <div class="qs" id="variants"></div>
+    </section>
 
-  <section class="panel">
-    <div class="sh"><h2>换皮题</h2><small>同骨架，换情境外形</small></div>
-    <div class="qs" id="reskins"></div>
-  </section>
+    <section class="pane" role="tabpanel" id="pane-skin" aria-labelledby="tab-skin" hidden>
+      <p class="hint">同一骨架，换情境外形。</p>
+      <div class="qs" id="reskins"></div>
+    </section>
 
-  <section class="panel">
-    <div class="sh"><h2>题源</h2></div>
-    <ul class="srcs" id="sources"></ul>
-  </section>
+    <section class="pane" role="tabpanel" id="pane-src" aria-labelledby="tab-src" hidden>
+      <ul class="srcs" id="sources"></ul>
+    </section>
+  </div>
 
   <footer id="foot"></footer>
 </div>
@@ -522,17 +852,25 @@ PS.forEach(p=>{
     d.innerHTML=p.options.map(o=>`<button id="opt-${p.key}-${o.value}" data-k="${p.key}" data-v="${o.value}">${esc(o.label)}</button>`).join('');
     box.appendChild(d);
   }else{
-    const d=document.createElement('div');d.className='field';
-    d.innerHTML=`<label for="in-${p.key}"><span class="s">${esc(p.sym)}</span><span class="note">${esc(p.label)}</span></label><input type="range" id="in-${p.key}" min="${p.min}" max="${p.max}" step="${p.step}" value="${p.def}"><output id="out-${p.key}"></output>`;
+    const d=document.createElement('div');d.className='field';d.id=`f-${p.key}`;
+    d.innerHTML=`<label for="num-${p.key}"><span class="s">${esc(p.sym)}</span><span class="note">${esc(p.label)}</span></label><span class="numin"><input type="number" id="num-${p.key}" min="${p.min}" max="${p.max}" step="any" inputmode="decimal" aria-label="${esc(p.label)}"><span class="u">${esc(p.unit||'')}</span></span><input type="range" id="in-${p.key}" min="${p.min}" max="${p.max}" step="${p.step}" value="${p.def}" aria-label="${esc(p.label)} 滑块">`;
     box.appendChild(d);
-    d.querySelector('input').addEventListener('input',e=>{P[p.key]=+e.target.value;sync();reset()});
+    d.querySelector('input[type=range]').addEventListener('input',e=>{P[p.key]=+e.target.value;active=-1;sync();reset()});
+    const num=d.querySelector('input[type=number]');
+    num.addEventListener('change',()=>{let v=parseFloat(num.value);
+      if(Number.isFinite(v)){v=Math.min(p.max,Math.max(p.min,v));P[p.key]=v;active=-1;reset()}sync()});
+    num.addEventListener('keydown',e=>{if(e.key==='Enter')num.blur()});
   }
 });
-box.addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(!b)return;P[b.dataset.k]=b.dataset.v;sync();reset()});
+box.addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(!b)return;P[b.dataset.k]=b.dataset.v;active=-1;sync();reset()});
+let active=-1;
+const shown=w=>!w||Object.entries(w).every(([k,v])=>[].concat(v).includes(P[k]));
+const chosen=o=>PS.every(p=>p.type!=='choice'||o[p.key]===undefined||o[p.key]===P[p.key]);
+const numTxt=(p,v)=>String(+(+v).toFixed(Math.max(p.dec??2,4)));
 function sync(){
   PS.forEach(p=>{
     if(p.type==='choice')p.options.forEach(o=>$(`opt-${p.key}-${o.value}`).setAttribute('aria-pressed',P[p.key]===o.value));
-    else{$(`in-${p.key}`).value=P[p.key];$(`out-${p.key}`).textContent=fmtP(p)}
+    else{$(`in-${p.key}`).value=P[p.key];const n=$(`num-${p.key}`);if(document.activeElement!==n)n.value=numTxt(p,P[p.key]);$(`f-${p.key}`).hidden=!shown(p.when)}
   });
   const fill=s=>esc(s).replace(/\{(\w+)\}/g,(m,k)=>{
     if(k==='constraint'){const p=PS.find(x=>x.type==='choice');return esc(p.options.find(o=>o.value===P[p.key]).text)}
@@ -542,15 +880,17 @@ function sync(){
   const qs=ask.split(/[①②③④⑤⑥]/).map(s=>s.trim()).filter(Boolean);
   $('asks').innerHTML=qs.map((q,i)=>`<li><b>${i+1}</b><span>${fill(q)}</span></li>`).join('');
   $('asks').hidden=!qs.length;
-  $('given').innerHTML=PS.map(p=>`<dt>${esc(p.sym)}</dt><dd>${esc(fmtP(p))}</dd>`).join('');
   $('verdict').innerHTML=SIM.verdict(P);
+  const ch=PS.find(p=>p.type==='choice');
+  $('presetMode').textContent=ch?`· ${ch.options.find(o=>o.value===P[ch.key]).label}`:'';
+  $('presets').innerHTML=D.presets.map((p,i)=>chosen(p.load)?`<button data-preset="${i}" aria-pressed="${i===active}" title="${esc(p.note||'')}">${esc(p.label)}</button>`:'').join('');
+  const pn=$('pnote'),ap=D.presets[active];pn.hidden=!(ap&&ap.note);if(ap&&ap.note)pn.innerHTML=`<b>${esc(ap.label)}</b>：${esc(ap.note)}`;
 }
-function load(o){Object.assign(P,o);sync();reset()}
-$('presets').innerHTML=D.presets.map((p,i)=>`<button data-preset="${i}">${esc(p.label)}</button>`).join('');
-$('presets').addEventListener('click',e=>{const b=e.target.closest('[data-preset]');if(b)load(D.presets[+b.dataset.preset].load)});
+function load(o,i=-1){Object.assign(P,o);active=i;sync();reset()}
+$('presets').addEventListener('click',e=>{const b=e.target.closest('[data-preset]');if(b)load(D.presets[+b.dataset.preset].load,+b.dataset.preset)});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-load]');if(!b)return;
   load(D.variants.find(v=>v.id===b.dataset.load).load);
-  $('labPanel').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})});
+  show('pane-lab');document.querySelector('.board').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})});
 
 /* 画布与循环 */
 const cv=$('cv'),ctx=cv.getContext('2d');let S,running=false,speed=1,lastT=0;
@@ -569,6 +909,15 @@ $('slow').onclick=()=>{speed=speed===1?.25:1;$('slow').textContent=speed===1?'�
 new ResizeObserver(render).observe(cv);
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change',render);
 new MutationObserver(render).observe(root,{attributes:true,attributeFilter:['data-theme']});
+/* 选项卡 */
+const tabs=[...document.querySelectorAll('[role=tab]')];
+function show(id){tabs.forEach(t=>{const on=t.dataset.pane===id;t.setAttribute('aria-selected',on);t.tabIndex=on?0:-1;$(t.dataset.pane).hidden=!on});
+  if(id==='pane-lab')requestAnimationFrame(render)}
+tabs.forEach((t,i)=>{t.addEventListener('click',()=>show(t.dataset.pane));
+  t.addEventListener('keydown',e=>{const d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(!d)return;e.preventDefault();
+    const n=tabs[(i+d+tabs.length)%tabs.length];n.focus();show(n.dataset.pane)})});
+$('nConcl').textContent=D.conclusions.length;$('nVar').textContent=D.variants.length;$('nSkin').textContent=D.reskins.length;$('nSrc').textContent=D.sources.length;
+show('pane-lab');
 sync();reset();
 })();
 </script>

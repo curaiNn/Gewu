@@ -13,29 +13,144 @@
   "freq": "高",
   "difficulty": 4,
   "version": "v0.1",
-  "related": ["MEC-MOM-02 动量定理求变力冲量", "MEC-ENG-01 速度相关阻力与收尾速度", "EM-ACG-01 线圈转动发电机"],
-  "tags": ["法拉第电磁感应定律 E = BLv", "右手定则与楞次定律", "安培力与收尾速度", "动量定理求电量与位移", "能量守恒求焦耳热"],
+  "related": [
+    "MEC-MOM-02 动量定理求变力冲量",
+    "MEC-ENG-01 速度相关阻力与收尾速度",
+    "EM-ACG-01 线圈转动发电机"
+  ],
+  "tags": [
+    "法拉第电磁感应定律 E = BLv",
+    "右手定则与楞次定律",
+    "安培力与收尾速度",
+    "动量定理求电量与位移",
+    "能量守恒求焦耳热"
+  ],
   "problem": {
     "stem": "光滑水平面上两根足够长的平行金属导轨间距 L = {L}，左端接电阻 R = {R}，整个区域有竖直向下的匀强磁场 B = {B}。质量 m = {m}、电阻 r = {r} 的导体棒 ab 垂直导轨放置（俯视时 a 端在上方导轨），{constraint}。初速度 v₀ = {v0}（滑行时用），恒力 F = {F}（拉动时用），导轨电阻不计。问：① 棒中感应电流沿什么方向？速度为 v 时电流多大？② 棒做什么运动，加速度怎样变化，最终速度多大？③ 滑行情形：棒滑行的总距离、通过电阻 R 的电量、R 上产生的焦耳热各多大？拉动情形：达到收尾速度后 R 的电功率多大？",
     "note": "g 取 10 m/s²。μ 为拓展参数（棒与导轨间的动摩擦因数），默认 0；结论以光滑为准。",
     "params": [
-      {"key": "mode", "sym": "驱动", "label": "驱动方式", "type": "choice", "def": "slide",
-       "options": [
-         {"value": "slide", "label": "初速度滑行", "text": "现给棒一个向右的初速度 v₀，此后棒不受其他水平外力"},
-         {"value": "force", "label": "恒力拉动", "text": "棒由静止开始受到水平向右的恒力 F 作用"}
-       ]},
-      {"key": "B", "sym": "B", "label": "磁感应强度", "unit": "T", "def": 1, "min": 0.2, "max": 2, "step": 0.05, "dec": 2},
-      {"key": "L", "sym": "L", "label": "导轨间距", "unit": "m", "def": 0.5, "min": 0.1, "max": 1, "step": 0.05, "dec": 2},
-      {"key": "R", "sym": "R", "label": "外接电阻", "unit": "Ω", "def": 0.8, "min": 0.2, "max": 4, "step": 0.1, "dec": 1},
-      {"key": "r", "sym": "r", "label": "棒的电阻", "unit": "Ω", "def": 0.2, "min": 0, "max": 2, "step": 0.05, "dec": 2},
-      {"key": "m", "sym": "m", "label": "棒的质量", "unit": "kg", "def": 0.1, "min": 0.05, "max": 1, "step": 0.01, "dec": 2},
-      {"key": "v0", "sym": "v₀", "label": "初速度（滑行）", "unit": "m/s", "def": 5, "min": 0, "max": 10, "step": 0.1, "dec": 1},
-      {"key": "F", "sym": "F", "label": "恒力（拉动）", "unit": "N", "def": 0.5, "min": 0, "max": 2, "step": 0.05, "dec": 2},
-      {"key": "mu", "sym": "μ", "label": "动摩擦因数（拓展）", "unit": "", "def": 0, "min": 0, "max": 0.5, "step": 0.01, "dec": 2}
+      {
+        "key": "mode",
+        "sym": "驱动",
+        "label": "驱动方式",
+        "type": "choice",
+        "def": "slide",
+        "options": [
+          {
+            "value": "slide",
+            "label": "初速度滑行",
+            "text": "现给棒一个向右的初速度 v₀，此后棒不受其他水平外力"
+          },
+          {
+            "value": "force",
+            "label": "恒力拉动",
+            "text": "棒由静止开始受到水平向右的恒力 F 作用"
+          }
+        ]
+      },
+      {
+        "key": "B",
+        "sym": "B",
+        "label": "磁感应强度",
+        "unit": "T",
+        "def": 1,
+        "min": 0.2,
+        "max": 2,
+        "step": 0.05,
+        "dec": 2
+      },
+      {
+        "key": "L",
+        "sym": "L",
+        "label": "导轨间距",
+        "unit": "m",
+        "def": 0.5,
+        "min": 0.1,
+        "max": 1,
+        "step": 0.05,
+        "dec": 2
+      },
+      {
+        "key": "R",
+        "sym": "R",
+        "label": "外接电阻",
+        "unit": "Ω",
+        "def": 0.8,
+        "min": 0.2,
+        "max": 4,
+        "step": 0.1,
+        "dec": 1
+      },
+      {
+        "key": "r",
+        "sym": "r",
+        "label": "棒的电阻",
+        "unit": "Ω",
+        "def": 0.2,
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "dec": 2
+      },
+      {
+        "key": "m",
+        "sym": "m",
+        "label": "棒的质量",
+        "unit": "kg",
+        "def": 0.1,
+        "min": 0.05,
+        "max": 1,
+        "step": 0.01,
+        "dec": 2
+      },
+      {
+        "key": "v0",
+        "sym": "v₀",
+        "label": "初速度（滑行）",
+        "unit": "m/s",
+        "def": 5,
+        "min": 0,
+        "max": 10,
+        "step": 0.1,
+        "dec": 1,
+        "when": {
+          "mode": "slide"
+        }
+      },
+      {
+        "key": "F",
+        "sym": "F",
+        "label": "恒力（拉动）",
+        "unit": "N",
+        "def": 0.5,
+        "min": 0,
+        "max": 2,
+        "step": 0.05,
+        "dec": 2,
+        "when": {
+          "mode": "force"
+        }
+      },
+      {
+        "key": "mu",
+        "sym": "μ",
+        "label": "动摩擦因数（拓展）",
+        "unit": "",
+        "def": 0,
+        "min": 0,
+        "max": 0.5,
+        "step": 0.01,
+        "dec": 2
+      }
     ]
   },
   "boundary": {
-    "conditions": ["导轨光滑、足够长、电阻不计；棒始终垂直导轨且接触良好", "磁场匀强，覆盖棒运动的全程（不出磁场）", "外力为零或恒定，方向沿导轨", "忽略回路自感，电流随速度瞬时变化"],
+    "conditions": [
+      "导轨光滑、足够长、电阻不计；棒始终垂直导轨且接触良好",
+      "磁场匀强，覆盖棒运动的全程（不出磁场）",
+      "外力为零或恒定，方向沿导轨",
+      "忽略回路自感，电流随速度瞬时变化"
+    ],
     "fallback": [
       "电路：E = BLv（v 取棒相对磁场的速度），I = E/R总",
       "力学：ma = F外 − F安 − f，F安 = BIL",
@@ -44,77 +159,351 @@
     ]
   },
   "presets": [
-    {"label": "母题·初速度滑行", "load": {"mode": "slide", "B": 1, "L": 0.5, "R": 0.8, "r": 0.2, "m": 0.1, "v0": 5, "F": 0.5, "mu": 0}},
-    {"label": "母题·恒力拉动", "load": {"mode": "force", "B": 1, "L": 0.5, "R": 0.8, "r": 0.2, "m": 0.1, "v0": 5, "F": 0.5, "mu": 0}},
-    {"label": "B 加倍：滑行距离变 1/4", "load": {"mode": "slide", "B": 2, "L": 0.5, "R": 0.8, "r": 0.2, "m": 0.1, "v0": 5, "F": 0.5, "mu": 0}},
-    {"label": "有摩擦滑行", "load": {"mode": "slide", "B": 1, "L": 0.5, "R": 0.8, "r": 0.2, "m": 0.1, "v0": 5, "F": 0.5, "mu": 0.2}},
-    {"label": "有摩擦拉动", "load": {"mode": "force", "B": 1, "L": 0.5, "R": 0.8, "r": 0.2, "m": 0.1, "v0": 5, "F": 0.7, "mu": 0.2}}
+    {
+      "label": "母题：v₀ = 5 m/s 滑行",
+      "note": "v、I、F安 同时减小，加速度越来越小；滑行距离 x = mv₀(R+r)/(B²L²) = 2 m。",
+      "load": {
+        "mode": "slide",
+        "B": 1,
+        "L": 0.5,
+        "R": 0.8,
+        "r": 0.2,
+        "m": 0.1,
+        "v0": 5,
+        "F": 0.5,
+        "mu": 0
+      }
+    },
+    {
+      "label": "B 加倍：滑行距离变为 1/4",
+      "note": "x ∝ 1/B²：x = 0.5 m，停得明显更快。",
+      "load": {
+        "mode": "slide",
+        "B": 2,
+        "L": 0.5,
+        "R": 0.8,
+        "r": 0.2,
+        "m": 0.1,
+        "v0": 5,
+        "F": 0.5,
+        "mu": 0
+      }
+    },
+    {
+      "label": "总电阻加倍：滑行距离加倍",
+      "note": "x ∝ (R + r)：电流小、安培力小，x = 4 m。",
+      "load": {
+        "mode": "slide",
+        "B": 1,
+        "L": 0.5,
+        "R": 1.8,
+        "r": 0.2,
+        "m": 0.1,
+        "v0": 5,
+        "F": 0.5,
+        "mu": 0
+      }
+    },
+    {
+      "label": "有摩擦：有限时间内停下",
+      "note": "摩擦力恒定，棒在有限时间内完全停住，x ≈ 1.37 m，小于无摩擦时的 2 m。",
+      "load": {
+        "mode": "slide",
+        "B": 1,
+        "L": 0.5,
+        "R": 0.8,
+        "r": 0.2,
+        "m": 0.1,
+        "v0": 5,
+        "F": 0.5,
+        "mu": 0.2
+      }
+    },
+    {
+      "label": "母题：F = 0.5 N 拉动",
+      "note": "加速度逐渐减小，最终匀速 vm = F(R+r)/(B²L²) = 2 m/s。",
+      "load": {
+        "mode": "force",
+        "B": 1,
+        "L": 0.5,
+        "R": 0.8,
+        "r": 0.2,
+        "m": 0.1,
+        "v0": 5,
+        "F": 0.5,
+        "mu": 0
+      }
+    },
+    {
+      "label": "F 加倍：收尾速度加倍",
+      "note": "vm ∝ F：vm = 4 m/s。",
+      "load": {
+        "mode": "force",
+        "B": 1,
+        "L": 0.5,
+        "R": 0.8,
+        "r": 0.2,
+        "m": 0.1,
+        "v0": 5,
+        "F": 1,
+        "mu": 0
+      }
+    },
+    {
+      "label": "F = μmg：恰好拉不动",
+      "note": "拉力等于最大静摩擦力，棒保持静止，回路中没有电流。",
+      "load": {
+        "mode": "force",
+        "B": 1,
+        "L": 0.5,
+        "R": 0.8,
+        "r": 0.2,
+        "m": 0.1,
+        "v0": 5,
+        "F": 0.2,
+        "mu": 0.2
+      }
+    },
+    {
+      "label": "有摩擦拉动",
+      "note": "vm = (F − μmg)(R+r)/(B²L²) = 2 m/s，和无摩擦、F = 0.5 N 时相同。",
+      "load": {
+        "mode": "force",
+        "B": 1,
+        "L": 0.5,
+        "R": 0.8,
+        "r": 0.2,
+        "m": 0.1,
+        "v0": 5,
+        "F": 0.7,
+        "mu": 0.2
+      }
+    }
   ],
   "conclusions": [
-    {"id": "C1", "title": "动生电动势与方向", "formula": "E = BLv；俯视逆时针，棒中 b → a，a 端电势高",
-     "derivation": "Δt 内棒扫过面积 ΔS = LvΔt，ΔΦ = BLvΔt，由法拉第电磁感应定律 E = ΔΦ/Δt = BLv。\n方向：右手定则（磁感线穿手心向下，拇指指 v 向右），四指指向 a，棒中电流 b → a；或用楞次定律：回路面积增大、向下的磁通增大，感应电流的磁场向上，俯视逆时针。\n棒是电源，电源内部电流从低电势流向高电势，所以 a 端电势高。"},
-    {"id": "C2", "title": "感应电流与路端电压", "formula": "I = BLv/(R + r)，U_ab = IR = BLvR/(R + r)",
-     "derivation": "棒相当于电动势 E = BLv、内阻 r 的电源，外电路电阻 R。\n闭合电路欧姆定律 I = E/(R + r) = BLv/(R + r)。\nab 两端电压是路端电压 U = IR，不是 E。"},
-    {"id": "C3", "title": "安培力与加速度的变化", "formula": "F安 = B²L²v/(R + r)，a = (F − F安)/m 随 v 变化",
-     "derivation": "F安 = BIL = B²L²v/(R + r)，方向由左手定则判断为向左，总是阻碍棒相对磁场的运动。\n滑行：a = −F安/m，v 减小 → F安 减小 → a 减小，做加速度减小的减速运动，v 按指数规律衰减（时间常数 τ = m(R + r)/(B²L²)）。\n拉动：a = (F − F安)/m，v 增大 → F安 增大 → a 减小，做加速度减小的加速运动。"},
-    {"id": "C4", "title": "恒力拉动的收尾速度", "formula": "vm = F(R + r)/(B²L²)；有摩擦时 vm = (F − μmg)(R + r)/(B²L²)",
-     "derivation": "a 减到 0 时速度不再变化：F = F安 = B²L²vm/(R + r)，得 vm = F(R + r)/(B²L²)。\n有摩擦时 F = F安 + μmg，把 F 换成 F − μmg 即可。\n收尾时 F·vm = I²(R + r)（+ μmg·vm）：外力的功率全部转化为焦耳热（和摩擦热）。"},
-    {"id": "C5", "title": "初速度滑行的总距离", "formula": "x = mv₀(R + r)/(B²L²)",
-     "derivation": "对棒用动量定理，取向右为正：−ΣBIL·Δt = 0 − mv₀，即 BLq = mv₀。\n又 q = ΣIΔt = ΣBLvΔt/(R + r) = BLx/(R + r)。\n联立 B²L²x/(R + r) = mv₀，得 x = mv₀(R + r)/(B²L²)。\n推论：速度变化量与滑过的距离成正比，Δv = B²L²Δx/[m(R + r)]。"},
-    {"id": "C6", "title": "通过电阻的电量", "formula": "q = ΔΦ/(R + r) = BLx/(R + r)；滑行到停下 q = mv₀/(BL)",
-     "derivation": "q = ĪΔt = ĒΔt/(R + r) = ΔΦ/(R + r)，ΔΦ = BLx，所以 q = BLx/(R + r)，与运动快慢无关。\n滑行到停下时，由 C5 的动量定理 BLq = mv₀，得 q = mv₀/(BL)。\n两条式子分别从「位移」和「动量」求电量，是计算题最常用的两条路。"},
-    {"id": "C7", "title": "能量转化与焦耳热分配", "formula": "滑行：Q总 = ½mv₀²，Q_R = R/(R + r)·Q总；拉动：Fx = ½mv² + Q总",
-     "derivation": "克服安培力做的功等于回路产生的总焦耳热。\n滑行：只有安培力做功，动能全部转化为焦耳热，Q总 = ½mv₀²。\n串联电流相同，Q = I²Rt ∝ R，所以 Q_R = R/(R + r)·Q总，Q_r = r/(R + r)·Q总。\n拉动：W_F = ΔEk + Q总，即 Fx = ½mv² + Q总（有摩擦再加 μmgx）。"}
+    {
+      "id": "C1",
+      "title": "动生电动势与方向",
+      "formula": "E = BLv；俯视逆时针，棒中 b → a，a 端电势高",
+      "derivation": "Δt 内棒扫过面积 ΔS = LvΔt，ΔΦ = BLvΔt，由法拉第电磁感应定律 E = ΔΦ/Δt = BLv。\n方向：右手定则（磁感线穿手心向下，拇指指 v 向右），四指指向 a，棒中电流 b → a；或用楞次定律：回路面积增大、向下的磁通增大，感应电流的磁场向上，俯视逆时针。\n棒是电源，电源内部电流从低电势流向高电势，所以 a 端电势高。"
+    },
+    {
+      "id": "C2",
+      "title": "感应电流与路端电压",
+      "formula": "I = BLv/(R + r)，U_ab = IR = BLvR/(R + r)",
+      "derivation": "棒相当于电动势 E = BLv、内阻 r 的电源，外电路电阻 R。\n闭合电路欧姆定律 I = E/(R + r) = BLv/(R + r)。\nab 两端电压是路端电压 U = IR，不是 E。"
+    },
+    {
+      "id": "C3",
+      "title": "安培力与加速度的变化",
+      "formula": "F安 = B²L²v/(R + r)，a = (F − F安)/m 随 v 变化",
+      "derivation": "F安 = BIL = B²L²v/(R + r)，方向由左手定则判断为向左，总是阻碍棒相对磁场的运动。\n滑行：a = −F安/m，v 减小 → F安 减小 → a 减小，做加速度减小的减速运动，v 按指数规律衰减（时间常数 τ = m(R + r)/(B²L²)）。\n拉动：a = (F − F安)/m，v 增大 → F安 增大 → a 减小，做加速度减小的加速运动。"
+    },
+    {
+      "id": "C4",
+      "title": "恒力拉动的收尾速度",
+      "formula": "vm = F(R + r)/(B²L²)；有摩擦时 vm = (F − μmg)(R + r)/(B²L²)",
+      "derivation": "a 减到 0 时速度不再变化：F = F安 = B²L²vm/(R + r)，得 vm = F(R + r)/(B²L²)。\n有摩擦时 F = F安 + μmg，把 F 换成 F − μmg 即可。\n收尾时 F·vm = I²(R + r)（+ μmg·vm）：外力的功率全部转化为焦耳热（和摩擦热）。"
+    },
+    {
+      "id": "C5",
+      "title": "初速度滑行的总距离",
+      "formula": "x = mv₀(R + r)/(B²L²)",
+      "derivation": "对棒用动量定理，取向右为正：−ΣBIL·Δt = 0 − mv₀，即 BLq = mv₀。\n又 q = ΣIΔt = ΣBLvΔt/(R + r) = BLx/(R + r)。\n联立 B²L²x/(R + r) = mv₀，得 x = mv₀(R + r)/(B²L²)。\n推论：速度变化量与滑过的距离成正比，Δv = B²L²Δx/[m(R + r)]。"
+    },
+    {
+      "id": "C6",
+      "title": "通过电阻的电量",
+      "formula": "q = ΔΦ/(R + r) = BLx/(R + r)；滑行到停下 q = mv₀/(BL)",
+      "derivation": "q = ĪΔt = ĒΔt/(R + r) = ΔΦ/(R + r)，ΔΦ = BLx，所以 q = BLx/(R + r)，与运动快慢无关。\n滑行到停下时，由 C5 的动量定理 BLq = mv₀，得 q = mv₀/(BL)。\n两条式子分别从「位移」和「动量」求电量，是计算题最常用的两条路。"
+    },
+    {
+      "id": "C7",
+      "title": "能量转化与焦耳热分配",
+      "formula": "滑行：Q总 = ½mv₀²，Q_R = R/(R + r)·Q总；拉动：Fx = ½mv² + Q总",
+      "derivation": "克服安培力做的功等于回路产生的总焦耳热。\n滑行：只有安培力做功，动能全部转化为焦耳热，Q总 = ½mv₀²。\n串联电流相同，Q = I²Rt ∝ R，所以 Q_R = R/(R + r)·Q总，Q_r = r/(R + r)·Q总。\n拉动：W_F = ΔEk + Q总，即 Fx = ½mv² + Q总（有摩擦再加 μmgx）。"
+    }
   ],
   "variants": [
-    {"id": "V1", "title": "变阻器的最大功率", "cs": ["C1", "C2", "C4"], "source": "改编自 2022 上海等级考 第 20 题",
-     "stem": "水平光滑导轨间距 L = 0.5 m，处在竖直向下 B = 1 T 的匀强磁场中，左端串联定值电阻 R₀ = 0.8 Ω 和滑动变阻器 Rp（最大 2 Ω）。电阻 r = 0.2 Ω 的导体棒在水平外力作用下以 v = 4 m/s 向右匀速运动。求：(1) 棒中电流方向和电动势；(2) Rp 调到多大时它消耗的功率最大？最大功率多少？(3) 此时维持匀速所需的外力。",
-     "answer": "(1) b → a，E = 2 V；(2) Rp = 1 Ω，P_max = 1 W；(3) F = 0.5 N",
-     "analysis": "E = BLv = 1 T × 0.5 m × 4 m/s = 2 V，方向由右手定则得 b → a。把 R₀ 与 r 合起来看作电源的等效内阻 1 Ω，Rp 的功率 P = E²Rp/(Rp + 1 Ω)²，Rp = 1 Ω 时最大；此时 I = 2 V ÷ 2 Ω = 1 A，P = I²Rp = 1 W。匀速时 F = F安 = BIL = 1 T × 1 A × 0.5 m = 0.5 N。原题由电势分布图读出 E = 1.5 V、定值电阻 5 Ω，本题换数并去掉图像。加载后动画中 R = R₀ + Rp = 1.8 Ω，用 0.5 N 恒力拉动，收尾速度正好是 4 m/s（C4），即题中的匀速状态。",
-     "load": {"mode": "force", "B": 1, "L": 0.5, "R": 1.8, "r": 0.2, "m": 0.1, "v0": 5, "F": 0.5, "mu": 0}},
-    {"id": "V2", "title": "两段等长距离的比较", "cs": ["C5", "C7"], "source": "改编自 2022 上海等级考 第 12 题",
-     "stem": "母题中（B = 1 T，L = 0.5 m，R = 0.8 Ω，r = 0.2 Ω，m = 0.1 kg），棒以 v₀ = 5 m/s 滑出。比较它滑过第 1 个 0.8 m 和第 2 个 0.8 m 两段：速度减少量、所用时间、克服安培力做的功。",
-     "answer": "两段速度都减少 2 m/s（5 → 3 → 1 m/s）；t₁ ≈ 0.20 s < t₂ ≈ 0.44 s；W₁ = 0.8 J > W₂ = 0.4 J",
-     "analysis": "由 C5 的推论 Δv = B²L²Δx/[m(R + r)] = 0.25 N·s/m × 0.8 m ÷ 0.1 kg = 2 m/s，两段距离相等，速度减少量相等。W₁ = ½m(v₀² − v₁²) = 0.05 kg × (25 − 9) m²/s² = 0.8 J，W₂ = 0.05 kg × (9 − 1) m²/s² = 0.4 J。第二段平均速度小，时间长：t = τ·ln(v初/v末)，τ = 0.4 s，t₁ = 0.4 s × ln(5/3) ≈ 0.20 s，t₂ = 0.4 s × ln3 ≈ 0.44 s（中学阶段只需定性比较）。原题是线框进入、离开磁场两段（位移都是边长），结论相同：t₁ < t₂，W₁ > W₂。加载后观察读数 x = 0.8 m、1.6 m 时的 v 与 Q总。",
-     "load": {"mode": "slide", "B": 1, "L": 0.5, "R": 0.8, "r": 0.2, "m": 0.1, "v0": 5, "F": 0.5, "mu": 0}},
-    {"id": "V3", "title": "由收尾速度反求间距", "cs": ["C4", "C7"], "source": "改编自 2023 上海等级考 第 19 题（回忆版）",
-     "stem": "水平导轨上导体棒 m = 0.1 kg，与导轨间动摩擦因数 μ = 0.2，R = 0.8 Ω，r = 0.2 Ω，磁场 B = 1 T 竖直向下。棒在水平恒力 F = 0.7 N 作用下由静止开始运动，最终以 2 m/s 匀速运动。求：(1) 导轨间距 L；(2) 匀速运动 1 s 内电阻 R 上的焦耳热和摩擦生热。",
-     "answer": "(1) L = 0.5 m；(2) Q_R = 0.8 J，Q_f = 0.4 J",
-     "analysis": "匀速时 F = μmg + B²L²vm/(R + r)：0.7 N = 0.2 N + 1 T² × L² × 2 m/s ÷ 1 Ω，得 L² = 0.25 m²，L = 0.5 m。I = BLvm/(R + r) = 1 A，Q_R = I²Rt = 1 A² × 0.8 Ω × 1 s = 0.8 J；Q_f = μmg·vm·t = 0.2 N × (2 m/s × 1 s) = 0.4 J。校核：F·vm·t = 1.4 J = Q总 1 J + Q_f 0.4 J。原题是斜面上的线框匀速穿过磁场（g 取 9.8 m/s²），平衡式中多了重力分量，骨架相同。",
-     "load": {"mode": "force", "B": 1, "L": 0.5, "R": 0.8, "r": 0.2, "m": 0.1, "v0": 5, "F": 0.7, "mu": 0.2}},
-    {"id": "V4", "title": "匀加速时外力随时间变化", "cs": ["C2", "C3"], "source": "改编自 2023 上海等级考 第 12 题（回忆版）",
-     "stem": "光滑导轨，B = 1 T，L = 0.5 m，R = 0.8 Ω，r = 0.2 Ω。m = 0.1 kg 的棒在水平外力 F 作用下由静止开始向右做 a = 2 m/s² 的匀加速运动。写出 F 随时间 t 的关系，并求 t = 1 s 时的 F安 和 F。",
-     "answer": "F = 0.2 N + (0.5 N/s)·t；t = 1 s 时 F安 = 0.5 N，F = 0.7 N",
-     "analysis": "v = at，F安 = B²L²at/(R + r) = 0.25 N·s/m × 2 m/s² × t = (0.5 N/s)·t。由 F − F安 = ma，F = 0.2 N + (0.5 N/s)·t。F–t 图与 F安–t 图斜率相同、整体上移 ma，这正是原题「由 F安–t 图反推 F–t 图」的关键。动画只能加恒力：加载 F = 0.7 N 作对比，恒力下 a 从 7 m/s² 逐渐减小，最终匀速 2.8 m/s，不是匀加速。",
-     "load": {"mode": "force", "B": 1, "L": 0.5, "R": 0.8, "r": 0.2, "m": 0.1, "v0": 5, "F": 0.7, "mu": 0}},
-    {"id": "V5", "title": "匀加速进入磁场的最大功率", "cs": ["C1", "C2", "C3"], "source": "改编自 2026 届浦东区二模 五-5(2)",
-     "stem": "边长 L = 0.5 m、总电阻 R = 1 Ω 的正方形单匝线框，从磁场左边界外由静止开始，以 a = 2 m/s² 向右匀加速进入 B = 1 T 的单边匀强磁场（右侧足够宽）。求：(1) 感应电流持续的时间；(2) 克服安培力做功的最大功率。",
-     "answer": "(1) t = √(2L/a) ≈ 0.71 s；(2) P_max = 2B²L³a/R = 0.5 W",
-     "analysis": "只有进入磁场过程有电流：L = ½at²，t = √(2 × 0.5 m ÷ 2 m/s²) = √0.5 s ≈ 0.71 s。P = F安·v = B²L²v²/R，v 越大功率越大，刚好完全进入时 v² = 2aL = 2 m²/s²，P_max = 1 T² × 0.25 m² × 2 m²/s² ÷ 1 Ω = 0.5 W。线框进入时只有右边切割，等效单棒。动画不能做匀加速，加载母题恒力情形（R + r = 1 Ω）观察 F安 随 v 增大，可用读数验证 P = F安·v = B²L²v²/(R + r)。",
-     "load": {"mode": "force", "B": 1, "L": 0.5, "R": 0.8, "r": 0.2, "m": 0.1, "v0": 5, "F": 0.5, "mu": 0}}
+    {
+      "id": "V1",
+      "title": "变阻器的最大功率",
+      "cs": [
+        "C1",
+        "C2",
+        "C4"
+      ],
+      "source": "改编自 2022 上海等级考 第 20 题",
+      "stem": "水平光滑导轨间距 L = 0.5 m，处在竖直向下 B = 1 T 的匀强磁场中，左端串联定值电阻 R₀ = 0.8 Ω 和滑动变阻器 Rp（最大 2 Ω）。电阻 r = 0.2 Ω 的导体棒在水平外力作用下以 v = 4 m/s 向右匀速运动。求：(1) 棒中电流方向和电动势；(2) Rp 调到多大时它消耗的功率最大？最大功率多少？(3) 此时维持匀速所需的外力。",
+      "answer": "(1) b → a，E = 2 V；(2) Rp = 1 Ω，P_max = 1 W；(3) F = 0.5 N",
+      "analysis": "E = BLv = 1 T × 0.5 m × 4 m/s = 2 V，方向由右手定则得 b → a。把 R₀ 与 r 合起来看作电源的等效内阻 1 Ω，Rp 的功率 P = E²Rp/(Rp + 1 Ω)²，Rp = 1 Ω 时最大；此时 I = 2 V ÷ 2 Ω = 1 A，P = I²Rp = 1 W。匀速时 F = F安 = BIL = 1 T × 1 A × 0.5 m = 0.5 N。原题由电势分布图读出 E = 1.5 V、定值电阻 5 Ω，本题换数并去掉图像。加载后动画中 R = R₀ + Rp = 1.8 Ω，用 0.5 N 恒力拉动，收尾速度正好是 4 m/s（C4），即题中的匀速状态。",
+      "load": {
+        "mode": "force",
+        "B": 1,
+        "L": 0.5,
+        "R": 1.8,
+        "r": 0.2,
+        "m": 0.1,
+        "v0": 5,
+        "F": 0.5,
+        "mu": 0
+      }
+    },
+    {
+      "id": "V2",
+      "title": "两段等长距离的比较",
+      "cs": [
+        "C5",
+        "C7"
+      ],
+      "source": "改编自 2022 上海等级考 第 12 题",
+      "stem": "母题中（B = 1 T，L = 0.5 m，R = 0.8 Ω，r = 0.2 Ω，m = 0.1 kg），棒以 v₀ = 5 m/s 滑出。比较它滑过第 1 个 0.8 m 和第 2 个 0.8 m 两段：速度减少量、所用时间、克服安培力做的功。",
+      "answer": "两段速度都减少 2 m/s（5 → 3 → 1 m/s）；t₁ ≈ 0.20 s < t₂ ≈ 0.44 s；W₁ = 0.8 J > W₂ = 0.4 J",
+      "analysis": "由 C5 的推论 Δv = B²L²Δx/[m(R + r)] = 0.25 N·s/m × 0.8 m ÷ 0.1 kg = 2 m/s，两段距离相等，速度减少量相等。W₁ = ½m(v₀² − v₁²) = 0.05 kg × (25 − 9) m²/s² = 0.8 J，W₂ = 0.05 kg × (9 − 1) m²/s² = 0.4 J。第二段平均速度小，时间长：t = τ·ln(v初/v末)，τ = 0.4 s，t₁ = 0.4 s × ln(5/3) ≈ 0.20 s，t₂ = 0.4 s × ln3 ≈ 0.44 s（中学阶段只需定性比较）。原题是线框进入、离开磁场两段（位移都是边长），结论相同：t₁ < t₂，W₁ > W₂。加载后观察读数 x = 0.8 m、1.6 m 时的 v 与 Q总。",
+      "load": {
+        "mode": "slide",
+        "B": 1,
+        "L": 0.5,
+        "R": 0.8,
+        "r": 0.2,
+        "m": 0.1,
+        "v0": 5,
+        "F": 0.5,
+        "mu": 0
+      }
+    },
+    {
+      "id": "V3",
+      "title": "由收尾速度反求间距",
+      "cs": [
+        "C4",
+        "C7"
+      ],
+      "source": "改编自 2023 上海等级考 第 19 题（回忆版）",
+      "stem": "水平导轨上导体棒 m = 0.1 kg，与导轨间动摩擦因数 μ = 0.2，R = 0.8 Ω，r = 0.2 Ω，磁场 B = 1 T 竖直向下。棒在水平恒力 F = 0.7 N 作用下由静止开始运动，最终以 2 m/s 匀速运动。求：(1) 导轨间距 L；(2) 匀速运动 1 s 内电阻 R 上的焦耳热和摩擦生热。",
+      "answer": "(1) L = 0.5 m；(2) Q_R = 0.8 J，Q_f = 0.4 J",
+      "analysis": "匀速时 F = μmg + B²L²vm/(R + r)：0.7 N = 0.2 N + 1 T² × L² × 2 m/s ÷ 1 Ω，得 L² = 0.25 m²，L = 0.5 m。I = BLvm/(R + r) = 1 A，Q_R = I²Rt = 1 A² × 0.8 Ω × 1 s = 0.8 J；Q_f = μmg·vm·t = 0.2 N × (2 m/s × 1 s) = 0.4 J。校核：F·vm·t = 1.4 J = Q总 1 J + Q_f 0.4 J。原题是斜面上的线框匀速穿过磁场（g 取 9.8 m/s²），平衡式中多了重力分量，骨架相同。",
+      "load": {
+        "mode": "force",
+        "B": 1,
+        "L": 0.5,
+        "R": 0.8,
+        "r": 0.2,
+        "m": 0.1,
+        "v0": 5,
+        "F": 0.7,
+        "mu": 0.2
+      }
+    },
+    {
+      "id": "V4",
+      "title": "匀加速时外力随时间变化",
+      "cs": [
+        "C2",
+        "C3"
+      ],
+      "source": "改编自 2023 上海等级考 第 12 题（回忆版）",
+      "stem": "光滑导轨，B = 1 T，L = 0.5 m，R = 0.8 Ω，r = 0.2 Ω。m = 0.1 kg 的棒在水平外力 F 作用下由静止开始向右做 a = 2 m/s² 的匀加速运动。写出 F 随时间 t 的关系，并求 t = 1 s 时的 F安 和 F。",
+      "answer": "F = 0.2 N + (0.5 N/s)·t；t = 1 s 时 F安 = 0.5 N，F = 0.7 N",
+      "analysis": "v = at，F安 = B²L²at/(R + r) = 0.25 N·s/m × 2 m/s² × t = (0.5 N/s)·t。由 F − F安 = ma，F = 0.2 N + (0.5 N/s)·t。F–t 图与 F安–t 图斜率相同、整体上移 ma，这正是原题「由 F安–t 图反推 F–t 图」的关键。动画只能加恒力：加载 F = 0.7 N 作对比，恒力下 a 从 7 m/s² 逐渐减小，最终匀速 2.8 m/s，不是匀加速。",
+      "load": {
+        "mode": "force",
+        "B": 1,
+        "L": 0.5,
+        "R": 0.8,
+        "r": 0.2,
+        "m": 0.1,
+        "v0": 5,
+        "F": 0.7,
+        "mu": 0
+      }
+    },
+    {
+      "id": "V5",
+      "title": "匀加速进入磁场的最大功率",
+      "cs": [
+        "C1",
+        "C2",
+        "C3"
+      ],
+      "source": "改编自 2026 届浦东区二模 五-5(2)",
+      "stem": "边长 L = 0.5 m、总电阻 R = 1 Ω 的正方形单匝线框，从磁场左边界外由静止开始，以 a = 2 m/s² 向右匀加速进入 B = 1 T 的单边匀强磁场（右侧足够宽）。求：(1) 感应电流持续的时间；(2) 克服安培力做功的最大功率。",
+      "answer": "(1) t = √(2L/a) ≈ 0.71 s；(2) P_max = 2B²L³a/R = 0.5 W",
+      "analysis": "只有进入磁场过程有电流：L = ½at²，t = √(2 × 0.5 m ÷ 2 m/s²) = √0.5 s ≈ 0.71 s。P = F安·v = B²L²v²/R，v 越大功率越大，刚好完全进入时 v² = 2aL = 2 m²/s²，P_max = 1 T² × 0.25 m² × 2 m²/s² ÷ 1 Ω = 0.5 W。线框进入时只有右边切割，等效单棒。动画不能做匀加速，加载母题恒力情形（R + r = 1 Ω）观察 F安 随 v 增大，可用读数验证 P = F安·v = B²L²v²/(R + r)。",
+      "load": {
+        "mode": "force",
+        "B": 1,
+        "L": 0.5,
+        "R": 0.8,
+        "r": 0.2,
+        "m": 0.1,
+        "v0": 5,
+        "F": 0.5,
+        "mu": 0
+      }
+    }
   ],
   "reskins": [
-    {"id": "R1", "title": "线框滑入有界磁场", "map": "进入过程只有前边切割，等效单棒滑过 x = 边长；完全进入后无电流、匀速", "anim": true, "source": "原创（情境取自 2022 上海等级考第 12 题、2023 第 19 题）",
-     "stem": "光滑水平面上，边长 L = 0.5 m、质量 m = 0.1 kg、电阻 R = 1 Ω 的正方形线框以 v₀ = 5 m/s 滑入 B = 1 T 的竖直向下单边匀强磁场。求线框刚好完全进入时的速度，以及进入过程通过线框的电量和产生的焦耳热。",
-     "answer": "v = 3.75 m/s，q = 0.25 C，Q ≈ 0.55 J（0.546875 J）",
-     "analysis": "由 C5 推论 Δv = B²L²·L/(mR) = 1 T² × 0.25 m² × 0.5 m ÷ (0.1 kg × 1 Ω) = 1.25 m/s，v = 3.75 m/s。q = ΔΦ/R = BL²/R = 0.25 C（也可用 mΔv/(BL) = 0.125 N·s ÷ 0.5 T·m 校核）。Q = ½m(v₀² − v²) = 0.05 kg × (25 − 14.0625) m²/s² ≈ 0.55 J。"},
-    {"id": "R2", "title": "电磁缓冲小车", "map": "v 换成线框与磁场的相对速度；安培力是系统内力，动量守恒求共速，焦耳热 = 动能损失", "anim": false, "source": "改编自 2026 届浦东区一模 六-2",
-     "stem": "光滑水平面上，小车连同导轨、磁场总质量 M₀ = 0.4 kg，以 v₀ = 5 m/s 撞向静止的障碍物（质量 m = 0.1 kg）。障碍物上固定 n = 10 匝矩形线框，切割边长 l = 0.1 m，总电阻 R = 1 Ω，磁场 B = 0.5 T。线框刚开始切割时受到的安培力多大？三者共速时速度多大？缓冲过程产生多少焦耳热？",
-     "answer": "F = 1.25 N；v共 = 4 m/s；Q = 1 J",
-     "analysis": "E = nBlv₀ = 10 × 0.5 T × 0.1 m × 5 m/s = 2.5 V，I = 2.5 A，F = nBIl = 10 × 0.5 T × 2.5 A × 0.1 m = 1.25 N（即 n²B²l²v₀/R）。安培力是内力，动量守恒 M₀v₀ = (M₀ + m)v共，v共 = 2 kg·m/s ÷ 0.5 kg = 4 m/s。Q = ½M₀v₀² − ½(M₀ + m)v共² = 5 J − 4 J = 1 J。"},
-    {"id": "R3", "title": "转动金属笼测速", "map": "一根棒切割做电源，另两根并联做外电路（R外 = r/2），E = BLv、v = ωR", "anim": false, "source": "改编自 2026 上海等级考 6.3",
-     "stem": "两铜环之间均匀连接 3 根金属棒，每根长 L = 0.05 m、电阻 r = 0.02 Ω，铜环电阻不计；金属笼转动时每次只有一根棒经过 B = 0.5 T 的窄磁场。某棒切割时两环间电压 U = 0.010 V。求该棒的电动势、所受安培力和线速度。若车匀加速，相继两个脉冲电压为 0.010 V、0.014 V，求下一个脉冲电压。",
-     "answer": "E = 0.030 V，F = 0.025 N，v = 1.2 m/s；U₃ = √(2U₂² − U₁²) ≈ 0.017 V",
-     "analysis": "外电路为两根棒并联 r/2，U = E·(r/2)/(r + r/2) = E/3，E = 3U = 0.030 V。I = E/(1.5r) = 1 A，F = BIL = 0.5 T × 1 A × 0.05 m = 0.025 N。v = E/(BL) = 0.030 V ÷ 0.025 T·m = 1.2 m/s。相邻脉冲之间转过的弧长相同，匀加速有 v₃² − v₂² = v₂² − v₁²，U ∝ v，所以 U₃ = √(2 × 0.014² − 0.010²) V ≈ 0.0171 V。"}
+    {
+      "id": "R1",
+      "title": "线框滑入有界磁场",
+      "map": "进入过程只有前边切割，等效单棒滑过 x = 边长；完全进入后无电流、匀速",
+      "anim": true,
+      "source": "原创（情境取自 2022 上海等级考第 12 题、2023 第 19 题）",
+      "stem": "光滑水平面上，边长 L = 0.5 m、质量 m = 0.1 kg、电阻 R = 1 Ω 的正方形线框以 v₀ = 5 m/s 滑入 B = 1 T 的竖直向下单边匀强磁场。求线框刚好完全进入时的速度，以及进入过程通过线框的电量和产生的焦耳热。",
+      "answer": "v = 3.75 m/s，q = 0.25 C，Q ≈ 0.55 J（0.546875 J）",
+      "analysis": "由 C5 推论 Δv = B²L²·L/(mR) = 1 T² × 0.25 m² × 0.5 m ÷ (0.1 kg × 1 Ω) = 1.25 m/s，v = 3.75 m/s。q = ΔΦ/R = BL²/R = 0.25 C（也可用 mΔv/(BL) = 0.125 N·s ÷ 0.5 T·m 校核）。Q = ½m(v₀² − v²) = 0.05 kg × (25 − 14.0625) m²/s² ≈ 0.55 J。"
+    },
+    {
+      "id": "R2",
+      "title": "电磁缓冲小车",
+      "map": "v 换成线框与磁场的相对速度；安培力是系统内力，动量守恒求共速，焦耳热 = 动能损失",
+      "anim": false,
+      "source": "改编自 2026 届浦东区一模 六-2",
+      "stem": "光滑水平面上，小车连同导轨、磁场总质量 M₀ = 0.4 kg，以 v₀ = 5 m/s 撞向静止的障碍物（质量 m = 0.1 kg）。障碍物上固定 n = 10 匝矩形线框，切割边长 l = 0.1 m，总电阻 R = 1 Ω，磁场 B = 0.5 T。线框刚开始切割时受到的安培力多大？三者共速时速度多大？缓冲过程产生多少焦耳热？",
+      "answer": "F = 1.25 N；v共 = 4 m/s；Q = 1 J",
+      "analysis": "E = nBlv₀ = 10 × 0.5 T × 0.1 m × 5 m/s = 2.5 V，I = 2.5 A，F = nBIl = 10 × 0.5 T × 2.5 A × 0.1 m = 1.25 N（即 n²B²l²v₀/R）。安培力是内力，动量守恒 M₀v₀ = (M₀ + m)v共，v共 = 2 kg·m/s ÷ 0.5 kg = 4 m/s。Q = ½M₀v₀² − ½(M₀ + m)v共² = 5 J − 4 J = 1 J。"
+    },
+    {
+      "id": "R3",
+      "title": "转动金属笼测速",
+      "map": "一根棒切割做电源，另两根并联做外电路（R外 = r/2），E = BLv、v = ωR",
+      "anim": false,
+      "source": "改编自 2026 上海等级考 6.3",
+      "stem": "两铜环之间均匀连接 3 根金属棒，每根长 L = 0.05 m、电阻 r = 0.02 Ω，铜环电阻不计；金属笼转动时每次只有一根棒经过 B = 0.5 T 的窄磁场。某棒切割时两环间电压 U = 0.010 V。求该棒的电动势、所受安培力和线速度。若车匀加速，相继两个脉冲电压为 0.010 V、0.014 V，求下一个脉冲电压。",
+      "answer": "E = 0.030 V，F = 0.025 N，v = 1.2 m/s；U₃ = √(2U₂² − U₁²) ≈ 0.017 V",
+      "analysis": "外电路为两根棒并联 r/2，U = E·(r/2)/(r + r/2) = E/3，E = 3U = 0.030 V。I = E/(1.5r) = 1 A，F = BIL = 0.5 T × 1 A × 0.05 m = 0.025 N。v = E/(BL) = 0.030 V ÷ 0.025 T·m = 1.2 m/s。相邻脉冲之间转过的弧长相同，匀加速有 v₃² − v₂² = v₂² − v₁²，U ∝ v，所以 U₃ = √(2 × 0.014² − 0.010²) V ≈ 0.0171 V。"
+    }
   ],
   "sources": [
-    {"src": "2022 上海等级考 第 12 题", "desc": "线框以 v₀ 穿过有界磁场，比较进、出的时间与克服安培力做功"},
-    {"src": "2022 上海等级考 第 20 题", "desc": "导体棒切割接定值电阻与变阻器，由电势图求速度和变阻器最大功率"},
-    {"src": "2023 上海等级考 第 12 题（回忆版）", "desc": "由 F安–t 图反推外力 F–t 图"},
-    {"src": "2023 上海等级考 第 19 题（回忆版）", "desc": "斜面上线框在恒力下匀速穿过磁场，求外力、边长、焦耳热"},
-    {"src": "2026 上海等级考 6.3", "desc": "金属笼转动，一根棒做电源；匀加速时推算下一个脉冲电压"},
-    {"src": "2026 届浦东区二模 五-5", "desc": "线框匀加速进入磁场：电流持续时间、最大安培力功率"},
-    {"src": "2026 届浦东区一模 六-2", "desc": "电磁缓冲线框：安培力、动量守恒、共速时的焦耳热"}
+    {
+      "src": "2022 上海等级考 第 12 题",
+      "desc": "线框以 v₀ 穿过有界磁场，比较进、出的时间与克服安培力做功"
+    },
+    {
+      "src": "2022 上海等级考 第 20 题",
+      "desc": "导体棒切割接定值电阻与变阻器，由电势图求速度和变阻器最大功率"
+    },
+    {
+      "src": "2023 上海等级考 第 12 题（回忆版）",
+      "desc": "由 F安–t 图反推外力 F–t 图"
+    },
+    {
+      "src": "2023 上海等级考 第 19 题（回忆版）",
+      "desc": "斜面上线框在恒力下匀速穿过磁场，求外力、边长、焦耳热"
+    },
+    {
+      "src": "2026 上海等级考 6.3",
+      "desc": "金属笼转动，一根棒做电源；匀加速时推算下一个脉冲电压"
+    },
+    {
+      "src": "2026 届浦东区二模 五-5",
+      "desc": "线框匀加速进入磁场：电流持续时间、最大安培力功率"
+    },
+    {
+      "src": "2026 届浦东区一模 六-2",
+      "desc": "电磁缓冲线框：安培力、动量守恒、共速时的焦耳热"
+    }
   ]
 }
 </script>
@@ -144,14 +533,15 @@
   --g:#ff7d71; --n:#52d39c; --v:#93acff; --track:#c3ccd8; --warn:#f0a35a; --ok:#52d39c;
   --shadow:0 1px 0 rgba(0,0,0,.25),0 12px 30px -20px rgba(0,0,0,.7); color-scheme:dark}
 *{box-sizing:border-box}
+[hidden]{display:none!important}
 body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.7;
   background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
   background-size:28px 28px;background-position:-1px -1px}
-.wrap{max-width:1160px;margin:0 auto;padding-inline:16px;padding-block:28px 64px;display:flex;flex-direction:column;gap:22px}
+.wrap{max-width:1160px;margin:0 auto;padding-inline:16px;padding-block:16px 56px;display:flex;flex-direction:column;gap:16px}
 h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;font-weight:800}
 p{margin:0}
 .mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
-.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;min-width:0;display:flex;flex-direction:column;gap:16px;box-shadow:var(--shadow)}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 22px;min-width:0;display:flex;flex-direction:column;gap:10px;box-shadow:var(--shadow)}
 @media (max-width:520px){.panel{padding:16px;border-radius:12px}}
 .sh{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
 .sh h2{font-size:20px;letter-spacing:.02em}
@@ -163,10 +553,10 @@ p{margin:0}
 /* 题头：标题 + 图纸标题栏 */
 .top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px 28px;align-items:end;padding-bottom:6px}
 @media (max-width:760px){.top{grid-template-columns:1fr}}
-.brand{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);margin-bottom:10px}
+.brand{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);margin-bottom:6px}
 .seal{font-family:var(--f-display);font-weight:800;font-size:13px;color:var(--card);background:var(--ink);padding:2px 8px;border-radius:3px;letter-spacing:.18em}
-.top h1{font-size:clamp(26px,4.6vw,40px);line-height:1.2;letter-spacing:.01em}
-.top .sub{margin-top:8px;color:var(--muted)}
+.top h1{font-size:clamp(22px,3vw,30px);line-height:1.2;letter-spacing:.01em}
+.top .sub{margin-top:4px;color:var(--muted);font-size:14px}
 .tb{border-collapse:collapse;font-size:13px;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:var(--shadow);min-width:0}
 .tb th,.tb td{border:1px solid var(--hair);padding:6px 12px;text-align:left;white-space:nowrap}
 .tb th{color:var(--faint);font-weight:500;font-size:12px;letter-spacing:.06em;background:var(--sunk)}
@@ -175,13 +565,13 @@ p{margin:0}
 .tbwrap{overflow-x:auto;max-width:100%}
 
 /* 母题 */
-.problem{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,15em);gap:22px;align-items:start}
-@media (max-width:760px){.problem{grid-template-columns:1fr}}
-.lead{font-family:var(--f-display);font-size:clamp(17px,2vw,19px);line-height:1.9;font-weight:600}
+.problem{display:flex;flex-direction:column;gap:10px;min-width:0}
+.lead{font-family:var(--f-display);font-size:clamp(16px,1.7vw,17px);line-height:1.8;font-weight:600}
 .num{font-family:var(--f-mono);font-weight:600;font-size:.92em;color:var(--ink);white-space:nowrap;
   background:linear-gradient(transparent 55%,var(--mark) 55%);padding:0 2px;transition:background-color .2s}
-.asks{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
-.asks li{display:grid;grid-template-columns:1.9em minmax(0,1fr);gap:8px;align-items:baseline}
+.asks{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 26px}
+.asks li{display:flex;gap:8px;align-items:baseline;min-width:0}
+.asks li b{flex:none}
 .asks li b{display:inline-grid;place-items:center;width:1.6em;height:1.6em;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-family:var(--f-mono);font-size:13px}
 .given{background:var(--sunk);border:1px solid var(--hair);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
 .given dl{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;font-size:14px}
@@ -189,7 +579,7 @@ p{margin:0}
 .given dd{margin:0;font-family:var(--f-mono);font-variant-numeric:tabular-nums;text-align:right}
 
 /* 考点 + 边界 */
-.row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:22px;align-items:stretch}
+.row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:28px;align-items:start}
 @media (max-width:860px){.row2{grid-template-columns:1fr}}
 .tags{display:flex;flex-wrap:wrap;gap:8px}
 .tag{font-size:14px;border:1px solid var(--line);background:var(--sunk);padding:4px 12px;border-radius:999px}
@@ -200,10 +590,21 @@ p{margin:0}
 .bnd .ok li::before{content:"✓";color:var(--ok);font-weight:700}
 .bnd .back li::before{content:"→";color:var(--accent);font-weight:700}
 
+/* 选项卡 */
+.board{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);min-width:0;overflow:hidden}
+.tabs{display:flex;gap:2px;padding:0 10px;border-bottom:1px solid var(--line);background:var(--sunk);overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{border:none;border-radius:0;background:none;padding:13px 14px 11px;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap;font-size:15px}
+.tab:hover{color:var(--ink);border-color:transparent;border-bottom-color:var(--line)}
+.tab[aria-selected="true"]{color:var(--ink);font-weight:700;border-bottom-color:var(--accent)}
+.tab .n{font-family:var(--f-mono);font-size:11px;color:var(--faint);margin-left:5px;font-weight:500}
+.pane{padding:16px 22px 22px;display:flex;flex-direction:column;gap:16px;min-width:0}
+@media (max-width:520px){.pane{padding:16px}}
+.hint{font-size:13px;color:var(--muted)}
+
 /* 动画区 */
-.lab{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:26px;align-items:start}
-@media (max-width:900px){.lab{grid-template-columns:1fr}}
-.stage{display:flex;flex-direction:column;gap:12px;min-width:0}
+.lab{display:flex;flex-wrap:wrap;gap:22px 28px;align-items:flex-start}
+.stage{flex:0 1 auto;width:min(100%,max(300px,calc(100vh - 430px)),640px);display:flex;flex-direction:column;gap:10px;min-width:0}
 .canvas-box{position:relative;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card)}
 canvas{width:100%;max-width:100%;aspect-ratio:1/1;display:block}
 .status{position:absolute;left:12px;top:12px;max-width:calc(100% - 24px);display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;
@@ -211,25 +612,32 @@ canvas{width:100%;max-width:100%;aspect-ratio:1/1;display:block}
 .status::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--faint);flex:none}
 .status.warn{color:var(--warn)} .status.warn::before{background:var(--warn)}
 .status.ok{color:var(--ok)} .status.ok::before{background:var(--ok)}
-.bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px}
-.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--muted)}
-.legend i{display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:5px;border-radius:2px}
+.legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--muted)}
+.legend i{display:inline-block;width:16px;height:3px;vertical-align:middle;margin-right:6px;border-radius:2px}
 .readout{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card)}
 .ro{padding:7px 12px;min-width:0;box-shadow:1px 0 0 var(--hair),0 1px 0 var(--hair)}
 .ro span{display:block;font-size:12px;color:var(--faint)}
 .ro b{font-family:var(--f-mono);font-weight:600;font-variant-numeric:tabular-nums;font-size:15px;overflow-wrap:anywhere}
 .btns{display:flex;flex-wrap:wrap;gap:8px}
-button{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:7px 16px;border-radius:999px;cursor:pointer;transition:border-color .15s,background-color .15s}
+button{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:7px 16px;border-radius:999px;cursor:pointer;transition:border-color .15s,background-color .15s,color .15s}
 button:hover{border-color:var(--accent)}
 button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 button.primary{background:var(--accent);color:var(--card);border-color:var(--accent);font-weight:700;padding-inline:22px}
-.ctrl{display:flex;flex-direction:column;gap:18px;min-width:0}
+.ctrl{flex:1 1 300px;display:flex;flex-direction:column;gap:18px;min-width:0}
+.side{display:flex;flex-direction:column;gap:12px;min-width:0}
 .group{display:flex;flex-direction:column;gap:10px}
 .field{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"l o" "r r";gap:2px 10px;align-items:baseline}
 .field label{grid-area:l;font-size:14px}
 .field label .s{font-family:var(--f-mono);font-weight:600;margin-right:6px}
 .field label .note{font-size:12px}
-.field output{grid-area:o;font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:14px;font-weight:600;color:var(--accent)}
+.numin{grid-area:o;display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:8px;padding:1px 8px 1px 2px;background:var(--sunk)}
+.numin:focus-within{border-color:var(--accent)}
+.numin input{width:6.2em;border:none;background:transparent;color:var(--accent);font:600 14px var(--f-mono);font-variant-numeric:tabular-nums;text-align:right;padding:3px 2px;outline:none;-moz-appearance:textfield}
+.numin input::-webkit-outer-spin-button,.numin input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.numin .u{font:500 12px var(--f-mono);color:var(--muted);min-width:1.5em}
+.presets button[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:700}
+.pnote{font-size:13px;color:var(--muted);border-left:2px solid var(--accent-soft);padding:2px 0 2px 10px}
+.pnote b{color:var(--ink);font-weight:600}
 .field input{grid-area:r}
 input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
 .seg{display:flex;padding:3px;gap:3px;border-radius:999px;background:var(--sunk);border:1px solid var(--line)}
@@ -293,77 +701,76 @@ footer{font-size:12px;color:var(--faint);text-align:center}
   <section class="panel">
     <div class="sh"><h2>母题</h2><small>题干数字随动画参数实时变化</small></div>
     <div class="problem">
-      <div>
-        <p class="lead" id="stem"></p>
-        <ol class="asks" id="asks"></ol>
-      </div>
-      <aside class="given">
-        <div class="label">已知量</div>
-        <dl id="given"></dl>
-        <p class="note" id="stemNote"></p>
-      </aside>
+      <p class="lead" id="stem"></p>
+      <ol class="asks" id="asks"></ol>
+      <p class="note" id="stemNote"></p>
     </div>
   </section>
 
-  <div class="row2">
-    <section class="panel">
-      <div class="sh"><h2>核心考点</h2></div>
-      <div class="tags" id="tags"></div>
-    </section>
-    <section class="panel">
-      <div class="sh"><h2>适用边界</h2></div>
-      <div class="bnd">
-        <div><div class="label">结论成立条件</div><ul class="ok" id="bCond"></ul></div>
-        <div><div class="label">超出边界时回到</div><ul class="back" id="bBack"></ul></div>
-      </div>
-    </section>
-  </div>
+  <div class="board">
+    <nav class="tabs" role="tablist" aria-label="母题内容">
+      <button class="tab" role="tab" id="tab-lab" aria-controls="pane-lab" data-pane="pane-lab">动画实验</button>
+      <button class="tab" role="tab" id="tab-scope" aria-controls="pane-scope" data-pane="pane-scope">考点与边界</button>
+      <button class="tab" role="tab" id="tab-concl" aria-controls="pane-concl" data-pane="pane-concl">结论<span class="n" id="nConcl"></span></button>
+      <button class="tab" role="tab" id="tab-var" aria-controls="pane-var" data-pane="pane-var">变式<span class="n" id="nVar"></span></button>
+      <button class="tab" role="tab" id="tab-skin" aria-controls="pane-skin" data-pane="pane-skin">换皮题<span class="n" id="nSkin"></span></button>
+      <button class="tab" role="tab" id="tab-src" aria-controls="pane-src" data-pane="pane-src">题源<span class="n" id="nSrc"></span></button>
+    </nav>
 
-  <section class="panel" id="labPanel">
-    <div class="sh"><h2>动画实验</h2><small>先自己预判，再点发射对答案</small></div>
-    <div class="lab">
-      <div class="stage">
-        <div class="canvas-box">
-          <canvas id="cv" aria-label="母题动画画布"></canvas>
-          <div class="status" id="status" role="status">准备就绪</div>
-        </div>
-        <div class="bar">
+    <section class="pane" role="tabpanel" id="pane-lab" aria-labelledby="tab-lab">
+      <div class="lab">
+        <div class="stage">
+          <div class="legend" id="legend"></div>
+          <div class="canvas-box">
+            <canvas id="cv" aria-label="母题动画画布"></canvas>
+            <div class="status" id="status" role="status">准备就绪</div>
+          </div>
           <div class="btns">
             <button class="primary" id="play">▶ 发射</button>
             <button id="reset">重置</button>
             <button id="slow">慢放 ×0.25</button>
           </div>
-          <div class="legend" id="legend"></div>
         </div>
-        <div class="readout" id="readout"></div>
+        <div class="ctrl">
+          <div class="group"><div class="label">参数</div><div id="params" class="group"></div></div>
+          <div class="group"><div class="label">预设情形 <span id="presetMode"></span></div><div class="presets" id="presets"></div><p class="pnote" id="pnote" hidden></p></div>
+          <div class="group"><div class="label">理论预判</div><div class="verdict" id="verdict"></div></div>
+        </div>
       </div>
-      <div class="ctrl">
-        <div class="group"><div class="label">参数</div><div id="params" class="group"></div></div>
-        <div class="group"><div class="label">预设情形</div><div class="presets" id="presets"></div></div>
-        <div class="group"><div class="label">理论预判</div><div class="verdict" id="verdict"></div></div>
+      <div class="group"><div class="label">实时读数</div><div class="readout" id="readout"></div></div>
+    </section>
+
+    <section class="pane" role="tabpanel" id="pane-scope" aria-labelledby="tab-scope" hidden>
+      <div class="row2">
+        <div class="group"><div class="label">核心考点</div><div class="tags" id="tags"></div></div>
+        <div class="group"><div class="label">适用边界</div>
+          <div class="bnd">
+            <div><div class="hint">结论成立条件</div><ul class="ok" id="bCond"></ul></div>
+            <div><div class="hint">超出边界时回到</div><ul class="back" id="bBack"></ul></div>
+          </div>
+        </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <section class="panel">
-    <div class="sh"><h2>结论</h2><small>点开看推导</small></div>
-    <div class="cl" id="concl"></div>
-  </section>
+    <section class="pane" role="tabpanel" id="pane-concl" aria-labelledby="tab-concl" hidden>
+      <p class="hint">点开每条结论看推导。</p>
+      <div class="cl" id="concl"></div>
+    </section>
 
-  <section class="panel">
-    <div class="sh"><h2>变式</h2><small>同骨架，换条件或问法</small></div>
-    <div class="qs" id="variants"></div>
-  </section>
+    <section class="pane" role="tabpanel" id="pane-var" aria-labelledby="tab-var" hidden>
+      <p class="hint">同一骨架，换条件或问法。点「加载到动画」可直接在动画里验证。</p>
+      <div class="qs" id="variants"></div>
+    </section>
 
-  <section class="panel">
-    <div class="sh"><h2>换皮题</h2><small>同骨架，换情境外形</small></div>
-    <div class="qs" id="reskins"></div>
-  </section>
+    <section class="pane" role="tabpanel" id="pane-skin" aria-labelledby="tab-skin" hidden>
+      <p class="hint">同一骨架，换情境外形。</p>
+      <div class="qs" id="reskins"></div>
+    </section>
 
-  <section class="panel">
-    <div class="sh"><h2>题源</h2></div>
-    <ul class="srcs" id="sources"></ul>
-  </section>
+    <section class="pane" role="tabpanel" id="pane-src" aria-labelledby="tab-src" hidden>
+      <ul class="srcs" id="sources"></ul>
+    </section>
+  </div>
 
   <footer id="foot"></footer>
 </div>
@@ -581,17 +988,25 @@ PS.forEach(p=>{
     d.innerHTML=p.options.map(o=>`<button id="opt-${p.key}-${o.value}" data-k="${p.key}" data-v="${o.value}">${esc(o.label)}</button>`).join('');
     box.appendChild(d);
   }else{
-    const d=document.createElement('div');d.className='field';
-    d.innerHTML=`<label for="in-${p.key}"><span class="s">${esc(p.sym)}</span><span class="note">${esc(p.label)}</span></label><input type="range" id="in-${p.key}" min="${p.min}" max="${p.max}" step="${p.step}" value="${p.def}"><output id="out-${p.key}"></output>`;
+    const d=document.createElement('div');d.className='field';d.id=`f-${p.key}`;
+    d.innerHTML=`<label for="num-${p.key}"><span class="s">${esc(p.sym)}</span><span class="note">${esc(p.label)}</span></label><span class="numin"><input type="number" id="num-${p.key}" min="${p.min}" max="${p.max}" step="any" inputmode="decimal" aria-label="${esc(p.label)}"><span class="u">${esc(p.unit||'')}</span></span><input type="range" id="in-${p.key}" min="${p.min}" max="${p.max}" step="${p.step}" value="${p.def}" aria-label="${esc(p.label)} 滑块">`;
     box.appendChild(d);
-    d.querySelector('input').addEventListener('input',e=>{P[p.key]=+e.target.value;sync();reset()});
+    d.querySelector('input[type=range]').addEventListener('input',e=>{P[p.key]=+e.target.value;active=-1;sync();reset()});
+    const num=d.querySelector('input[type=number]');
+    num.addEventListener('change',()=>{let v=parseFloat(num.value);
+      if(Number.isFinite(v)){v=Math.min(p.max,Math.max(p.min,v));P[p.key]=v;active=-1;reset()}sync()});
+    num.addEventListener('keydown',e=>{if(e.key==='Enter')num.blur()});
   }
 });
-box.addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(!b)return;P[b.dataset.k]=b.dataset.v;sync();reset()});
+box.addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(!b)return;P[b.dataset.k]=b.dataset.v;active=-1;sync();reset()});
+let active=-1;
+const shown=w=>!w||Object.entries(w).every(([k,v])=>[].concat(v).includes(P[k]));
+const chosen=o=>PS.every(p=>p.type!=='choice'||o[p.key]===undefined||o[p.key]===P[p.key]);
+const numTxt=(p,v)=>String(+(+v).toFixed(Math.max(p.dec??2,4)));
 function sync(){
   PS.forEach(p=>{
     if(p.type==='choice')p.options.forEach(o=>$(`opt-${p.key}-${o.value}`).setAttribute('aria-pressed',P[p.key]===o.value));
-    else{$(`in-${p.key}`).value=P[p.key];$(`out-${p.key}`).textContent=fmtP(p)}
+    else{$(`in-${p.key}`).value=P[p.key];const n=$(`num-${p.key}`);if(document.activeElement!==n)n.value=numTxt(p,P[p.key]);$(`f-${p.key}`).hidden=!shown(p.when)}
   });
   const fill=s=>esc(s).replace(/\{(\w+)\}/g,(m,k)=>{
     if(k==='constraint'){const p=PS.find(x=>x.type==='choice');return esc(p.options.find(o=>o.value===P[p.key]).text)}
@@ -601,15 +1016,17 @@ function sync(){
   const qs=ask.split(/[①②③④⑤⑥]/).map(s=>s.trim()).filter(Boolean);
   $('asks').innerHTML=qs.map((q,i)=>`<li><b>${i+1}</b><span>${fill(q)}</span></li>`).join('');
   $('asks').hidden=!qs.length;
-  $('given').innerHTML=PS.map(p=>`<dt>${esc(p.sym)}</dt><dd>${esc(fmtP(p))}</dd>`).join('');
   $('verdict').innerHTML=SIM.verdict(P);
+  const ch=PS.find(p=>p.type==='choice');
+  $('presetMode').textContent=ch?`· ${ch.options.find(o=>o.value===P[ch.key]).label}`:'';
+  $('presets').innerHTML=D.presets.map((p,i)=>chosen(p.load)?`<button data-preset="${i}" aria-pressed="${i===active}" title="${esc(p.note||'')}">${esc(p.label)}</button>`:'').join('');
+  const pn=$('pnote'),ap=D.presets[active];pn.hidden=!(ap&&ap.note);if(ap&&ap.note)pn.innerHTML=`<b>${esc(ap.label)}</b>：${esc(ap.note)}`;
 }
-function load(o){Object.assign(P,o);sync();reset()}
-$('presets').innerHTML=D.presets.map((p,i)=>`<button data-preset="${i}">${esc(p.label)}</button>`).join('');
-$('presets').addEventListener('click',e=>{const b=e.target.closest('[data-preset]');if(b)load(D.presets[+b.dataset.preset].load)});
+function load(o,i=-1){Object.assign(P,o);active=i;sync();reset()}
+$('presets').addEventListener('click',e=>{const b=e.target.closest('[data-preset]');if(b)load(D.presets[+b.dataset.preset].load,+b.dataset.preset)});
 document.addEventListener('click',e=>{const b=e.target.closest('[data-load]');if(!b)return;
   load(D.variants.find(v=>v.id===b.dataset.load).load);
-  $('labPanel').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})});
+  show('pane-lab');document.querySelector('.board').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})});
 
 /* 画布与循环 */
 const cv=$('cv'),ctx=cv.getContext('2d');let S,running=false,speed=1,lastT=0;
@@ -628,6 +1045,15 @@ $('slow').onclick=()=>{speed=speed===1?.25:1;$('slow').textContent=speed===1?'�
 new ResizeObserver(render).observe(cv);
 matchMedia('(prefers-color-scheme: dark)').addEventListener('change',render);
 new MutationObserver(render).observe(root,{attributes:true,attributeFilter:['data-theme']});
+/* 选项卡 */
+const tabs=[...document.querySelectorAll('[role=tab]')];
+function show(id){tabs.forEach(t=>{const on=t.dataset.pane===id;t.setAttribute('aria-selected',on);t.tabIndex=on?0:-1;$(t.dataset.pane).hidden=!on});
+  if(id==='pane-lab')requestAnimationFrame(render)}
+tabs.forEach((t,i)=>{t.addEventListener('click',()=>show(t.dataset.pane));
+  t.addEventListener('keydown',e=>{const d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(!d)return;e.preventDefault();
+    const n=tabs[(i+d+tabs.length)%tabs.length];n.focus();show(n.dataset.pane)})});
+$('nConcl').textContent=D.conclusions.length;$('nVar').textContent=D.variants.length;$('nSkin').textContent=D.reskins.length;$('nSrc').textContent=D.sources.length;
+show('pane-lab');
 sync();reset();
 })();
 </script>
