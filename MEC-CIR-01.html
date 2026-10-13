@@ -1,0 +1,574 @@
+<title>格物 MEC-CIR-01 竖直圆轨道</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;800&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+
+<!-- ================= 母题数据（由 {编号}.md 转换，页面只改这里和 SIM 模块） ================= -->
+<script type="application/json" id="data">
+{
+  "id": "MEC-CIR-01",
+  "name": "竖直圆轨道（绳 / 杆模型）",
+  "module": "力学",
+  "chapter": "必修二 · 圆周运动",
+  "freq": "高",
+  "difficulty": 3,
+  "version": "v0.2",
+  "related": ["MEC-ENG 机械能守恒", "MEC-PRJ 脱轨后斜抛", "MEC-MOM 最低点碰撞"],
+  "tags": ["竖直面圆周运动", "最高点临界条件", "机械能守恒", "绳模型 vs 杆模型", "脱轨判断"],
+  "problem": {
+    "stem": "质量 m = {m} 的小球位于半径 R = {R} 的{constraint}最低点。给小球一个水平初速度 v₀ = {v0}。问：① 小球能否通过最高点？② 最高点、最低点轨道对小球的弹力各多大？③ 若不能通过，小球在哪里离开轨道，或升到多高后返回？",
+    "note": "g 取 10 m/s²。",
+    "params": [
+      {"key": "mode", "sym": "约束", "label": "约束类型", "type": "choice", "def": "rope",
+       "options": [
+         {"value": "rope", "label": "绳 / 轨道内侧", "text": "竖直光滑圆轨道内侧"},
+         {"value": "rod", "label": "杆 / 圆管", "text": "竖直光滑圆管内"}
+       ]},
+      {"key": "v0", "sym": "v₀", "label": "最低点初速度", "unit": "m/s", "def": 5, "min": 0, "max": 10, "step": 0.01, "dec": 2},
+      {"key": "R", "sym": "R", "label": "轨道半径", "unit": "m", "def": 0.5, "min": 0.2, "max": 2, "step": 0.05, "dec": 2},
+      {"key": "m", "sym": "m", "label": "小球质量", "unit": "kg", "def": 0.2, "min": 0.1, "max": 2, "step": 0.05, "dec": 2},
+      {"key": "mu", "sym": "μ", "label": "动摩擦因数（仅演示）", "unit": "", "def": 0, "min": 0, "max": 0.3, "step": 0.005, "dec": 3}
+    ]
+  },
+  "boundary": {
+    "conditions": ["轨道光滑（无摩擦、无空气阻力）", "完整圆轨道，小球从最低点出发", "单一过程（不含脱轨后的斜抛落点计算）"],
+    "fallback": [
+      "能量：½mv₁² + mgh₁ = ½mv₂² + mgh₂（有摩擦时加 −W_f）",
+      "向心：沿半径方向合力 = mv²/R",
+      "约束：绳 / 轨道内侧要求 N ≥ 0；杆 / 圆管 N 可正可负"
+    ]
+  },
+  "presets": [
+    {"label": "下半圆来回摆", "load": {"mode": "rope", "v0": 2.74, "R": 0.5, "m": 0.2, "mu": 0}},
+    {"label": "上半圆脱轨", "load": {"mode": "rope", "v0": 4, "R": 0.5, "m": 0.2, "mu": 0}},
+    {"label": "恰好过最高点", "load": {"mode": "rope", "v0": 5, "R": 0.5, "m": 0.2, "mu": 0}},
+    {"label": "杆：最高点速度为 0", "load": {"mode": "rod", "v0": 4.4721, "R": 0.5, "m": 0.2, "mu": 0}},
+    {"label": "有摩擦转几圈", "load": {"mode": "rod", "v0": 8.37, "R": 0.5, "m": 0.2, "mu": 0.03}}
+  ],
+  "conclusions": [
+    {"id": "C1", "title": "绳模型：能过最高点的最小速度", "formula": "v顶 ≥ √(gR)",
+     "derivation": "最高点，绳或轨道只能提供向下的力，N ≥ 0。\n向心方程 mg + N = mv²/R，令 N = 0 得 v顶 = √(gR)。"},
+    {"id": "C2", "title": "绳模型：在最低点做完整圆周所需最小速度", "formula": "v₀ ≥ √(5gR)",
+     "derivation": "最低点到最高点能量守恒，½mv₀² = ½mv顶² + mg·2R。\n代入 v顶 ≥ √(gR)，得 v₀² ≥ gR + 4gR = 5gR。"},
+    {"id": "C3", "title": "杆模型：在最低点做完整圆周所需速度", "formula": "v₀ > 2√(gR)；取等号时恰好停在最高点",
+     "derivation": "杆或圆管可推可拉，只要到达最高点时速度不为 0，就能越过最高点。\n½mv₀² = ½mv顶² + mg·2R，要求 v顶 > 0，得 v₀ > 2√(gR)。\n取等号时 v顶 = 0，杆对球推力等于 mg，小球停在最高点（不稳定平衡），理论上转不过去。"},
+    {"id": "C4", "title": "光滑完整圆周时，最低点与最高点弹力之差", "formula": "N底 − N顶 = 6mg（N 以指向圆心为正）",
+     "derivation": "取指向圆心为正。最低点 N底 − mg = mv₀²/R；最高点 N顶 + mg = mv顶²/R。\n两式相减：N底 − N顶 = 2mg + m(v₀² − v顶²)/R。\n能量守恒 v₀² − v顶² = 4gR，代入得 N底 − N顶 = 6mg。\n推导没有用到 N 的正负限制，所以杆模型同样成立；N顶 < 0 表示杆推球。"},
+    {"id": "C5", "title": "绳模型不脱轨的两种情况", "formula": "v₀ ≤ √(2gR) 或 v₀ ≥ √(5gR)",
+     "derivation": "v₀ ≤ √(2gR) 时，上升高度 h = v₀²/(2g) ≤ R，小球只在下半圆运动。下半圆中重力沿半径的分量背离圆心，N > 0 恒成立，不脱轨。\nv₀ ≥ √(5gR) 时由 C2 可做完整圆周。"},
+    {"id": "C6", "title": "绳模型脱轨高度（√(2gR) < v₀ < √(5gR)）", "formula": "h = (v₀² + gR) / (3g)",
+     "derivation": "设脱轨处与圆心连线和竖直向上方向夹角为 α，高度 h = R + R cos α。\n脱轨时 N = 0，重力沿半径的分量提供向心力：mg cos α = mv²/R。\n能量：v² = v₀² − 2gh。\n联立：g(h − R) = v₀² − 2gh，得 h = (v₀² + gR)/(3g)。"},
+    {"id": "C7", "title": "杆模型最高点杆对球的力", "formula": "v顶 > √(gR) 拉；= √(gR) 无力；< √(gR) 推",
+     "derivation": "最高点 F + mg = mv顶²/R（F 以指向圆心为正）。\nF = m(v顶²/R − g)：v顶 > √(gR) 时 F > 0，杆拉球；相等时 F = 0；小于时 F < 0，杆推球。"}
+  ],
+  "variants": [
+    {"id": "V1", "title": "求最小初速度", "cs": ["C2"], "source": "改编自 2026 届闵行区二模 二-2",
+     "stem": "竖直光滑圆轨道半径 R = 0.5 m，小球从最低点出发，恰好能通过最高点，求最低点初速度。",
+     "answer": "v₀ = 5 m/s",
+     "analysis": "恰好过最高点，N顶 = 0，mg = mv顶²/R，v顶² = gR = 5 m²/s²。能量守恒 v₀² = v顶² + 4gR = 25 m²/s²，v₀ = 5 m/s。",
+     "load": {"mode": "rope", "v0": 5, "R": 0.5, "m": 0.2, "mu": 0}},
+    {"id": "V2", "title": "求两点弹力", "cs": ["C4"], "source": "原创，未改编自具体真题",
+     "stem": "m = 0.2 kg，R = 0.5 m，v₀ = 6 m/s，求最高点和最低点轨道对小球的弹力。",
+     "answer": "N顶 = 4.4 N，N底 = 16.4 N",
+     "analysis": "v顶² = v₀² − 4gR = 16 m²/s²，v顶 = 4 m/s。N顶 = m(v顶²/R − g) = 0.2 kg × 22 m/s² = 4.4 N；N底 = m(g + v₀²/R) = 0.2 kg × 82 m/s² = 16.4 N。差值 12 N = 6mg，与 C4 一致。",
+     "load": {"mode": "rope", "v0": 6, "R": 0.5, "m": 0.2, "mu": 0}},
+    {"id": "V3", "title": "求脱轨位置", "cs": ["C5", "C6"], "source": "原创，未改编自具体真题",
+     "stem": "R = 0.5 m，v₀ = 4 m/s，判断小球能否过最高点；若不能，求脱轨处高度和速度。",
+     "answer": "不能过最高点；h = 0.7 m，v = √2 m/s ≈ 1.41 m/s",
+     "analysis": "2gR = 10 m²/s²，5gR = 25 m²/s²，v₀² = 16 m²/s² 介于两者之间，会脱轨。h = (v₀² + gR)/(3g) = 21 m²/s² ÷ 30 m/s² = 0.7 m。v² = v₀² − 2gh = 2 m²/s²。校核：cos α = (h − R)/R = 0.4，gR cos α = 2 m²/s²，一致。",
+     "load": {"mode": "rope", "v0": 4, "R": 0.5, "m": 0.2, "mu": 0}},
+    {"id": "V4", "title": "由最低点压力判断能否过顶", "cs": ["C2", "C4"], "source": "原创，未改编自具体真题",
+     "stem": "小球在最低点对轨道的压力为 7mg，能否通过最高点？若能，最高点压力多大？",
+     "answer": "能通过；最高点压力为 mg",
+     "analysis": "由牛顿第三定律，N底 = 7mg。N底 − mg = mv₀²/R，得 v₀² = 6gR ≥ 5gR，能通过。由 C4，N顶 = N底 − 6mg = mg。",
+     "load": {"mode": "rope", "v0": 5.48, "R": 0.5, "m": 0.2, "mu": 0}},
+    {"id": "V5", "title": "杆模型最高点受力", "cs": ["C7"], "source": "原创，未改编自具体真题",
+     "stem": "轻杆长 R = 0.5 m，小球 m = 0.2 kg，在竖直面内转动，经过最高点时速度 1 m/s，求杆对球的作用力。",
+     "answer": "杆对球推力 1.6 N，竖直向上",
+     "analysis": "以指向圆心为正，F = m(v顶²/R − g) = 0.2 kg × (2 m/s² − 10 m/s²) = −1.6 N，负号表示背离圆心，即杆推球。对应最低点 v₀² = v顶² + 4gR = 21 m²/s²，v₀ ≈ 4.58 m/s。",
+     "load": {"mode": "rod", "v0": 4.58, "R": 0.5, "m": 0.2, "mu": 0}}
+  ],
+  "reskins": [
+    {"id": "R1", "title": "斜面滑入圆轨道", "map": "mgh = ½mv₀²，代入 C2", "anim": true, "source": "原创，未改编自具体真题",
+     "stem": "小球从光滑斜面高 h 处由静止滑下，进入半径 R 的竖直光滑圆轨道。h 至少多大，小球才能通过圆轨道最高点？",
+     "answer": "h ≥ 2.5R",
+     "analysis": "斜面底端即圆轨道最低点，mgh = ½mv₀²，v₀² = 2gh。由 C2，v₀² ≥ 5gR，得 h ≥ 2.5R。"},
+    {"id": "R2", "title": "电场中的等效最高点", "map": "用等效重力 g' 替代 g", "anim": true, "source": "原创，未改编自具体真题",
+     "stem": "带电小球（m，q > 0）用长 R = 0.4 m 的绝缘细绳系于 O 点，在竖直面内做圆周运动，空间有水平向右的匀强电场，qE = ¾mg。求小球能做完整圆周运动时在「等效最高点」的最小速度。",
+     "answer": "√5 m/s ≈ 2.24 m/s",
+     "analysis": "mg' = √((mg)² + (qE)²) = 5/4 mg，g' = 12.5 m/s²，方向与竖直方向成 37° 偏右下。等效最高点在 O 点沿 g' 反方向（左上方偏离竖直 37°）。把 C1 中的 g 换成 g'：v ≥ √(g'R) = √(12.5 m/s² × 0.4 m) = √5 m/s。"},
+    {"id": "R3", "title": "汽车过凸形桥", "map": "小球在轨道外侧，约束方向反过来", "anim": false, "source": "原创，未改编自具体真题",
+     "stem": "汽车以速度 v 通过半径 R 的凸形桥顶，v 多大时车对桥面无压力？",
+     "answer": "v = √(gR)",
+     "analysis": "桥顶 mg − N = mv²/R，令 N = 0，v = √(gR)。与 C1 是同一临界，但外侧轨道要求 v ≤ √(gR) 才不离开，内侧轨道要求 v ≥ √(gR) 才不脱离。"}
+  ],
+  "sources": [
+    {"src": "2025 上海等级考 4.1–4.3", "desc": "光滑竖直圆轨道：时间分布、弹力冲量、求 R 与重力功率"},
+    {"src": "2026 届闵行区二模 二-2、二-4", "desc": "弹珠机恰好过最高点，碰挡板后平抛"},
+    {"src": "2026 届黄浦区一模 4-5", "desc": "旋转气嘴灯：最低点弹力与最小角速度"},
+    {"src": "2024 上海等级考 4.1(2)", "desc": "摆到最低点后弹性碰撞再平抛"},
+    {"src": "2023 上海等级考 第 20 题（回忆版）", "desc": "单摆最低点与滑块弹性碰撞"}
+  ]
+}
+</script>
+
+<style>
+/* Layout: 实验报告 / 图纸标题栏。题头左标题右标题栏表格；母题独占一行；考点与边界并排；动画区左画布右控制台；结论、变式、换皮题依次向下 */
+:root{
+  --paper:#f2f4f3; --grid:#e4e9e6; --card:#ffffff; --sunk:#f6f8f7;
+  --ink:#142030; --muted:#5b6979; --faint:#8a96a3; --line:#d6dedA; --hair:#e7ece9;
+  --accent:#2443a6; --accent-soft:#e9eefb; --mark:#f7e9b0;
+  --g:#c4382f; --n:#18845a; --v:#2443a6; --track:#34404f; --warn:#a85a14; --ok:#18845a;
+  --shadow:0 1px 0 rgba(20,32,48,.04),0 10px 28px -18px rgba(20,32,48,.28);
+  --f-display:"Noto Serif SC","Songti SC","STSong",serif;
+  --f-body:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#10161d; --grid:#18202a; --card:#171f28; --sunk:#131a22;
+  --ink:#e4e9ef; --muted:#9aa7b6; --faint:#6f7d8c; --line:#2a3542; --hair:#212b36;
+  --accent:#93acff; --accent-soft:#1f2a44; --mark:#4a4020;
+  --g:#ff7d71; --n:#52d39c; --v:#93acff; --track:#c3ccd8; --warn:#f0a35a; --ok:#52d39c;
+  --shadow:0 1px 0 rgba(0,0,0,.25),0 12px 30px -20px rgba(0,0,0,.7); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#10161d; --grid:#18202a; --card:#171f28; --sunk:#131a22;
+  --ink:#e4e9ef; --muted:#9aa7b6; --faint:#6f7d8c; --line:#2a3542; --hair:#212b36;
+  --accent:#93acff; --accent-soft:#1f2a44; --mark:#4a4020;
+  --g:#ff7d71; --n:#52d39c; --v:#93acff; --track:#c3ccd8; --warn:#f0a35a; --ok:#52d39c;
+  --shadow:0 1px 0 rgba(0,0,0,.25),0 12px 30px -20px rgba(0,0,0,.7); color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.7;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:28px 28px;background-position:-1px -1px}
+.wrap{max-width:1160px;margin:0 auto;padding-inline:16px;padding-block:28px 64px;display:flex;flex-direction:column;gap:22px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;font-weight:800}
+p{margin:0}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;min-width:0;display:flex;flex-direction:column;gap:16px;box-shadow:var(--shadow)}
+@media (max-width:520px){.panel{padding:16px;border-radius:12px}}
+.sh{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.sh h2{font-size:20px;letter-spacing:.02em}
+.sh small{font-size:13px;color:var(--muted)}
+.sh::after{content:"";flex:1 1 40px;height:1px;background:var(--hair);align-self:center}
+.label{font-size:12px;letter-spacing:.12em;color:var(--faint);font-weight:700}
+.note{font-size:13px;color:var(--muted)}
+
+/* 题头：标题 + 图纸标题栏 */
+.top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px 28px;align-items:end;padding-bottom:6px}
+@media (max-width:760px){.top{grid-template-columns:1fr}}
+.brand{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);margin-bottom:10px}
+.seal{font-family:var(--f-display);font-weight:800;font-size:13px;color:var(--card);background:var(--ink);padding:2px 8px;border-radius:3px;letter-spacing:.18em}
+.top h1{font-size:clamp(26px,4.6vw,40px);line-height:1.2;letter-spacing:.01em}
+.top .sub{margin-top:8px;color:var(--muted)}
+.tb{border-collapse:collapse;font-size:13px;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:var(--shadow);min-width:0}
+.tb th,.tb td{border:1px solid var(--hair);padding:6px 12px;text-align:left;white-space:nowrap}
+.tb th{color:var(--faint);font-weight:500;font-size:12px;letter-spacing:.06em;background:var(--sunk)}
+.tb td{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.tb td.code{color:var(--accent);font-weight:600}
+.tbwrap{overflow-x:auto;max-width:100%}
+
+/* 母题 */
+.problem{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,15em);gap:22px;align-items:start}
+@media (max-width:760px){.problem{grid-template-columns:1fr}}
+.lead{font-family:var(--f-display);font-size:clamp(17px,2vw,19px);line-height:1.9;font-weight:600}
+.num{font-family:var(--f-mono);font-weight:600;font-size:.92em;color:var(--ink);white-space:nowrap;
+  background:linear-gradient(transparent 55%,var(--mark) 55%);padding:0 2px;transition:background-color .2s}
+.asks{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.asks li{display:grid;grid-template-columns:1.9em minmax(0,1fr);gap:8px;align-items:baseline}
+.asks li b{display:inline-grid;place-items:center;width:1.6em;height:1.6em;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-family:var(--f-mono);font-size:13px}
+.given{background:var(--sunk);border:1px solid var(--hair);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.given dl{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;font-size:14px}
+.given dt{font-family:var(--f-mono);color:var(--muted)}
+.given dd{margin:0;font-family:var(--f-mono);font-variant-numeric:tabular-nums;text-align:right}
+
+/* 考点 + 边界 */
+.row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:22px;align-items:stretch}
+@media (max-width:860px){.row2{grid-template-columns:1fr}}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{font-size:14px;border:1px solid var(--line);background:var(--sunk);padding:4px 12px;border-radius:999px}
+.bnd{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+@media (max-width:620px){.bnd{grid-template-columns:1fr}}
+.bnd ul{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.bnd li{display:grid;grid-template-columns:1.2em minmax(0,1fr);gap:6px}
+.bnd .ok li::before{content:"✓";color:var(--ok);font-weight:700}
+.bnd .back li::before{content:"→";color:var(--accent);font-weight:700}
+
+/* 动画区 */
+.lab{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:26px;align-items:start}
+@media (max-width:900px){.lab{grid-template-columns:1fr}}
+.stage{display:flex;flex-direction:column;gap:12px;min-width:0}
+.canvas-box{position:relative;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card)}
+canvas{width:100%;max-width:100%;aspect-ratio:1/1;display:block}
+.status{position:absolute;left:12px;top:12px;max-width:calc(100% - 24px);display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;
+  padding:5px 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow)}
+.status::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--faint);flex:none}
+.status.warn{color:var(--warn)} .status.warn::before{background:var(--warn)}
+.status.ok{color:var(--ok)} .status.ok::before{background:var(--ok)}
+.bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:5px;border-radius:2px}
+.readout{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card)}
+.ro{padding:7px 12px;min-width:0;box-shadow:1px 0 0 var(--hair),0 1px 0 var(--hair)}
+.ro span{display:block;font-size:12px;color:var(--faint)}
+.ro b{font-family:var(--f-mono);font-weight:600;font-variant-numeric:tabular-nums;font-size:15px;overflow-wrap:anywhere}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+button{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:7px 16px;border-radius:999px;cursor:pointer;transition:border-color .15s,background-color .15s}
+button:hover{border-color:var(--accent)}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.primary{background:var(--accent);color:var(--card);border-color:var(--accent);font-weight:700;padding-inline:22px}
+.ctrl{display:flex;flex-direction:column;gap:18px;min-width:0}
+.group{display:flex;flex-direction:column;gap:10px}
+.field{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"l o" "r r";gap:2px 10px;align-items:baseline}
+.field label{grid-area:l;font-size:14px}
+.field label .s{font-family:var(--f-mono);font-weight:600;margin-right:6px}
+.field label .note{font-size:12px}
+.field output{grid-area:o;font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:14px;font-weight:600;color:var(--accent)}
+.field input{grid-area:r}
+input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
+.seg{display:flex;padding:3px;gap:3px;border-radius:999px;background:var(--sunk);border:1px solid var(--line)}
+.seg button{flex:1;border:none;padding:6px 10px;background:transparent;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--card);color:var(--ink);font-weight:700;box-shadow:var(--shadow)}
+.presets{display:flex;flex-wrap:wrap;gap:6px}
+.presets button{font-size:13px;padding:4px 12px;background:var(--sunk)}
+.verdict{background:var(--sunk);border:1px solid var(--hair);border-radius:10px;padding:12px 14px;font-size:14px;line-height:1.8}
+.verdict b{color:var(--accent);font-family:var(--f-mono)}
+
+/* 结论 */
+.cl{display:flex;flex-direction:column}
+.cl details{border-top:1px solid var(--hair)}
+.cl details:last-child{border-bottom:1px solid var(--hair)}
+.cl summary{display:grid;grid-template-columns:2.6em minmax(0,1fr) minmax(0,auto) 1em;gap:6px 14px;align-items:center;padding:12px 4px;cursor:pointer;list-style:none}
+.cl summary::-webkit-details-marker{display:none}
+.cl summary:hover .t{color:var(--accent)}
+.badge{display:inline-grid;place-items:center;min-width:2.3em;height:1.7em;padding:0 6px;border-radius:6px;background:var(--accent-soft);color:var(--accent);font-family:var(--f-mono);font-weight:600;font-size:13px}
+.cl .f{font-family:var(--f-mono);font-size:14px;background:var(--sunk);border:1px solid var(--hair);border-radius:6px;padding:2px 10px;justify-self:end;text-align:right}
+.chev{width:8px;height:8px;border-right:2px solid var(--faint);border-bottom:2px solid var(--faint);transform:rotate(45deg);transition:transform .2s;justify-self:center}
+details[open]>summary .chev{transform:rotate(225deg)}
+@media (max-width:640px){.cl summary{grid-template-columns:2.6em minmax(0,1fr) 1em}.cl .f{grid-column:2;grid-row:2;justify-self:start;text-align:left}.chev{grid-column:3;grid-row:1}}
+.deriv{margin:0 4px 14px calc(2.6em + 18px);padding:4px 0 4px 14px;border-left:2px solid var(--accent-soft);white-space:pre-line;font-size:14px;color:var(--ink)}
+@media (max-width:640px){.deriv{margin-left:4px}}
+
+/* 变式 / 换皮题 */
+.qs{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:14px}
+.q{border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px;background:var(--card);min-width:0}
+.q .head{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+.q h3{font-size:16px;margin-right:auto}
+.chip{font-size:12px;font-family:var(--f-mono);border:1px solid var(--line);border-radius:999px;padding:0 8px;color:var(--muted)}
+.src{font-size:12px;color:var(--faint)}
+.map{font-size:13px;color:var(--muted)}
+.map b{font-weight:500;color:var(--ink)}
+.q details{border-top:1px dashed var(--line);padding-top:8px}
+.q details summary{cursor:pointer;color:var(--accent);font-size:14px;font-weight:500;list-style:none;display:flex;align-items:center;gap:8px;width:fit-content}
+.q details summary::-webkit-details-marker{display:none}
+.ans{margin-top:8px;display:flex;flex-direction:column;gap:6px;font-size:14px;background:var(--sunk);border-radius:8px;padding:10px 12px}
+.ans .a{font-weight:700}
+.q .foot{margin-top:auto;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:space-between}
+.q .foot button{font-size:13px;padding:4px 14px;color:var(--accent);border-color:var(--accent-soft);background:var(--accent-soft)}
+.srcs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.srcs li{display:grid;grid-template-columns:minmax(0,15em) minmax(0,1fr);gap:4px 16px;padding:8px 0;border-top:1px solid var(--hair);font-size:14px}
+.srcs li b{font-family:var(--f-mono);font-weight:500;font-size:13px}
+.srcs li span{color:var(--muted)}
+@media (max-width:620px){.srcs li{grid-template-columns:1fr}}
+footer{font-size:12px;color:var(--faint);text-align:center}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+
+<div class="wrap" id="app">
+  <header class="top">
+    <div>
+      <div class="brand"><span class="seal">格物</span><span>Gewu · 高中物理母题</span></div>
+      <h1 id="hName"></h1>
+      <p class="sub" id="hSub"></p>
+    </div>
+    <div class="tbwrap"><table class="tb" id="hTable"></table></div>
+  </header>
+
+  <section class="panel">
+    <div class="sh"><h2>母题</h2><small>题干数字随动画参数实时变化</small></div>
+    <div class="problem">
+      <div>
+        <p class="lead" id="stem"></p>
+        <ol class="asks" id="asks"></ol>
+      </div>
+      <aside class="given">
+        <div class="label">已知量</div>
+        <dl id="given"></dl>
+        <p class="note" id="stemNote"></p>
+      </aside>
+    </div>
+  </section>
+
+  <div class="row2">
+    <section class="panel">
+      <div class="sh"><h2>核心考点</h2></div>
+      <div class="tags" id="tags"></div>
+    </section>
+    <section class="panel">
+      <div class="sh"><h2>适用边界</h2></div>
+      <div class="bnd">
+        <div><div class="label">结论成立条件</div><ul class="ok" id="bCond"></ul></div>
+        <div><div class="label">超出边界时回到</div><ul class="back" id="bBack"></ul></div>
+      </div>
+    </section>
+  </div>
+
+  <section class="panel" id="labPanel">
+    <div class="sh"><h2>动画实验</h2><small>先自己预判，再点发射对答案</small></div>
+    <div class="lab">
+      <div class="stage">
+        <div class="canvas-box">
+          <canvas id="cv" aria-label="母题动画画布"></canvas>
+          <div class="status" id="status" role="status">准备就绪</div>
+        </div>
+        <div class="bar">
+          <div class="btns">
+            <button class="primary" id="play">▶ 发射</button>
+            <button id="reset">重置</button>
+            <button id="slow">慢放 ×0.25</button>
+          </div>
+          <div class="legend" id="legend"></div>
+        </div>
+        <div class="readout" id="readout"></div>
+      </div>
+      <div class="ctrl">
+        <div class="group"><div class="label">参数</div><div id="params" class="group"></div></div>
+        <div class="group"><div class="label">预设情形</div><div class="presets" id="presets"></div></div>
+        <div class="group"><div class="label">理论预判</div><div class="verdict" id="verdict"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="sh"><h2>结论</h2><small>点开看推导</small></div>
+    <div class="cl" id="concl"></div>
+  </section>
+
+  <section class="panel">
+    <div class="sh"><h2>变式</h2><small>同骨架，换条件或问法</small></div>
+    <div class="qs" id="variants"></div>
+  </section>
+
+  <section class="panel">
+    <div class="sh"><h2>换皮题</h2><small>同骨架，换情境外形</small></div>
+    <div class="qs" id="reskins"></div>
+  </section>
+
+  <section class="panel">
+    <div class="sh"><h2>题源</h2></div>
+    <ul class="srcs" id="sources"></ul>
+  </section>
+
+  <footer id="foot"></footer>
+</div>
+
+<script>
+/* ================= SIM 模块：每个母题替换这一段 =================
+   约定接口：
+   SIM.legend            [{label, color(CSS 变量名)}]
+   SIM.init(P)           → 状态 S（含 S.done、S.status={text,cls}）
+   SIM.step(S,P,dt)      推进 dt 秒（引擎保证 dt ≤ 0.5 ms）
+   SIM.readouts(S,P)     → [[标签, 带单位的值]]
+   SIM.draw(ctx,S,P,W,H,tok)  tok(name) 取主题色
+   SIM.verdict(P)        → 理论预判 HTML
+*/
+const SIM=(()=>{
+  const g=10;
+  const fmt=(x,d=2)=>(Math.abs(x)<1e-9?0:x).toFixed(d);
+  const Nm=(P,th,w)=>w*w*P.R+g*Math.cos(th);           // N/m（指向圆心为正）
+  const acc=(P,th,w)=>{let a=-(g/P.R)*Math.sin(th);
+    if(P.mu>0&&Math.abs(w)>1e-6)a-=Math.sign(w)*P.mu*Math.abs(Nm(P,th,w))/P.R;return a};
+  const pos=(P,S)=>[P.R*Math.sin(S.th),-P.R*Math.cos(S.th)];
+  function cur(S,P){
+    if(S.free)return{x:S.x,y:S.y,vx:S.vx,vy:S.vy,N:0};
+    const[x,y]=pos(P,S);return{x,y,vx:S.w*P.R*Math.cos(S.th),vy:S.w*P.R*Math.sin(S.th),N:P.m*Nm(P,S.th,S.w)};
+  }
+  const norm=a=>{a%=2*Math.PI;return a<0?a+2*Math.PI:a};
+  return{
+    legend:[{label:'重力 G',color:'--g'},{label:'轨道弹力 N',color:'--n'},{label:'速度 v',color:'--v'}],
+    init(P){return{th:0,w:P.v0/P.R,t:0,free:false,x:0,y:-P.R,vx:P.v0,vy:0,done:false,Q:0,maxTh:0,trail:[],status:{text:'准备就绪',cls:''}}},
+    step(S,P,dt){
+      if(S.done)return;
+      if(S.free){
+        S.vy-=g*dt;S.x+=S.vx*dt;S.y+=S.vy*dt;S.t+=dt;
+        if(S.x*S.x+S.y*S.y>=P.R*P.R){const r=Math.hypot(S.x,S.y);S.x*=P.R/r;S.y*=P.R/r;S.done=true;
+          S.status={text:'脱轨后斜抛，撞回轨道（演示到此结束）',cls:'warn'}}
+        S.trail.push([S.x,S.y]);return;
+      }
+      const f=(th,w)=>[w,acc(P,th,w)];
+      const k1=f(S.th,S.w),k2=f(S.th+k1[0]*dt/2,S.w+k1[1]*dt/2),k3=f(S.th+k2[0]*dt/2,S.w+k2[1]*dt/2),k4=f(S.th+k3[0]*dt,S.w+k3[1]*dt);
+      const nth=S.th+dt/6*(k1[0]+2*k2[0]+2*k3[0]+k4[0]);
+      const nw=S.w+dt/6*(k1[1]+2*k2[1]+2*k3[1]+k4[1]);
+      if(P.mu>0){
+        S.Q+=P.m*P.mu*Math.abs(Nm(P,S.th,S.w))*Math.abs(nth-S.th)*P.R;
+        if(S.w!==0&&Math.sign(nw)!==Math.sign(S.w)){
+          const c=Math.cos(nth),s=Math.sin(nth);
+          if(c>0&&Math.abs(s)<=P.mu*c){S.th=nth;S.w=0;S.done=true;
+            S.status={text:`在 θ = ${fmt(norm(nth)*180/Math.PI,1)}° 处停住（静摩擦足够）`,cls:''};S.trail.push(pos(P,S));return}
+        }
+      }
+      S.th=nth;S.w=nw;S.t+=dt;S.maxTh=Math.max(S.maxTh,S.th);
+      if(P.mode==='rope'&&Nm(P,S.th,S.w)<-1e-6){
+        S.free=true;const[x,y]=pos(P,S);S.x=x;S.y=y;
+        S.vx=S.w*P.R*Math.cos(S.th);S.vy=S.w*P.R*Math.sin(S.th);
+        S.status={text:`在高度 h = ${fmt(P.R+y)} m 处脱离轨道（N 减到 0）`,cls:'warn'};
+      }else if(P.mode==='rod'&&P.mu===0&&Math.abs(S.w)<2e-3&&Math.cos(S.th)<-0.9999){
+        S.done=true;S.w=0;S.status={text:'恰好停在最高点（v = 0，杆对球推力 = mg）',cls:'ok'};
+      }
+      S.trail.push(pos(P,S));if(S.trail.length>1600)S.trail.shift();
+      if(!S.free&&!S.done){
+        const laps=Math.floor(S.th/(2*Math.PI));
+        if(laps>=1)S.status={text:`完整圆周运动中，已转 ${laps} 圈`,cls:'ok'};
+        else if(S.th>Math.PI)S.status={text:'已通过最高点',cls:'ok'};
+        else if(S.w<0)S.status={text:S.maxTh<=Math.PI/2+1e-6?'在下半圆往回摆':'速度减为 0 后往回滑',cls:''};
+        else if(S.w>0)S.status={text:'上升中',cls:''};
+      }
+    },
+    readouts(S,P){
+      const c=cur(S,P),v=Math.hypot(c.vx,c.vy),h=P.R+c.y,ek=.5*P.m*v*v,ep=P.m*g*h;
+      let n=S.free?'0 N（离轨）':fmt(Math.abs(c.N))+' N';
+      if(!S.free&&Math.abs(c.N)>1e-4)n+=c.N>0?' 指向圆心':' 背离圆心';
+      const laps=Math.max(0,S.th/(2*Math.PI));
+      return[['速度 v',fmt(v)+' m/s'],['高度 h',fmt(h,3)+' m'],['弹力 N',n],['时间 t',fmt(S.t,3)+' s'],
+        ['已转圈数',fmt(laps,2)+' 圈'],['动能 Ek',fmt(ek,3)+' J'],['势能 Ep',fmt(ep,3)+' J'],
+        ['机械能 E',fmt(ek+ep,3)+' J'],['摩擦生热 Q',fmt(S.Q,3)+' J']];
+    },
+    draw(ctx,S,P,W,H,tok){
+      const cx=W/2,cy=H/2+W*0.01,Rp=W*0.35,sc=Rp/P.R,T=x=>cx+x*sc,TY=y=>cy-y*sc,u=W/720;
+      ctx.clearRect(0,0,W,H);ctx.fillStyle=tok('--card');ctx.fillRect(0,0,W,H);
+      ctx.setLineDash([6*u,8*u]);ctx.strokeStyle=tok('--line');ctx.lineWidth=1.5*u;
+      ctx.beginPath();ctx.moveTo(cx-Rp-30*u,cy);ctx.lineTo(cx+Rp+30*u,cy);ctx.moveTo(cx,cy-Rp-30*u);ctx.lineTo(cx,cy+Rp+30*u);ctx.stroke();ctx.setLineDash([]);
+      ctx.font=`${16*u}px ${tok('--f-body')}`;ctx.fillStyle=tok('--muted');
+      ctx.fillText('圆心',cx+8*u,cy-8*u);ctx.fillText('最高点',cx+10*u,cy-Rp-16*u);ctx.fillText('最低点',cx+10*u,cy+Rp+28*u);
+      ctx.strokeStyle=tok('--track');
+      if(P.mode==='rod'){ctx.lineWidth=2*u;ctx.beginPath();ctx.arc(cx,cy,Rp+14*u,0,7);ctx.stroke();ctx.beginPath();ctx.arc(cx,cy,Rp-14*u,0,7);ctx.stroke()}
+      else{ctx.lineWidth=4*u;ctx.beginPath();ctx.arc(cx,cy,Rp+12*u,0,7);ctx.stroke();ctx.lineWidth=1.2*u;
+        for(let i=0;i<72;i++){const a=i/72*2*Math.PI;ctx.beginPath();ctx.moveTo(cx+(Rp+12*u)*Math.cos(a),cy+(Rp+12*u)*Math.sin(a));
+          ctx.lineTo(cx+(Rp+22*u)*Math.cos(a+.06),cy+(Rp+22*u)*Math.sin(a+.06));ctx.stroke()}}
+      if(S.trail.length>1){ctx.strokeStyle=tok('--accent');ctx.globalAlpha=.35;ctx.lineWidth=2.5*u;ctx.beginPath();
+        S.trail.forEach(([x,y],i)=>i?ctx.lineTo(T(x),TY(y)):ctx.moveTo(T(x),TY(y)));ctx.stroke();ctx.globalAlpha=1}
+      const c=cur(S,P),bx=T(c.x),by=TY(c.y),mg=P.m*g,fs=55*u/mg;
+      const arrow=(dx,dy,col,lab)=>{const L=Math.hypot(dx,dy);if(L<3*u)return;ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=3*u;ctx.lineCap='round';
+        ctx.beginPath();ctx.moveTo(bx,by);ctx.lineTo(bx+dx,by+dy);ctx.stroke();const a=Math.atan2(dy,dx),hs=10*u;
+        ctx.beginPath();ctx.moveTo(bx+dx,by+dy);ctx.lineTo(bx+dx-hs*Math.cos(a-.4),by+dy-hs*Math.sin(a-.4));ctx.lineTo(bx+dx-hs*Math.cos(a+.4),by+dy-hs*Math.sin(a+.4));ctx.closePath();ctx.fill();
+        ctx.font=`600 ${17*u}px ${tok('--f-mono')}`;ctx.fillText(lab,bx+dx+10*u*Math.cos(a)-4*u,by+dy+10*u*Math.sin(a)+6*u)};
+      arrow(0,mg*fs,tok('--g'),'G');
+      if(!S.free&&Math.abs(c.N)>1e-6){const ux=-c.x/P.R,uy=-c.y/P.R;let L=c.N*fs;const cap=Rp*.95;if(Math.abs(L)>cap)L=Math.sign(L)*cap;arrow(ux*L,-uy*L,tok('--n'),'N')}
+      arrow(c.vx*22*u,-c.vy*22*u,tok('--v'),'v');
+      ctx.fillStyle=tok('--ink');ctx.beginPath();ctx.arc(bx,by,12*u,0,7);ctx.fill();
+      ctx.fillStyle=tok('--card');ctx.beginPath();ctx.arc(bx-4*u,by-4*u,3.5*u,0,7);ctx.fill();
+    },
+    verdict(P){
+      const{v0,R,m}=P,gR=g*R,v2=v0*v0,mg=m*g,k=v2/gR;
+      let h=`v₀²/(gR) = <b>${fmt(k)}</b>。`;
+      if(P.mu>0)h+='有摩擦时以下光滑结论只作参考，实际以动画为准。';
+      h+='<br>';
+      if(P.mode==='rope'){
+        if(k<=2)h+=`k ≤ 2（C5）：最高只到 h = v₀²/(2g) = <b>${fmt(v2/(2*g))} m</b>，不超过圆心高度，在下半圆来回摆。`;
+        else if(k<5)h+=`2 &lt; k &lt; 5（C6）：在上半圆脱轨，脱轨高度 h = (v₀²+gR)/(3g) = <b>${fmt((v2+gR)/(3*g))} m</b>，之后做斜抛运动。`;
+        else{const vt=Math.sqrt(v2-4*gR);h+=`k ≥ 5（C2）：能做完整圆周。最高点 v = <b>${fmt(vt)} m/s</b>，N顶 = <b>${fmt(m*(vt*vt/R-g))} N</b>。`}
+      }else{
+        if(k<4-1e-3)h+=`k &lt; 4（C3）：到不了最高点，最高到 h = v₀²/(2g) = <b>${fmt(v2/(2*g))} m</b>，然后返回。`;
+        else if(k<=4+1e-3)h+='k = 4（C3）：恰好到达最高点且速度为 0，停在顶端（不稳定平衡）。';
+        else{const vt=Math.sqrt(v2-4*gR),Nt=m*(vt*vt/R-g);
+          h+=`k &gt; 4（C3）：能做完整圆周。最高点 v = <b>${fmt(vt)} m/s</b>，${Nt>5e-4?`杆拉球 <b>${fmt(Nt)} N</b>`:Nt<-5e-4?`杆推球 <b>${fmt(-Nt)} N</b>`:'杆对球无作用力'}（C7）。`}
+      }
+      const Nb=mg+m*v2/R;h+=`<br>最低点 N底 = mg + mv₀²/R = <b>${fmt(Nb)} N</b>（约 ${fmt(Nb/mg,1)} mg）。`;
+      return h;
+    },
+    _cur:cur
+  };
+})();
+
+/* ================= 通用渲染引擎（所有母题共用，不改） ================= */
+(()=>{
+const D=JSON.parse(document.getElementById('data').textContent);
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const root=document.documentElement;
+const tok=n=>getComputedStyle(root).getPropertyValue(n).trim();
+const PS=D.problem.params;
+const P={};PS.forEach(p=>P[p.key]=p.def);
+const fmtP=p=>p.type==='choice'?p.options.find(o=>o.value===P[p.key]).label:(+P[p.key]).toFixed(p.dec??2)+(p.unit?' '+p.unit:'');
+
+/* 静态内容 */
+document.title=`格物 ${D.id} ${D.name.replace(/（.*）/,'')}`;
+$('hName').textContent=D.name;
+$('hSub').textContent=`${D.module} · ${D.chapter}　关联：${D.related.join('、')}`;
+$('hTable').innerHTML=`<tr><th>编号</th><th>考查频率</th><th>难度</th><th>版本</th></tr>
+<tr><td class="code">${esc(D.id)}</td><td>${esc(D.freq)}</td><td title="${D.difficulty} / 5">${'●'.repeat(D.difficulty)}${'○'.repeat(5-D.difficulty)}</td><td>${esc(D.version)}</td></tr>`;
+$('foot').textContent=`格物 Gewu · ${D.id} · ${D.version} · g 取 10 m/s²`;
+$('tags').innerHTML=D.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('');
+$('stemNote').textContent=D.problem.note||'';
+$('bCond').innerHTML=D.boundary.conditions.map(c=>`<li><span>${esc(c)}</span></li>`).join('');
+$('bBack').innerHTML=D.boundary.fallback.map(c=>`<li><span>${esc(c)}</span></li>`).join('');
+$('legend').innerHTML=SIM.legend.map(l=>`<span><i style="background:var(${l.color})"></i>${esc(l.label)}</span>`).join('');
+$('concl').innerHTML=D.conclusions.map(c=>`<details><summary><span class="badge">${c.id}</span><span class="t">${esc(c.title)}</span><span class="f">${esc(c.formula)}</span><span class="chev" aria-hidden="true"></span></summary><div class="deriv">${esc(c.derivation)}</div></details>`).join('');
+const qCard=(q,isVar)=>`<article class="q">
+  <div class="head"><span class="badge">${q.id}</span><h3>${esc(q.title)}</h3>${isVar?q.cs.map(c=>`<span class="chip">${c}</span>`).join(''):`<span class="chip">${q.anim?'计划做动画':'不做动画'}</span>`}</div>
+  <p>${esc(q.stem)}</p>
+  ${isVar?'':`<p class="map">映射：<b>${esc(q.map)}</b></p>`}
+  <details><summary><span class="chev" aria-hidden="true"></span>答案与解析</summary><div class="ans"><p class="a">答案：${esc(q.answer)}</p><p>${esc(q.analysis)}</p></div></details>
+  <div class="foot"><span class="src">${esc(q.source)}</span>${isVar?`<button data-load="${q.id}">加载到动画 ↑</button>`:''}</div>
+</article>`;
+$('variants').innerHTML=D.variants.map(v=>qCard(v,true)).join('');
+$('reskins').innerHTML=D.reskins.map(r=>qCard(r,false)).join('');
+$('sources').innerHTML=D.sources.map(s=>`<li><b>${esc(s.src)}</b><span>${esc(s.desc)}</span></li>`).join('');
+
+/* 参数控件 */
+const box=$('params');
+PS.forEach(p=>{
+  if(p.type==='choice'){
+    const d=document.createElement('div');d.className='seg';d.setAttribute('role','group');d.setAttribute('aria-label',p.label);
+    d.innerHTML=p.options.map(o=>`<button id="opt-${p.key}-${o.value}" data-k="${p.key}" data-v="${o.value}">${esc(o.label)}</button>`).join('');
+    box.appendChild(d);
+  }else{
+    const d=document.createElement('div');d.className='field';
+    d.innerHTML=`<label for="in-${p.key}"><span class="s">${esc(p.sym)}</span><span class="note">${esc(p.label)}</span></label><input type="range" id="in-${p.key}" min="${p.min}" max="${p.max}" step="${p.step}" value="${p.def}"><output id="out-${p.key}"></output>`;
+    box.appendChild(d);
+    d.querySelector('input').addEventListener('input',e=>{P[p.key]=+e.target.value;sync();reset()});
+  }
+});
+box.addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(!b)return;P[b.dataset.k]=b.dataset.v;sync();reset()});
+function sync(){
+  PS.forEach(p=>{
+    if(p.type==='choice')p.options.forEach(o=>$(`opt-${p.key}-${o.value}`).setAttribute('aria-pressed',P[p.key]===o.value));
+    else{$(`in-${p.key}`).value=P[p.key];$(`out-${p.key}`).textContent=fmtP(p)}
+  });
+  const fill=s=>esc(s).replace(/\{(\w+)\}/g,(m,k)=>{
+    if(k==='constraint'){const p=PS.find(x=>x.type==='choice');return esc(p.options.find(o=>o.value===P[p.key]).text)}
+    const p=PS.find(x=>x.key===k);return p?`<span class="num">${esc(fmtP(p))}</span>`:m});
+  const [lead,ask='']=D.problem.stem.split(/问[:：]/);
+  $('stem').innerHTML=fill(lead.trim());
+  const qs=ask.split(/[①②③④⑤⑥]/).map(s=>s.trim()).filter(Boolean);
+  $('asks').innerHTML=qs.map((q,i)=>`<li><b>${i+1}</b><span>${fill(q)}</span></li>`).join('');
+  $('asks').hidden=!qs.length;
+  $('given').innerHTML=PS.map(p=>`<dt>${esc(p.sym)}</dt><dd>${esc(fmtP(p))}</dd>`).join('');
+  $('verdict').innerHTML=SIM.verdict(P);
+}
+function load(o){Object.assign(P,o);sync();reset()}
+$('presets').innerHTML=D.presets.map((p,i)=>`<button data-preset="${i}">${esc(p.label)}</button>`).join('');
+$('presets').addEventListener('click',e=>{const b=e.target.closest('[data-preset]');if(b)load(D.presets[+b.dataset.preset].load)});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-load]');if(!b)return;
+  load(D.variants.find(v=>v.id===b.dataset.load).load);
+  $('labPanel').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})});
+
+/* 画布与循环 */
+const cv=$('cv'),ctx=cv.getContext('2d');let S,running=false,speed=1,lastT=0;
+function size(){const r=cv.getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);const w=Math.max(200,Math.round(r.width*dpr));if(cv.width!==w){cv.width=w;cv.height=w}}
+function render(){size();SIM.draw(ctx,S,P,cv.width,cv.height,tok);
+  $('readout').innerHTML=SIM.readouts(S,P).map(([k,v])=>`<div class="ro"><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('');
+  const st=$('status');st.textContent=S.status.text;st.className='status '+S.status.cls}
+function reset(){running=false;S=SIM.init(P);$('play').textContent='▶ 发射';render()}
+function loop(t){if(!running)return;const real=Math.min(.05,(t-lastT)/1000);lastT=t;
+  const sim=real*speed,n=Math.max(1,Math.ceil(sim/5e-4));for(let i=0;i<n;i++)SIM.step(S,P,sim/n);
+  render();if(S.done){running=false;$('play').textContent='▶ 再发射';return}requestAnimationFrame(loop)}
+$('play').onclick=()=>{if(running){running=false;$('play').textContent='▶ 继续';return}
+  if(S.done)S=SIM.init(P);running=true;$('play').textContent='❚❚ 暂停';lastT=performance.now();requestAnimationFrame(loop)};
+$('reset').onclick=reset;
+$('slow').onclick=()=>{speed=speed===1?.25:1;$('slow').textContent=speed===1?'慢放 ×0.25':'正常速度'};
+new ResizeObserver(render).observe(cv);
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',render);
+new MutationObserver(render).observe(root,{attributes:true,attributeFilter:['data-theme']});
+sync();reset();
+})();
+</script>

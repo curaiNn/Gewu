@@ -1,0 +1,643 @@
+<title>格物 MEC-GRV-01 天体圆轨道</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;800&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+
+<!-- ================= 母题数据（由 {编号}.md 转换，页面只改这里和 SIM 模块） ================= -->
+<script type="application/json" id="data">
+{
+  "id": "MEC-GRV-01",
+  "name": "天体圆轨道参量比较",
+  "module": "力学",
+  "chapter": "必修二 · 万有引力与宇宙航行",
+  "freq": "高",
+  "difficulty": 2,
+  "version": "v0.1",
+  "related": ["MEC-GRV-02 椭圆轨道与逃逸", "MEC-CIR-01 向心力方程", "EM-MAG-01 qvB 提供向心力"],
+  "tags": ["万有引力提供向心力", "高轨低速大周期", "开普勒第三定律", "黄金代换 GM = gR²", "轨道能量 Ek、Ep、E"],
+  "problem": {
+    "stem": "地球半径 R地 = 6400 km，地球表面重力加速度 g = 10 m/s²（不计地球自转）。两颗质量均为 m = {m} 的卫星 A、B 绕地球做匀速圆周运动，轨道半径分别为 r_A = {rA}、r_B = {rB}{constraint}。问：① 比较 A、B 的线速度 v、角速度 ω、周期 T、向心加速度 a 的大小 ② 求卫星 A 的线速度 v_A 和周期 T_A ③ 比较 A、B 的动能、引力势能和机械能",
+    "note": "g 取 10 m/s²，GM = gR地² = 4.096×10¹⁴ m³/s²；引力势能以无穷远处为零。k 只在单星模式中使用。",
+    "params": [
+      {"key": "mode", "sym": "显示", "label": "动画显示", "type": "choice", "def": "duo",
+       "options": [
+         {"value": "duo", "label": "两星对比", "text": ""},
+         {"value": "one", "label": "单星（可调 k）", "text": "（动画为单星模式：只放卫星 A，在 A 处以 k 倍圆轨道速度沿切向发射，拓展到 MEC-GRV-02）"}
+       ]},
+      {"key": "rA", "sym": "r_A", "label": "卫星 A 轨道半径（地心距）", "unit": "km", "def": 6800, "min": 6400, "max": 45000, "step": 100, "dec": 0},
+      {"key": "rB", "sym": "r_B", "label": "卫星 B 轨道半径（地心距）", "unit": "km", "def": 7200, "min": 6400, "max": 45000, "step": 100, "dec": 0},
+      {"key": "m", "sym": "m", "label": "卫星质量（A、B 相同）", "unit": "kg", "def": 1000, "min": 100, "max": 5000, "step": 100, "dec": 0},
+      {"key": "k", "sym": "k", "label": "单星：发射速度 / 圆轨道速度", "unit": "", "def": 1, "min": 0.6, "max": 1.6, "step": 0.01, "dec": 2}
+    ]
+  },
+  "boundary": {
+    "conditions": ["中心天体质量远大于卫星，可视为静止的球对称质点", "卫星只受中心天体引力（不计大气阻力和其他天体）", "轨道是以地心为圆心的圆（单星模式 k = 1）", "黄金代换用地表 g，不计地球自转"],
+    "fallback": [
+      "动力学：F = GMm/r²，F = ma（方向指向中心天体）",
+      "椭圆轨道（k ≠ 1）：近、远地点 r₁v₁ = r₂v₂；机械能 ½mv² − GMm/r 守恒 → MEC-GRV-02",
+      "考虑自转：赤道上 GMm/R² − mg = mω自²R，两极 GMm/R² = mg"
+    ]
+  },
+  "presets": [
+    {"label": "母题 6800 vs 7200 km", "load": {"mode": "duo", "rA": 6800, "rB": 7200, "m": 1000, "k": 1}},
+    {"label": "近地卫星 vs 同步卫星", "load": {"mode": "duo", "rA": 6400, "rB": 42600, "m": 1000, "k": 1}},
+    {"label": "半径 1∶4（周期 1∶8）", "load": {"mode": "duo", "rA": 8000, "rB": 32000, "m": 1000, "k": 1}},
+    {"label": "单星 k = 1.2 椭圆", "load": {"mode": "one", "rA": 6800, "rB": 7200, "m": 1000, "k": 1.2}},
+    {"label": "单星 k = 0.9（A 为远地点）", "load": {"mode": "one", "rA": 12800, "rB": 7200, "m": 1000, "k": 0.9}},
+    {"label": "单星 k = 1.45 逃逸", "load": {"mode": "one", "rA": 6800, "rB": 7200, "m": 1000, "k": 1.45}}
+  ],
+  "conclusions": [
+    {"id": "C1", "title": "线速度：万有引力提供向心力", "formula": "GMm/r² = mv²/r ⇒ v = √(GM/r)",
+     "derivation": "卫星做匀速圆周运动，只受地球引力，引力指向地心，恰好提供向心力。\nGMm/r² = mv²/r，约去 m 和一个 r，得 v² = GM/r，v = √(GM/r)。\n卫星质量 m 被约掉，所以 v 与卫星质量无关。"},
+    {"id": "C2", "title": "角速度与周期", "formula": "ω = √(GM/r³)，T = 2π√(r³/GM)",
+     "derivation": "ω = v/r = √(GM/r)/r = √(GM/r³)。\nT = 2π/ω = 2π√(r³/GM)。\n也可直接由 GMm/r² = m(2π/T)²r 得 T² = 4π²r³/(GM)。"},
+    {"id": "C3", "title": "向心加速度（= 该处的引力加速度）", "formula": "a = GM/r²",
+     "derivation": "a = F/m = GM/r²。\n也可由 a = v²/r = (GM/r)/r = GM/r² 验证。\n圆轨道上的向心加速度就是该处的重力（引力）加速度。"},
+    {"id": "C4", "title": "高轨低速大周期：r 越大，v、ω、a 越小，T 越大", "formula": "v ∝ r^(−1/2)，ω ∝ r^(−3/2)，a ∝ r^(−2)，T ∝ r^(3/2)",
+     "derivation": "由 C1–C3，GM 是常量，v、ω、a 都是 r 的负幂次，r 增大时减小；T 是 r 的正幂次，r 增大时增大。\n比例：r_B/r_A = n 时，v_B/v_A = 1/√n，ω_B/ω_A = 1/n^(3/2)，a_B/a_A = 1/n²，T_B/T_A = n^(3/2)。\n注意：只有 v、ω、a、T 由 r 唯一决定；引力 F、动能 Ek 还和卫星质量有关，比较时必须先确认 m 相同。"},
+    {"id": "C5", "title": "开普勒第三定律：同一中心天体，r³/T² 相同", "formula": "r³/T² = GM/(4π²)",
+     "derivation": "由 C2，T² = 4π²r³/(GM)，所以 r³/T² = GM/(4π²)，只与中心天体质量 M 有关。\n绕同一中心天体的所有卫星 r³/T² 相同；绕不同中心天体时（例如水星绕太阳、月球绕地球）比值不同，M 越大 r³/T² 越大（T²/r³ 越小）。"},
+    {"id": "C6", "title": "圆轨道能量：r 越大，Ek 越小，Ep、E 越大", "formula": "Ek = GMm/(2r)，Ep = −GMm/r，E = −GMm/(2r)",
+     "derivation": "由 C1，Ek = ½mv² = ½m·GM/r = GMm/(2r)。\n以无穷远为零势能点，引力势能 Ep = −GMm/r（课本给出的结论，推导需积分，不作要求）。\nE = Ek + Ep = GMm/(2r) − GMm/r = −GMm/(2r)。\nr 增大时 Ek 减小；Ep、E 是负数，绝对值减小，即 Ep、E 增大。所以把卫星送到更高的圆轨道，要对它做功（ΔE = GMm/(2r₁) − GMm/(2r₂) > 0）。\n常用关系：Ek = −E，Ep = 2E = −2Ek。"},
+    {"id": "C7", "title": "黄金代换与第一宇宙速度", "formula": "GM = gR²；v₁ = √(gR) = 8.0 km/s，T₁ ≈ 84 min",
+     "derivation": "不计自转时，地表物体所受引力等于重力：GMm/R² = mg，所以 GM = gR²，可以用 g、R 代替不知道的 G、M。\n近地卫星 r ≈ R：v₁ = √(GM/R) = √(gR) = √(10 m/s² × 6.4×10⁶ m) = 8.0×10³ m/s。\nT₁ = 2π√(R³/GM) = 2π√(R/g) = 2π × 800 s ≈ 5027 s ≈ 84 min。\n由 C4，v₁ 是所有圆轨道卫星中最大的环绕速度，T₁ 是最小的周期。"}
+  ],
+  "variants": [
+    {"id": "V1", "title": "卫星与空间站", "cs": ["C3", "C4", "C6"], "source": "改编自 2026 届浦东新区一模 二-2",
+     "stem": "中国空间站在离地面约 400 km 的轨道上做匀速圆周运动，另一颗卫星 A 在离地面 1600 km 的圆轨道上运行，地球半径取 6400 km，g = 10 m/s²。求：(1) 卫星 A 在轨道处所受万有引力是它在地面所受引力的几倍；(2) 由于稀薄空气阻力，A 的轨道缓慢降低，它的引力势能、动能如何变化；(3) A 与空间站的周期哪个大，各约多少分钟。",
+     "answer": "(1) 0.64 倍（16/25）；(2) Ep 减小，Ek 增大；(3) T_A > T站，T_A ≈ 117.1 min，T站 ≈ 91.8 min",
+     "analysis": "(1) r_A = 6400 km + 1600 km = 8000 km，F ∝ 1/r²，F轨/F地 = (6400 km ÷ 8000 km)² = 0.64。(2) 高度降低，引力做正功，Ep 减小；由 C6，Ek = GMm/(2r)，r 减小 Ek 增大（阻力做负功，但引力做的正功更多，机械能减小）。(3) r站 = 6800 km < r_A，由 C4 知 T_A > T站。GM = gR² = 4.096×10¹⁴ m³/s²：T_A = 2π√((8.0×10⁶ m)³ ÷ GM) ≈ 7025 s ≈ 117.1 min；T站 = 2π√((6.8×10⁶ m)³ ÷ GM) ≈ 5505 s ≈ 91.8 min。",
+     "load": {"mode": "duo", "rA": 8000, "rB": 6800, "m": 1000, "k": 1}},
+    {"id": "V2", "title": "由周期比反推半径比、速度比", "cs": ["C4", "C5", "C1"], "source": "改编自 2022 上海等级考 第 10 题（原题为木卫一、木卫二）",
+     "stem": "卫星 A、B 绕地球做匀速圆周运动，周期之比 T_A ∶ T_B = 1 ∶ 8。(1) 求轨道半径之比和线速度之比；(2) 若 r_A = 8000 km，求 v_A、r_B 和 v_B（g = 10 m/s²，R地 = 6400 km）。",
+     "answer": "(1) r_A ∶ r_B = 1 ∶ 4，v_A ∶ v_B = 2 ∶ 1；(2) v_A ≈ 7.16 km/s，r_B = 32000 km，v_B ≈ 3.58 km/s",
+     "analysis": "(1) 由 C5，r³ ∝ T²，r_B/r_A = (T_B/T_A)^(2/3) = 8^(2/3) = 4。由 C4，v ∝ 1/√r，v_A/v_B = √4 = 2。(2) v_A = √(GM/r_A) = √(4.096×10¹⁴ m³/s² ÷ 8.0×10⁶ m) ≈ 7.16×10³ m/s；r_B = 4 × 8000 km = 32000 km；v_B = v_A/2 ≈ 3.58 km/s。",
+     "load": {"mode": "duo", "rA": 8000, "rB": 32000, "m": 1000, "k": 1}},
+    {"id": "V3", "title": "同步卫星的半径、速度与引力", "cs": ["C2", "C7", "C1"], "source": "改编自 2023 上海等级考 第 14 题（回忆版，原题为月球）",
+     "stem": "质量 m = 1000 kg 的地球同步卫星周期 T = 24 h，地球半径 6400 km，g = 10 m/s²。求：(1) 轨道半径 r；(2) 线速度 v；(3) 地球对它的万有引力 F。",
+     "answer": "(1) r ≈ 4.26×10⁴ km（约 6.7 R地）；(2) v ≈ 3.10 km/s；(3) F ≈ 225 N",
+     "analysis": "(1) 由 C2 与 C7，r³ = GMT²/(4π²) = gR²T²/(4π²) = 4.096×10¹⁴ m³/s² × (86400 s)² ÷ 39.48 ≈ 7.745×10²² m³，r ≈ 4.263×10⁷ m。(2) v = 2πr/T = 2π × 4.263×10⁷ m ÷ 86400 s ≈ 3.10×10³ m/s。(3) F = m·4π²r/T² = 1000 kg × 39.48 × 4.263×10⁷ m ÷ (86400 s)² ≈ 225 N；校核 F = GMm/r² ≈ 225 N。加载后 B 为同步卫星，A 为近地卫星作对照。",
+     "load": {"mode": "duo", "rA": 6400, "rB": 42600, "m": 1000, "k": 1}},
+    {"id": "V4", "title": "圆轨道动能、势能与升轨做功", "cs": ["C6"], "source": "改编自 2026 上海等级考 1.4",
+     "stem": "质量 m = 500 kg 的卫星在离地高度等于地球半径（r = 2R地 = 12800 km）的圆轨道上运行，g = 10 m/s²，R地 = 6400 km，以无穷远为零势能点。(1) 求 Ek、Ep、E；(2) 若把它变轨到 r = 4R地 的圆轨道，机械能变化多少？",
+     "answer": "(1) Ek = 8.0×10⁹ J，Ep = −1.6×10¹⁰ J，E = −8.0×10⁹ J；(2) 机械能增加 4.0×10⁹ J",
+     "analysis": "(1) GMm = gR²m = 4.096×10¹⁴ m³/s² × 500 kg = 2.048×10¹⁷ J·m。Ek = GMm/(2r) = 2.048×10¹⁷ J·m ÷ (2 × 1.28×10⁷ m) = 8.0×10⁹ J；Ep = −GMm/r = −1.6×10¹⁰ J；E = −GMm/(2r) = −8.0×10⁹ J。(2) r = 2.56×10⁷ m 时 E′ = −4.0×10⁹ J，ΔE = E′ − E = 4.0×10⁹ J，需要发动机做功。",
+     "load": {"mode": "duo", "rA": 12800, "rB": 25600, "m": 500, "k": 1}},
+    {"id": "V5", "title": "周期更大说明什么；不同中心天体比 T²/r³", "cs": ["C4", "C5"], "source": "改编自 2026 届浦东新区二模 五-1、五-2",
+     "stem": "(1) 绕地球做圆周运动的卫星 B 周期比卫星 A 大，下列一定成立的是：A. B 的线速度更小　B. B 的质量更小　C. B 受到的引力更小　D. B 的机械能更大。(2) 已知月球质量约为地球质量的 1/81。比较绕地球的卫星与绕月球的卫星的 T²/r³，并求两者之比（g = 10 m/s²，R地 = 6400 km）。",
+     "answer": "(1) A；(2) 绕月卫星的 T²/r³ 更大，是绕地卫星的 81 倍：绕地 ≈ 9.64×10⁻¹⁴ s²/m³，绕月 ≈ 7.81×10⁻¹² s²/m³",
+     "analysis": "(1) 由 C4，T 大 ⇒ r 大 ⇒ v 小，A 正确；引力 GMm/r²、机械能 −GMm/(2r) 都与卫星质量有关，题目没说质量相同，C、D 不一定成立；B 与轨道无关。(2) 由 C5，T²/r³ = 4π²/(GM)，与中心天体质量成反比。绕地：4π² ÷ (gR²) = 39.48 ÷ 4.096×10¹⁴ m³/s² ≈ 9.64×10⁻¹⁴ s²/m³；绕月：M 为 1/81，比值为 81 倍，≈ 7.81×10⁻¹² s²/m³。",
+     "load": {"mode": "duo", "rA": 6800, "rB": 20000, "m": 1000, "k": 1}}
+  ],
+  "reskins": [
+    {"id": "R1", "title": "脉冲星的最小密度", "map": "自转的赤道物质 = 近表面卫星（r = R），M = ρ·4πR³/3", "anim": false, "source": "改编自 2026 届杨浦区二模 二-2(1)",
+     "stem": "某脉冲星自转周期 T = 2.0 ms，视为质量均匀的球体。要使它赤道上的物质不被甩出，它的平均密度至少多大？可能是哪类天体？（G = 6.67×10⁻¹¹ N·m²/kg²；中子星平均密度约 10¹⁴ ~ 10¹⁸ kg/m³，白矮星约 10⁹ kg/m³ 量级）",
+     "answer": "ρ ≥ 3π/(GT²) ≈ 3.5×10¹⁶ kg/m³，是中子星",
+     "analysis": "赤道物质恰好不被甩出时，万有引力恰好提供它随星体自转的向心力：GMm/R² = m(2π/T)²R，即 T 等于近表面卫星的周期（C2，r = R）。M = ρ·4πR³/3，代入得 ρ = 3π/(GT²) = 3π ÷ (6.67×10⁻¹¹ N·m²/kg² × (2.0×10⁻³ s)²) ≈ 3.5×10¹⁶ kg/m³。密度更小时引力不足以提供向心力，赤道物质会被甩出，所以这是最小值，且与半径 R 无关。"},
+    {"id": "R2", "title": "氢原子中电子绕核", "map": "库仑力 ke²/r² 替代 GMm/r²，即 GM → ke²/m", "anim": false, "source": "改编自 2025 上海等级考 2.3",
+     "stem": "玻尔模型中，氢原子的电子绕原子核做匀速圆周运动。基态轨道半径 r₁ = 5.3×10⁻¹¹ m，n = 2 轨道半径 r₂ = 4r₁。求电子在两个轨道上的速率与动量，并比较。（k = 9.0×10⁹ N·m²/C²，e = 1.6×10⁻¹⁹ C，电子质量 m = 9.1×10⁻³¹ kg）",
+     "answer": "v₁ ≈ 2.19×10⁶ m/s，p₁ ≈ 1.99×10⁻²⁴ kg·m/s；v₂ ≈ 1.09×10⁶ m/s，p₂ ≈ 9.9×10⁻²⁵ kg·m/s；轨道越大速率越小",
+     "analysis": "ke²/r² = mv²/r，v = e√(k/(mr))，p = mv = e√(km/r)。r₁ 代入：v₁ = √(9.0×10⁹ × (1.6×10⁻¹⁹)² ÷ (9.1×10⁻³¹ × 5.3×10⁻¹¹)) m/s ≈ 2.19×10⁶ m/s，p₁ ≈ 1.99×10⁻²⁴ kg·m/s。r₂ = 4r₁，由 v ∝ 1/√r（C4 的同型结论），v₂ = v₁/2 ≈ 1.09×10⁶ m/s，p₂ ≈ 9.9×10⁻²⁵ kg·m/s。「高轨低速」同样成立，但 r³/T² = ke²/(4π²m) 由电荷与电子质量决定。"},
+    {"id": "R3", "title": "行星绕太阳", "map": "中心天体换成太阳，同一中心天体比较 r³/T²", "anim": true, "source": "原创，未改编自具体真题",
+     "stem": "地球绕太阳公转的轨道半径记为 1 AU，周期 1 年。火星的公转轨道半径约 1.52 AU，把两者都看作圆轨道，求火星的公转周期，以及火星与地球公转速率之比。",
+     "answer": "T火 ≈ 1.87 年；v火 ∶ v地 ≈ 0.81 ∶ 1",
+     "analysis": "由 C5，同绕太阳，r³/T² 相同：T火 = 1 年 × 1.52^(3/2) ≈ 1.87 年。由 C4，v ∝ 1/√r，v火/v地 = 1/√1.52 ≈ 0.81。"}
+  ],
+  "sources": [
+    {"src": "2022 上海等级考 第 10 题", "desc": "木卫一、木卫二已知周期，比较轨道半径与线速度"},
+    {"src": "2023 上海等级考 第 14 题（回忆版）", "desc": "月球绕地球，已知 T、r、m 求线速度与万有引力"},
+    {"src": "2026 上海等级考 1.4", "desc": "圆轨道卫星动能 Ek = GMm/(2r)"},
+    {"src": "2026 届浦东新区一模 二-2", "desc": "卫星与空间站：引力倍数、轨道降低时的势能、周期比较"},
+    {"src": "2026 届浦东新区二模 五-1、五-2", "desc": "周期大则线速度小；不同中心天体的 T²/R³ 比较"},
+    {"src": "2026 届杨浦区二模 二-2(1)", "desc": "脉冲星自转周期求最小密度（换皮题 R1）"},
+    {"src": "2025 上海等级考 2.3", "desc": "氢原子电子绕核，库仑力提供向心力求动量（换皮题 R2）"}
+  ]
+}
+</script>
+
+<style>
+/* Layout: 实验报告 / 图纸标题栏。题头左标题右标题栏表格；母题独占一行；考点与边界并排；动画区左画布右控制台；结论、变式、换皮题依次向下 */
+:root{
+  --paper:#f2f4f3; --grid:#e4e9e6; --card:#ffffff; --sunk:#f6f8f7;
+  --ink:#142030; --muted:#5b6979; --faint:#8a96a3; --line:#d6dedA; --hair:#e7ece9;
+  --accent:#2443a6; --accent-soft:#e9eefb; --mark:#f7e9b0;
+  --g:#c4382f; --n:#18845a; --v:#2443a6; --track:#34404f; --warn:#a85a14; --ok:#18845a;
+  --shadow:0 1px 0 rgba(20,32,48,.04),0 10px 28px -18px rgba(20,32,48,.28);
+  --f-display:"Noto Serif SC","Songti SC","STSong",serif;
+  --f-body:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#10161d; --grid:#18202a; --card:#171f28; --sunk:#131a22;
+  --ink:#e4e9ef; --muted:#9aa7b6; --faint:#6f7d8c; --line:#2a3542; --hair:#212b36;
+  --accent:#93acff; --accent-soft:#1f2a44; --mark:#4a4020;
+  --g:#ff7d71; --n:#52d39c; --v:#93acff; --track:#c3ccd8; --warn:#f0a35a; --ok:#52d39c;
+  --shadow:0 1px 0 rgba(0,0,0,.25),0 12px 30px -20px rgba(0,0,0,.7); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#10161d; --grid:#18202a; --card:#171f28; --sunk:#131a22;
+  --ink:#e4e9ef; --muted:#9aa7b6; --faint:#6f7d8c; --line:#2a3542; --hair:#212b36;
+  --accent:#93acff; --accent-soft:#1f2a44; --mark:#4a4020;
+  --g:#ff7d71; --n:#52d39c; --v:#93acff; --track:#c3ccd8; --warn:#f0a35a; --ok:#52d39c;
+  --shadow:0 1px 0 rgba(0,0,0,.25),0 12px 30px -20px rgba(0,0,0,.7); color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.7;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:28px 28px;background-position:-1px -1px}
+.wrap{max-width:1160px;margin:0 auto;padding-inline:16px;padding-block:28px 64px;display:flex;flex-direction:column;gap:22px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;font-weight:800}
+p{margin:0}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px;min-width:0;display:flex;flex-direction:column;gap:16px;box-shadow:var(--shadow)}
+@media (max-width:520px){.panel{padding:16px;border-radius:12px}}
+.sh{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.sh h2{font-size:20px;letter-spacing:.02em}
+.sh small{font-size:13px;color:var(--muted)}
+.sh::after{content:"";flex:1 1 40px;height:1px;background:var(--hair);align-self:center}
+.label{font-size:12px;letter-spacing:.12em;color:var(--faint);font-weight:700}
+.note{font-size:13px;color:var(--muted)}
+
+/* 题头：标题 + 图纸标题栏 */
+.top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px 28px;align-items:end;padding-bottom:6px}
+@media (max-width:760px){.top{grid-template-columns:1fr}}
+.brand{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);margin-bottom:10px}
+.seal{font-family:var(--f-display);font-weight:800;font-size:13px;color:var(--card);background:var(--ink);padding:2px 8px;border-radius:3px;letter-spacing:.18em}
+.top h1{font-size:clamp(26px,4.6vw,40px);line-height:1.2;letter-spacing:.01em}
+.top .sub{margin-top:8px;color:var(--muted)}
+.tb{border-collapse:collapse;font-size:13px;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:var(--shadow);min-width:0}
+.tb th,.tb td{border:1px solid var(--hair);padding:6px 12px;text-align:left;white-space:nowrap}
+.tb th{color:var(--faint);font-weight:500;font-size:12px;letter-spacing:.06em;background:var(--sunk)}
+.tb td{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.tb td.code{color:var(--accent);font-weight:600}
+.tbwrap{overflow-x:auto;max-width:100%}
+
+/* 母题 */
+.problem{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,15em);gap:22px;align-items:start}
+@media (max-width:760px){.problem{grid-template-columns:1fr}}
+.lead{font-family:var(--f-display);font-size:clamp(17px,2vw,19px);line-height:1.9;font-weight:600}
+.num{font-family:var(--f-mono);font-weight:600;font-size:.92em;color:var(--ink);white-space:nowrap;
+  background:linear-gradient(transparent 55%,var(--mark) 55%);padding:0 2px;transition:background-color .2s}
+.asks{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.asks li{display:grid;grid-template-columns:1.9em minmax(0,1fr);gap:8px;align-items:baseline}
+.asks li b{display:inline-grid;place-items:center;width:1.6em;height:1.6em;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-family:var(--f-mono);font-size:13px}
+.given{background:var(--sunk);border:1px solid var(--hair);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.given dl{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;font-size:14px}
+.given dt{font-family:var(--f-mono);color:var(--muted)}
+.given dd{margin:0;font-family:var(--f-mono);font-variant-numeric:tabular-nums;text-align:right}
+
+/* 考点 + 边界 */
+.row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:22px;align-items:stretch}
+@media (max-width:860px){.row2{grid-template-columns:1fr}}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{font-size:14px;border:1px solid var(--line);background:var(--sunk);padding:4px 12px;border-radius:999px}
+.bnd{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+@media (max-width:620px){.bnd{grid-template-columns:1fr}}
+.bnd ul{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.bnd li{display:grid;grid-template-columns:1.2em minmax(0,1fr);gap:6px}
+.bnd .ok li::before{content:"✓";color:var(--ok);font-weight:700}
+.bnd .back li::before{content:"→";color:var(--accent);font-weight:700}
+
+/* 动画区 */
+.lab{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:26px;align-items:start}
+@media (max-width:900px){.lab{grid-template-columns:1fr}}
+.stage{display:flex;flex-direction:column;gap:12px;min-width:0}
+.canvas-box{position:relative;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card)}
+canvas{width:100%;max-width:100%;aspect-ratio:1/1;display:block}
+.status{position:absolute;left:12px;top:12px;max-width:calc(100% - 24px);display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;
+  padding:5px 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow)}
+.status::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--faint);flex:none}
+.status.warn{color:var(--warn)} .status.warn::before{background:var(--warn)}
+.status.ok{color:var(--ok)} .status.ok::before{background:var(--ok)}
+.bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 16px}
+.legend{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--muted)}
+.legend i{display:inline-block;width:14px;height:3px;vertical-align:middle;margin-right:5px;border-radius:2px}
+.readout{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card)}
+.ro{padding:7px 12px;min-width:0;box-shadow:1px 0 0 var(--hair),0 1px 0 var(--hair)}
+.ro span{display:block;font-size:12px;color:var(--faint)}
+.ro b{font-family:var(--f-mono);font-weight:600;font-variant-numeric:tabular-nums;font-size:15px;overflow-wrap:anywhere}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+button{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:7px 16px;border-radius:999px;cursor:pointer;transition:border-color .15s,background-color .15s}
+button:hover{border-color:var(--accent)}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.primary{background:var(--accent);color:var(--card);border-color:var(--accent);font-weight:700;padding-inline:22px}
+.ctrl{display:flex;flex-direction:column;gap:18px;min-width:0}
+.group{display:flex;flex-direction:column;gap:10px}
+.field{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"l o" "r r";gap:2px 10px;align-items:baseline}
+.field label{grid-area:l;font-size:14px}
+.field label .s{font-family:var(--f-mono);font-weight:600;margin-right:6px}
+.field label .note{font-size:12px}
+.field output{grid-area:o;font-family:var(--f-mono);font-variant-numeric:tabular-nums;font-size:14px;font-weight:600;color:var(--accent)}
+.field input{grid-area:r}
+input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
+.seg{display:flex;padding:3px;gap:3px;border-radius:999px;background:var(--sunk);border:1px solid var(--line)}
+.seg button{flex:1;border:none;padding:6px 10px;background:transparent;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--card);color:var(--ink);font-weight:700;box-shadow:var(--shadow)}
+.presets{display:flex;flex-wrap:wrap;gap:6px}
+.presets button{font-size:13px;padding:4px 12px;background:var(--sunk)}
+.verdict{background:var(--sunk);border:1px solid var(--hair);border-radius:10px;padding:12px 14px;font-size:14px;line-height:1.8}
+.verdict b{color:var(--accent);font-family:var(--f-mono)}
+
+/* 结论 */
+.cl{display:flex;flex-direction:column}
+.cl details{border-top:1px solid var(--hair)}
+.cl details:last-child{border-bottom:1px solid var(--hair)}
+.cl summary{display:grid;grid-template-columns:2.6em minmax(0,1fr) minmax(0,auto) 1em;gap:6px 14px;align-items:center;padding:12px 4px;cursor:pointer;list-style:none}
+.cl summary::-webkit-details-marker{display:none}
+.cl summary:hover .t{color:var(--accent)}
+.badge{display:inline-grid;place-items:center;min-width:2.3em;height:1.7em;padding:0 6px;border-radius:6px;background:var(--accent-soft);color:var(--accent);font-family:var(--f-mono);font-weight:600;font-size:13px}
+.cl .f{font-family:var(--f-mono);font-size:14px;background:var(--sunk);border:1px solid var(--hair);border-radius:6px;padding:2px 10px;justify-self:end;text-align:right}
+.chev{width:8px;height:8px;border-right:2px solid var(--faint);border-bottom:2px solid var(--faint);transform:rotate(45deg);transition:transform .2s;justify-self:center}
+details[open]>summary .chev{transform:rotate(225deg)}
+@media (max-width:640px){.cl summary{grid-template-columns:2.6em minmax(0,1fr) 1em}.cl .f{grid-column:2;grid-row:2;justify-self:start;text-align:left}.chev{grid-column:3;grid-row:1}}
+.deriv{margin:0 4px 14px calc(2.6em + 18px);padding:4px 0 4px 14px;border-left:2px solid var(--accent-soft);white-space:pre-line;font-size:14px;color:var(--ink)}
+@media (max-width:640px){.deriv{margin-left:4px}}
+
+/* 变式 / 换皮题 */
+.qs{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:14px}
+.q{border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px;background:var(--card);min-width:0}
+.q .head{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+.q h3{font-size:16px;margin-right:auto}
+.chip{font-size:12px;font-family:var(--f-mono);border:1px solid var(--line);border-radius:999px;padding:0 8px;color:var(--muted)}
+.src{font-size:12px;color:var(--faint)}
+.map{font-size:13px;color:var(--muted)}
+.map b{font-weight:500;color:var(--ink)}
+.q details{border-top:1px dashed var(--line);padding-top:8px}
+.q details summary{cursor:pointer;color:var(--accent);font-size:14px;font-weight:500;list-style:none;display:flex;align-items:center;gap:8px;width:fit-content}
+.q details summary::-webkit-details-marker{display:none}
+.ans{margin-top:8px;display:flex;flex-direction:column;gap:6px;font-size:14px;background:var(--sunk);border-radius:8px;padding:10px 12px}
+.ans .a{font-weight:700}
+.q .foot{margin-top:auto;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:space-between}
+.q .foot button{font-size:13px;padding:4px 14px;color:var(--accent);border-color:var(--accent-soft);background:var(--accent-soft)}
+.srcs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.srcs li{display:grid;grid-template-columns:minmax(0,15em) minmax(0,1fr);gap:4px 16px;padding:8px 0;border-top:1px solid var(--hair);font-size:14px}
+.srcs li b{font-family:var(--f-mono);font-weight:500;font-size:13px}
+.srcs li span{color:var(--muted)}
+@media (max-width:620px){.srcs li{grid-template-columns:1fr}}
+footer{font-size:12px;color:var(--faint);text-align:center}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+
+<div class="wrap" id="app">
+  <header class="top">
+    <div>
+      <div class="brand"><span class="seal">格物</span><span>Gewu · 高中物理母题</span></div>
+      <h1 id="hName"></h1>
+      <p class="sub" id="hSub"></p>
+    </div>
+    <div class="tbwrap"><table class="tb" id="hTable"></table></div>
+  </header>
+
+  <section class="panel">
+    <div class="sh"><h2>母题</h2><small>题干数字随动画参数实时变化</small></div>
+    <div class="problem">
+      <div>
+        <p class="lead" id="stem"></p>
+        <ol class="asks" id="asks"></ol>
+      </div>
+      <aside class="given">
+        <div class="label">已知量</div>
+        <dl id="given"></dl>
+        <p class="note" id="stemNote"></p>
+      </aside>
+    </div>
+  </section>
+
+  <div class="row2">
+    <section class="panel">
+      <div class="sh"><h2>核心考点</h2></div>
+      <div class="tags" id="tags"></div>
+    </section>
+    <section class="panel">
+      <div class="sh"><h2>适用边界</h2></div>
+      <div class="bnd">
+        <div><div class="label">结论成立条件</div><ul class="ok" id="bCond"></ul></div>
+        <div><div class="label">超出边界时回到</div><ul class="back" id="bBack"></ul></div>
+      </div>
+    </section>
+  </div>
+
+  <section class="panel" id="labPanel">
+    <div class="sh"><h2>动画实验</h2><small>先自己预判，再点发射对答案</small></div>
+    <div class="lab">
+      <div class="stage">
+        <div class="canvas-box">
+          <canvas id="cv" aria-label="母题动画画布"></canvas>
+          <div class="status" id="status" role="status">准备就绪</div>
+        </div>
+        <div class="bar">
+          <div class="btns">
+            <button class="primary" id="play">▶ 发射</button>
+            <button id="reset">重置</button>
+            <button id="slow">慢放 ×0.25</button>
+          </div>
+          <div class="legend" id="legend"></div>
+        </div>
+        <div class="readout" id="readout"></div>
+      </div>
+      <div class="ctrl">
+        <div class="group"><div class="label">参数</div><div id="params" class="group"></div></div>
+        <div class="group"><div class="label">预设情形</div><div class="presets" id="presets"></div></div>
+        <div class="group"><div class="label">理论预判</div><div class="verdict" id="verdict"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="sh"><h2>结论</h2><small>点开看推导</small></div>
+    <div class="cl" id="concl"></div>
+  </section>
+
+  <section class="panel">
+    <div class="sh"><h2>变式</h2><small>同骨架，换条件或问法</small></div>
+    <div class="qs" id="variants"></div>
+  </section>
+
+  <section class="panel">
+    <div class="sh"><h2>换皮题</h2><small>同骨架，换情境外形</small></div>
+    <div class="qs" id="reskins"></div>
+  </section>
+
+  <section class="panel">
+    <div class="sh"><h2>题源</h2></div>
+    <ul class="srcs" id="sources"></ul>
+  </section>
+
+  <footer id="foot"></footer>
+</div>
+
+<script>
+/* ================= SIM 模块：每个母题替换这一段 =================
+   约定接口：
+   SIM.legend            [{label, color(CSS 变量名)}]
+   SIM.init(P)           → 状态 S（含 S.done、S.status={text,cls}）
+   SIM.step(S,P,dt)      推进 dt 秒（引擎保证 dt ≤ 0.5 ms）
+   SIM.readouts(S,P)     → [[标签, 带单位的值]]
+   SIM.draw(ctx,S,P,W,H,tok)  tok(name) 取主题色
+   SIM.verdict(P)        → 理论预判 HTML
+*/
+const SIM=(()=>{
+  const g=10,RE=6.4e6,GM=g*RE*RE,TAU=2*Math.PI;
+  const fmt=(x,d=2)=>(Math.abs(x)<1e-12?0:x).toFixed(d);
+  const SUP={'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const sci=(x,d=2)=>{if(!isFinite(x))return'—';if(Math.abs(x)<1e-300)return'0';let e=Math.floor(Math.log10(Math.abs(x))),m=x/Math.pow(10,e);
+    if(Math.abs(+m.toFixed(d))>=10){m/=10;e++}return m.toFixed(d).replace('-','−')+'×10'+String(e).replace(/./g,c=>SUP[c])};
+  const km=r=>fmt(r/1e3,0)+' km',kms=v=>fmt(v/1e3,2)+' km/s',ms2=a=>(a>=1?fmt(a,2):fmt(a,3))+' m/s²';
+  const tfmt=s=>!isFinite(s)?'—':s<7200?fmt(s/60,1)+' min':fmt(s/3600,2)+' h';
+  const vc=r=>Math.sqrt(GM/r),Tc=r=>TAU*Math.sqrt(r*r*r/GM);
+  const sat=(r,v)=>({x:r,y:0,vx:0,vy:v,cum:0,last:0,T1:null,rmin:r,rmax:r,trail:[[r,0]]});
+  const acc=(x,y)=>{const r2=x*x+y*y,k=-GM/(r2*Math.sqrt(r2));return[k*x,k*y]};
+  function rk4(o,h){                                   // 对 (x,y,vx,vy) 做一步 RK4
+    const{x,y,vx,vy}=o,a1=acc(x,y);
+    const x2=x+vx*h/2,y2=y+vy*h/2,u2=vx+a1[0]*h/2,w2=vy+a1[1]*h/2,a2=acc(x2,y2);
+    const x3=x+u2*h/2,y3=y+w2*h/2,u3=vx+a2[0]*h/2,w3=vy+a2[1]*h/2,a3=acc(x3,y3);
+    const x4=x+u3*h,y4=y+w3*h,u4=vx+a3[0]*h,w4=vy+a3[1]*h,a4=acc(x4,y4);
+    o.x=x+h/6*(vx+2*u2+2*u3+u4);o.y=y+h/6*(vy+2*w2+2*w3+w4);
+    o.vx=vx+h/6*(a1[0]+2*a2[0]+2*a3[0]+a4[0]);o.vy=vy+h/6*(a1[1]+2*a2[1]+2*a3[1]+a4[1]);
+  }
+  const q=o=>{const r=Math.hypot(o.x,o.y),v=Math.hypot(o.vx,o.vy);return{r,v,T:TAU*r/v,a:GM/(r*r)}};
+  const cmp=(a,b)=>a>b*(1+1e-9)?'&gt;':a<b*(1-1e-9)?'&lt;':'=';
+  const orbitOf=(rA,k)=>{const k2=k*k,bound=k2<2-1e-12,other=bound?rA*k2/(2-k2):Infinity;
+    return{bound,other,rp:Math.min(rA,other),ra:Math.max(rA,other),a:bound?(rA+other)/2:Infinity}};
+  return{
+    legend:[{label:'卫星 A',color:'--v'},{label:'卫星 B',color:'--warn'},{label:'速度 v',color:'--n'},{label:'加速度 a（指向地心）',color:'--g'}],
+    init(P){
+      const one=P.mode==='one',rA=P.rA*1e3,rB=P.rB*1e3,S={t:0,done:false,one,status:{text:'准备就绪',cls:''}};
+      if(!one){
+        S.sats=[sat(rA,vc(rA)),sat(rB,vc(rB))];
+        const Tmin=Tc(Math.min(rA,rB));S.TS=Tmin/5;S.h=Tmin/20000;S.view=Math.max(rA,rB);
+      }else{
+        const O=orbitOf(rA,P.k),T0=Tc(rA),Tell=O.bound?Tc(O.a):Infinity;
+        S.sats=[sat(rA,P.k*vc(rA))];Object.assign(S,O);
+        S.TS=Math.max(T0/5,Math.min(Tell,20*T0)/10);
+        S.h=Tc(Math.max(RE,Math.min(rA,O.rp)))/20000;
+        S.view=O.bound?Math.max(rA,Math.min(O.ra,12*rA)):6*rA;
+      }
+      return S;
+    },
+    step(S,P,dt){
+      if(S.done)return;
+      const span=dt*S.TS,n=Math.max(1,Math.ceil(span/S.h-1e-9)),h=span/n;
+      for(const o of S.sats){
+        let tt=S.t;
+        for(let i=0;i<n;i++){
+          rk4(o,h);tt+=h;
+          const r=Math.hypot(o.x,o.y),ang=Math.atan2(o.y,o.x);let d=ang-o.last;
+          if(d>Math.PI)d-=TAU;else if(d<-Math.PI)d+=TAU;
+          if(o.T1===null&&o.cum<TAU&&o.cum+d>=TAU)o.T1=tt-h+h*(TAU-o.cum)/d;   // 首次转满一圈的时刻（线性插值）
+          o.cum+=d;o.last=ang;o.rmin=Math.min(o.rmin,r);o.rmax=Math.max(o.rmax,r);
+          if(S.one&&r<RE){o.x*=RE/r;o.y*=RE/r;S.done=true;S.t=tt;
+            S.status={text:`撞上地球表面（近地点地心距 ${km(S.rp)} < R地）`,cls:'warn'};o.trail.push([o.x,o.y]);return}
+          if(S.one&&r>S.view*1.04){S.done=true;S.t=tt;
+            S.status=S.bound?{text:`飞出画面（远地点 ${sci(S.ra/1e3)} km），动画到此结束`,cls:''}:{text:'k² ≥ 2：卫星逃逸，不再回来（→ MEC-GRV-02）',cls:'warn'};return}
+        }
+        const L=o.trail[o.trail.length-1];
+        if(Math.hypot(o.x-L[0],o.y-L[1])>S.view*0.006){o.trail.push([o.x,o.y]);if(o.trail.length>4000)o.trail.shift()}
+      }
+      S.t+=span;
+      const lA=S.sats[0].cum/TAU;
+      if(!S.one){const lB=S.sats[1].cum/TAU;
+        S.status={text:`A ${fmt(lA,2)} 圈 · B ${fmt(lB,2)} 圈${Math.abs(P.rA-P.rB)<1e-9?'（同轨道）':P.rA<P.rB?'（内侧 A 快）':'（内侧 B 快）'}`,cls:lA>=1?'ok':''};
+      }else{
+        const c=q(S.sats[0]);
+        S.status={text:Math.abs(P.k-1)<1e-9?`圆轨道 · ${fmt(lA,2)} 圈`:S.bound?`椭圆轨道 · ${fmt(lA,2)} 圈`:`逃逸中 · r = ${km(c.r)}`,cls:lA>=1?'ok':''};
+      }
+    },
+    readouts(S,P){
+      if(!S.one){
+        const A=q(S.sats[0]),B=q(S.sats[1]);
+        return[['r_A',km(A.r)],['r_B',km(B.r)],['v_A',kms(A.v)],['v_B',kms(B.v)],['T_A',tfmt(A.T)],['T_B',tfmt(B.T)],
+          ['a_A',ms2(A.a)],['a_B',ms2(B.a)],['已运行 t',fmt(S.t/3600,2)+' h'],['A 转过圈数',fmt(Math.max(0,S.sats[0].cum/TAU),2)+' 圈']];
+      }
+      const o=S.sats[0],c=q(o),ek=.5*P.m*c.v*c.v,ep=-GM*P.m/c.r;
+      return[['地心距 r',km(c.r)],['速度 v',kms(c.v)],['近地点 r近（实测）',km(o.rmin)],['远地点 r远（实测）',km(o.rmax)],
+        ['已运行 t',fmt(S.t/3600,2)+' h'],['转过圈数',fmt(Math.max(0,o.cum/TAU),2)+' 圈'],
+        ['动能 Ek',sci(ek)+' J'],['势能 Ep',sci(ep)+' J'],['机械能 E',sci(ek+ep)+' J']];
+    },
+    draw(ctx,S,P,W,H,tok){
+      const u=W/720,css=(ctx.canvas&&ctx.canvas.clientWidth)||W,px=W/css,fz=Math.max(15*u,11*px);
+      const fb=tok('--f-body'),fm=tok('--f-mono');
+      ctx.clearRect(0,0,W,H);ctx.fillStyle=tok('--card');ctx.fillRect(0,0,W,H);
+      // 底部对比条形图占一条，轨道画在其上方
+      const Hs=5.4*fz,top=0,avail=H-Hs-14*u;
+      const cx=W/2,cy=top+avail/2+8*u,Rv=Math.min(W*0.46,avail/2-6*u),sc=Rv/S.view,X=x=>cx+x*sc,Y=y=>cy-y*sc;
+      // 刻度圈：R地 的整数倍
+      const nmax=S.view/RE,steps=[1,2,5,10,20,50,100,200];let st=steps.find(s=>nmax/s<=7)||500;
+      ctx.setLineDash([4*u,7*u]);ctx.lineWidth=1.2*u;ctx.strokeStyle=tok('--line');ctx.font=`${Math.max(12*u,10*px)}px ${fb}`;ctx.fillStyle=tok('--faint');
+      for(let n=st===1?2:st;n*RE<=S.view*1.06;n+=st){const rr=n*RE*sc;ctx.beginPath();ctx.arc(cx,cy,rr,0,TAU);ctx.stroke();
+        if(rr>22*u)ctx.fillText(`${n}R地`,cx-rr*0.707-8*u,cy+rr*0.707+14*u)}
+      ctx.setLineDash([]);
+      // 地球
+      const re=Math.max(RE*sc,5*u);ctx.fillStyle=tok('--accent-soft');ctx.strokeStyle=tok('--accent');ctx.lineWidth=2*u;
+      ctx.beginPath();ctx.arc(cx,cy,re,0,TAU);ctx.fill();ctx.stroke();
+      ctx.globalAlpha=.3;ctx.lineWidth=1*u;ctx.beginPath();ctx.ellipse(cx,cy,re,re*.35,0,0,TAU);ctx.moveTo(cx,cy-re);ctx.lineTo(cx,cy+re);ctx.stroke();ctx.globalAlpha=1;
+      if(re>26*u){ctx.fillStyle=tok('--accent');ctx.font=`600 ${Math.max(14*u,11*px)}px ${fb}`;ctx.textAlign='center';ctx.fillText('地球',cx,cy+re*0.62+5*u);ctx.textAlign='left'}
+      const cols=S.one?['--v']:['--v','--warn'];
+      // 轨道
+      if(!S.one){S.sats.forEach((o,i)=>{const r0=(i?P.rB:P.rA)*1e3;ctx.strokeStyle=tok(cols[i]);ctx.globalAlpha=.55;ctx.lineWidth=2.2*u;ctx.beginPath();ctx.arc(cx,cy,r0*sc,0,TAU);ctx.stroke();ctx.globalAlpha=1})}
+      else{ctx.setLineDash([3*u,6*u]);ctx.strokeStyle=tok('--muted');ctx.lineWidth=1.5*u;ctx.beginPath();ctx.arc(cx,cy,P.rA*1e3*sc,0,TAU);ctx.stroke();ctx.setLineDash([]);
+        const tr=S.sats[0].trail;if(tr.length>1){ctx.strokeStyle=tok('--v');ctx.lineWidth=2.5*u;ctx.beginPath();tr.forEach(([x,y],i)=>i?ctx.lineTo(X(x),Y(y)):ctx.moveTo(X(x),Y(y)));
+          const o=S.sats[0];ctx.lineTo(X(o.x),Y(o.y));ctx.stroke()}}
+      // 矢量
+      const arrow=(bx,by,dx,dy,col,lab)=>{const Lg=Math.hypot(dx,dy);if(Lg<3*u)return;ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=3*u;ctx.lineCap='round';
+        ctx.beginPath();ctx.moveTo(bx,by);ctx.lineTo(bx+dx,by+dy);ctx.stroke();const a=Math.atan2(dy,dx),hs=10*u;
+        ctx.beginPath();ctx.moveTo(bx+dx,by+dy);ctx.lineTo(bx+dx-hs*Math.cos(a-.4),by+dy-hs*Math.sin(a-.4));ctx.lineTo(bx+dx-hs*Math.cos(a+.4),by+dy-hs*Math.sin(a+.4));ctx.closePath();ctx.fill();
+        ctx.font=`600 ${Math.max(16*u,11*px)}px ${fm}`;ctx.fillText(lab,bx+dx+10*u*Math.cos(a)-5*u,by+dy+10*u*Math.sin(a)+6*u)};
+      const Q=S.sats.map(q);
+      const vref=S.one?vc(P.rA*1e3):Math.max(...Q.map(c=>c.v)),aref=S.one?GM/Math.pow(P.rA*1e3,2):Math.max(...Q.map(c=>c.a));
+      S.sats.forEach((o,i)=>{const c=Q[i],bx=X(o.x),by=Y(o.y);
+        const Lv=Math.max(10*u,Math.min(200*u,80*u*c.v/vref)),La=Math.max(10*u,Math.min(160*u,70*u*c.a/aref));   // 按两星之比画，过小时取最短 10 单位以便看见
+        arrow(bx,by,-o.x/c.r*La,o.y/c.r*La,tok('--g'),'a');
+        arrow(bx,by,o.vx/c.v*Lv,-o.vy/c.v*Lv,tok('--n'),'v');
+        ctx.fillStyle=tok(cols[i]);ctx.strokeStyle=tok('--card');ctx.lineWidth=2.5*u;ctx.beginPath();ctx.arc(bx,by,9*u,0,TAU);ctx.fill();ctx.stroke();
+        ctx.font=`700 ${Math.max(17*u,12*px)}px ${fm}`;ctx.fillText(S.one?'A':(i?'B':'A'),bx+o.x/c.r*20*u-6*u,by-o.y/c.r*20*u+6*u)});
+      // 对比条形图
+      const x0=10*u,y0=H-Hs-4*u,w=W-20*u;
+      ctx.fillStyle=tok('--sunk');ctx.strokeStyle=tok('--line');ctx.lineWidth=1*u;ctx.beginPath();
+      if(ctx.roundRect)ctx.roundRect(x0,y0,w,Hs,8*u);else ctx.rect(x0,y0,w,Hs);ctx.fill();ctx.stroke();
+      let groups;
+      if(!S.one){const[A,B]=Q;
+        groups=[{h:'线速度 v（km/s）',rows:[['A',A.v/1e3,'--v'],['B',B.v/1e3,'--warn']],d:2},
+          {h:'周期 T（'+(Math.max(A.T,B.T)<7200?'min':'h')+'）',rows:[['A',A.T,'--v'],['B',B.T,'--warn']],T:Math.max(A.T,B.T)<7200?60:3600,d:Math.max(A.T,B.T)<7200?1:2},
+          {h:'加速度 a（m/s²）',rows:[['A',A.a,'--v'],['B',B.a,'--warn']],d:Math.min(A.a,B.a)<1?3:2}];
+      }else{const c=Q[0],v1=vc(c.r);
+        groups=[{h:'当前 v（km/s）',rows:[['v',c.v/1e3,'--n']],d:2,max:Math.SQRT2*v1/1e3},
+          {h:'该处 v圆（km/s）',rows:[['v圆',v1/1e3,'--v']],d:2,max:Math.SQRT2*v1/1e3},
+          {h:'该处 v逃 = √2 v圆',rows:[['v逃',Math.SQRT2*v1/1e3,'--g']],d:2,max:Math.SQRT2*v1/1e3}];}
+      const gw=w/3,pad=0.6*fz;
+      groups.forEach((G,gi)=>{const gx=x0+gi*gw+pad,gW=gw-1.6*pad;let yy=y0+pad+fz*0.85;
+        ctx.fillStyle=tok('--muted');ctx.font=`600 ${fz*0.92}px ${fb}`;ctx.fillText(G.h,gx,yy,gW);
+        const vals=G.rows.map(r=>r[1]/(G.T||1)),mx=G.max||Math.max(...vals),lw=(S.one?2.4:1.1)*fz,vw=3.3*fz,bw=Math.max(4*u,gW-lw-vw);
+        G.rows.forEach((r,ri)=>{yy=y0+pad+fz*(2.05+ri*1.45);const val=vals[ri];
+          ctx.fillStyle=tok(r[2]);ctx.font=`700 ${fz*0.9}px ${fm}`;ctx.fillText(r[0],gx,yy);
+          ctx.fillStyle=tok('--hair');ctx.fillRect(gx+lw,yy-fz*0.72,bw,fz*0.8);
+          ctx.fillStyle=tok(r[2]);ctx.fillRect(gx+lw,yy-fz*0.72,Math.max(1.5*u,bw*Math.min(1,val/mx)),fz*0.8);
+          ctx.fillStyle=tok('--ink');ctx.font=`600 ${fz*0.9}px ${fm}`;ctx.fillText(fmt(val,G.d),gx+lw+bw+0.35*fz,yy)});
+      });
+    },
+    verdict(P){
+      const rA=P.rA*1e3,rB=P.rB*1e3,m=P.m;
+      if(P.mode==='one'){
+        const O=orbitOf(rA,P.k),v1=vc(rA),k=P.k;
+        let h=`单星模式：A 处 v圆 = √(GM/r_A) = <b>${kms(v1)}</b>，v逃 = √2·v圆 = <b>${kms(Math.SQRT2*v1)}</b>，发射速度 v = k·v圆 = <b>${kms(k*v1)}</b>。<br>`;
+        if(Math.abs(k-1)<1e-9)h+=`k = 1：圆轨道，T = <b>${tfmt(Tc(rA))}</b>（C2）。`;
+        else if(!O.bound)h+=`k² = ${fmt(k*k)} ≥ 2：机械能 E = ½mv² − GMm/r ≥ 0，卫星逃逸，不再回来（MEC-GRV-02）。`;
+        else{
+          h+=k>1?`1 &lt; k &lt; √2：椭圆轨道，A 处为近地点，远地点地心距 r远 = r_A·k²/(2 − k²) = <b>${km(O.other)}</b>。`
+                 :`k &lt; 1：椭圆轨道，A 处为远地点，近地点地心距 r近 = r_A·k²/(2 − k²) = <b>${km(O.other)}</b>。`;
+          if(O.rp<RE)h+=` 近地点低于地面（R地 = 6400 km），会<b>撞上地球</b>。`;
+          else h+=` 半长轴 a = <b>${km(O.a)}</b>，按开普勒第三定律 T = 2π√(a³/GM) = <b>${tfmt(Tc(O.a))}</b>。`;
+        }
+        const E=.5*m*k*k*v1*v1-GM*m/rA;
+        h+=`<br>机械能 E = <b>${sci(E)} J</b>（圆轨道时 E = −GMm/(2r) = ${sci(-GM*m/(2*rA))} J）。以上为椭圆拓展，本母题结论以圆轨道（k = 1）为准。`;
+        return h;
+      }
+      const f=r=>({v:vc(r),w:Math.sqrt(GM/(r*r*r)),T:Tc(r),a:GM/(r*r),Ek:GM*m/(2*r),Ep:-GM*m/r,E:-GM*m/(2*r)});
+      const A=f(rA),B=f(rB);
+      let h=`r_B / r_A = <b>${fmt(rB/rA,3)}</b>。`;
+      h+=rA<rB?'A 在内侧，由 C4：v、ω、a 都是 A 大，T 是 B 大。':rA>rB?'B 在内侧，由 C4：v、ω、a 都是 B 大，T 是 A 大。':'两星同轨道，各量相等。';
+      h+=`<br>v（C1）：v_A = <b>${kms(A.v)}</b> ${cmp(A.v,B.v)} v_B = <b>${kms(B.v)}</b>`;
+      h+=`<br>ω（C2）：ω_A = <b>${sci(A.w)} rad/s</b> ${cmp(A.w,B.w)} ω_B = <b>${sci(B.w)} rad/s</b>`;
+      h+=`<br>T（C2）：T_A = <b>${tfmt(A.T)}</b> ${cmp(A.T,B.T)} T_B = <b>${tfmt(B.T)}</b>`;
+      h+=`<br>a（C3）：a_A = <b>${ms2(A.a)}</b> ${cmp(A.a,B.a)} a_B = <b>${ms2(B.a)}</b>`;
+      h+=`<br>Ek（C6）：<b>${sci(A.Ek)} J</b> ${cmp(A.Ek,B.Ek)} <b>${sci(B.Ek)} J</b>`;
+      h+=`<br>Ep（C6）：<b>${sci(A.Ep)} J</b> ${cmp(A.Ep,B.Ep)} <b>${sci(B.Ep)} J</b>`;
+      h+=`<br>E（C6）：<b>${sci(A.E)} J</b> ${cmp(A.E,B.E)} <b>${sci(B.E)} J</b>`;
+      h+=`<br>r³/T²（C5）：两星都等于 GM/(4π²) = <b>${sci(GM/(TAU*TAU))} m³/s²</b>。`;
+      return h;
+    },
+    _q:q,_GM:GM,_Tc:Tc,_vc:vc
+  };
+})();
+
+/* ================= 通用渲染引擎（所有母题共用，不改） ================= */
+(()=>{
+const D=JSON.parse(document.getElementById('data').textContent);
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const root=document.documentElement;
+const tok=n=>getComputedStyle(root).getPropertyValue(n).trim();
+const PS=D.problem.params;
+const P={};PS.forEach(p=>P[p.key]=p.def);
+const fmtP=p=>p.type==='choice'?p.options.find(o=>o.value===P[p.key]).label:(+P[p.key]).toFixed(p.dec??2)+(p.unit?' '+p.unit:'');
+
+/* 静态内容 */
+document.title=`格物 ${D.id} ${D.name.replace(/（.*）/,'')}`;
+$('hName').textContent=D.name;
+$('hSub').textContent=`${D.module} · ${D.chapter}　关联：${D.related.join('、')}`;
+$('hTable').innerHTML=`<tr><th>编号</th><th>考查频率</th><th>难度</th><th>版本</th></tr>
+<tr><td class="code">${esc(D.id)}</td><td>${esc(D.freq)}</td><td title="${D.difficulty} / 5">${'●'.repeat(D.difficulty)}${'○'.repeat(5-D.difficulty)}</td><td>${esc(D.version)}</td></tr>`;
+$('foot').textContent=`格物 Gewu · ${D.id} · ${D.version} · g 取 10 m/s²`;
+$('tags').innerHTML=D.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('');
+$('stemNote').textContent=D.problem.note||'';
+$('bCond').innerHTML=D.boundary.conditions.map(c=>`<li><span>${esc(c)}</span></li>`).join('');
+$('bBack').innerHTML=D.boundary.fallback.map(c=>`<li><span>${esc(c)}</span></li>`).join('');
+$('legend').innerHTML=SIM.legend.map(l=>`<span><i style="background:var(${l.color})"></i>${esc(l.label)}</span>`).join('');
+$('concl').innerHTML=D.conclusions.map(c=>`<details><summary><span class="badge">${c.id}</span><span class="t">${esc(c.title)}</span><span class="f">${esc(c.formula)}</span><span class="chev" aria-hidden="true"></span></summary><div class="deriv">${esc(c.derivation)}</div></details>`).join('');
+const qCard=(q,isVar)=>`<article class="q">
+  <div class="head"><span class="badge">${q.id}</span><h3>${esc(q.title)}</h3>${isVar?q.cs.map(c=>`<span class="chip">${c}</span>`).join(''):`<span class="chip">${q.anim?'计划做动画':'不做动画'}</span>`}</div>
+  <p>${esc(q.stem)}</p>
+  ${isVar?'':`<p class="map">映射：<b>${esc(q.map)}</b></p>`}
+  <details><summary><span class="chev" aria-hidden="true"></span>答案与解析</summary><div class="ans"><p class="a">答案：${esc(q.answer)}</p><p>${esc(q.analysis)}</p></div></details>
+  <div class="foot"><span class="src">${esc(q.source)}</span>${isVar?`<button data-load="${q.id}">加载到动画 ↑</button>`:''}</div>
+</article>`;
+$('variants').innerHTML=D.variants.map(v=>qCard(v,true)).join('');
+$('reskins').innerHTML=D.reskins.map(r=>qCard(r,false)).join('');
+$('sources').innerHTML=D.sources.map(s=>`<li><b>${esc(s.src)}</b><span>${esc(s.desc)}</span></li>`).join('');
+
+/* 参数控件 */
+const box=$('params');
+PS.forEach(p=>{
+  if(p.type==='choice'){
+    const d=document.createElement('div');d.className='seg';d.setAttribute('role','group');d.setAttribute('aria-label',p.label);
+    d.innerHTML=p.options.map(o=>`<button id="opt-${p.key}-${o.value}" data-k="${p.key}" data-v="${o.value}">${esc(o.label)}</button>`).join('');
+    box.appendChild(d);
+  }else{
+    const d=document.createElement('div');d.className='field';
+    d.innerHTML=`<label for="in-${p.key}"><span class="s">${esc(p.sym)}</span><span class="note">${esc(p.label)}</span></label><input type="range" id="in-${p.key}" min="${p.min}" max="${p.max}" step="${p.step}" value="${p.def}"><output id="out-${p.key}"></output>`;
+    box.appendChild(d);
+    d.querySelector('input').addEventListener('input',e=>{P[p.key]=+e.target.value;sync();reset()});
+  }
+});
+box.addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(!b)return;P[b.dataset.k]=b.dataset.v;sync();reset()});
+function sync(){
+  PS.forEach(p=>{
+    if(p.type==='choice')p.options.forEach(o=>$(`opt-${p.key}-${o.value}`).setAttribute('aria-pressed',P[p.key]===o.value));
+    else{$(`in-${p.key}`).value=P[p.key];$(`out-${p.key}`).textContent=fmtP(p)}
+  });
+  const fill=s=>esc(s).replace(/\{(\w+)\}/g,(m,k)=>{
+    if(k==='constraint'){const p=PS.find(x=>x.type==='choice');return esc(p.options.find(o=>o.value===P[p.key]).text)}
+    const p=PS.find(x=>x.key===k);return p?`<span class="num">${esc(fmtP(p))}</span>`:m});
+  const [lead,ask='']=D.problem.stem.split(/问[:：]/);
+  $('stem').innerHTML=fill(lead.trim());
+  const qs=ask.split(/[①②③④⑤⑥]/).map(s=>s.trim()).filter(Boolean);
+  $('asks').innerHTML=qs.map((q,i)=>`<li><b>${i+1}</b><span>${fill(q)}</span></li>`).join('');
+  $('asks').hidden=!qs.length;
+  $('given').innerHTML=PS.map(p=>`<dt>${esc(p.sym)}</dt><dd>${esc(fmtP(p))}</dd>`).join('');
+  $('verdict').innerHTML=SIM.verdict(P);
+}
+function load(o){Object.assign(P,o);sync();reset()}
+$('presets').innerHTML=D.presets.map((p,i)=>`<button data-preset="${i}">${esc(p.label)}</button>`).join('');
+$('presets').addEventListener('click',e=>{const b=e.target.closest('[data-preset]');if(b)load(D.presets[+b.dataset.preset].load)});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-load]');if(!b)return;
+  load(D.variants.find(v=>v.id===b.dataset.load).load);
+  $('labPanel').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})});
+
+/* 画布与循环 */
+const cv=$('cv'),ctx=cv.getContext('2d');let S,running=false,speed=1,lastT=0;
+function size(){const r=cv.getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);const w=Math.max(200,Math.round(r.width*dpr));if(cv.width!==w){cv.width=w;cv.height=w}}
+function render(){size();SIM.draw(ctx,S,P,cv.width,cv.height,tok);
+  $('readout').innerHTML=SIM.readouts(S,P).map(([k,v])=>`<div class="ro"><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('');
+  const st=$('status');st.textContent=S.status.text;st.className='status '+S.status.cls}
+function reset(){running=false;S=SIM.init(P);$('play').textContent='▶ 发射';render()}
+function loop(t){if(!running)return;const real=Math.min(.05,(t-lastT)/1000);lastT=t;
+  const sim=real*speed,n=Math.max(1,Math.ceil(sim/5e-4));for(let i=0;i<n;i++)SIM.step(S,P,sim/n);
+  render();if(S.done){running=false;$('play').textContent='▶ 再发射';return}requestAnimationFrame(loop)}
+$('play').onclick=()=>{if(running){running=false;$('play').textContent='▶ 继续';return}
+  if(S.done)S=SIM.init(P);running=true;$('play').textContent='❚❚ 暂停';lastT=performance.now();requestAnimationFrame(loop)};
+$('reset').onclick=reset;
+$('slow').onclick=()=>{speed=speed===1?.25:1;$('slow').textContent=speed===1?'慢放 ×0.25':'正常速度'};
+new ResizeObserver(render).observe(cv);
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',render);
+new MutationObserver(render).observe(root,{attributes:true,attributeFilter:['data-theme']});
+sync();reset();
+})();
+</script>
