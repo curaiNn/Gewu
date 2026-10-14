@@ -1,18 +1,22 @@
-<title>格物 MEC-CIR-01 竖直圆轨道</title>
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>格物 MEC-CIR-01 轻绳模型与轻杆模型</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;800&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;800&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" media="print" onload="this.media='all'">
 
 <!-- ================= 母题数据（由 {编号}.md 转换，页面只改这里和 SIM 模块） ================= -->
 <script type="application/json" id="data">
 {
   "id": "MEC-CIR-01",
-  "name": "竖直圆轨道（绳 / 杆模型）",
+  "name": "竖直面内圆周运动：轻绳模型与轻杆模型",
   "module": "力学",
   "chapter": "必修二 · 圆周运动",
   "freq": "高",
   "difficulty": 3,
-  "version": "v0.2",
+  "version": "v0.3",
   "related": [
     "MEC-ENG 机械能守恒",
     "MEC-PRJ 脱轨后斜抛",
@@ -22,7 +26,7 @@
     "竖直面圆周运动",
     "最高点临界条件",
     "机械能守恒",
-    "绳模型 vs 杆模型",
+    "轻绳模型 vs 轻杆模型",
     "脱轨判断"
   ],
   "problem": {
@@ -38,12 +42,14 @@
         "options": [
           {
             "value": "rope",
-            "label": "绳 / 轨道内侧",
+            "label": "轻绳模型",
+            "hint": "绳 / 内轨道",
             "text": "竖直光滑圆轨道内侧"
           },
           {
             "value": "rod",
-            "label": "杆 / 圆管",
+            "label": "轻杆模型",
+            "hint": "杆 / 圆管",
             "text": "竖直光滑圆管内"
           }
         ]
@@ -232,19 +238,19 @@
   "conclusions": [
     {
       "id": "C1",
-      "title": "绳模型：能过最高点的最小速度",
+      "title": "轻绳模型：能过最高点的最小速度",
       "formula": "v顶 ≥ √(gR)",
       "derivation": "最高点，绳或轨道只能提供向下的力，N ≥ 0。\n向心方程 mg + N = mv²/R，令 N = 0 得 v顶 = √(gR)。"
     },
     {
       "id": "C2",
-      "title": "绳模型：在最低点做完整圆周所需最小速度",
+      "title": "轻绳模型：在最低点做完整圆周所需最小速度",
       "formula": "v₀ ≥ √(5gR)",
       "derivation": "最低点到最高点能量守恒，½mv₀² = ½mv顶² + mg·2R。\n代入 v顶 ≥ √(gR)，得 v₀² ≥ gR + 4gR = 5gR。"
     },
     {
       "id": "C3",
-      "title": "杆模型：在最低点做完整圆周所需速度",
+      "title": "轻杆模型：在最低点做完整圆周所需速度",
       "formula": "v₀ > 2√(gR)；取等号时恰好停在最高点",
       "derivation": "杆或圆管可推可拉，只要到达最高点时速度不为 0，就能越过最高点。\n½mv₀² = ½mv顶² + mg·2R，要求 v顶 > 0，得 v₀ > 2√(gR)。\n取等号时 v顶 = 0，杆对球推力等于 mg，小球停在最高点（不稳定平衡），理论上转不过去。"
     },
@@ -252,23 +258,23 @@
       "id": "C4",
       "title": "光滑完整圆周时，最低点与最高点弹力之差",
       "formula": "N底 − N顶 = 6mg（N 以指向圆心为正）",
-      "derivation": "取指向圆心为正。最低点 N底 − mg = mv₀²/R；最高点 N顶 + mg = mv顶²/R。\n两式相减：N底 − N顶 = 2mg + m(v₀² − v顶²)/R。\n能量守恒 v₀² − v顶² = 4gR，代入得 N底 − N顶 = 6mg。\n推导没有用到 N 的正负限制，所以杆模型同样成立；N顶 < 0 表示杆推球。"
+      "derivation": "取指向圆心为正。最低点 N底 − mg = mv₀²/R；最高点 N顶 + mg = mv顶²/R。\n两式相减：N底 − N顶 = 2mg + m(v₀² − v顶²)/R。\n能量守恒 v₀² − v顶² = 4gR，代入得 N底 − N顶 = 6mg。\n推导没有用到 N 的正负限制，所以轻杆模型同样成立；N顶 < 0 表示杆推球。"
     },
     {
       "id": "C5",
-      "title": "绳模型不脱轨的两种情况",
+      "title": "轻绳模型不脱轨的两种情况",
       "formula": "v₀ ≤ √(2gR) 或 v₀ ≥ √(5gR)",
       "derivation": "v₀ ≤ √(2gR) 时，上升高度 h = v₀²/(2g) ≤ R，小球只在下半圆运动。下半圆中重力沿半径的分量背离圆心，N > 0 恒成立，不脱轨。\nv₀ ≥ √(5gR) 时由 C2 可做完整圆周。"
     },
     {
       "id": "C6",
-      "title": "绳模型脱轨高度（√(2gR) < v₀ < √(5gR)）",
+      "title": "轻绳模型脱轨高度（√(2gR) < v₀ < √(5gR)）",
       "formula": "h = (v₀² + gR) / (3g)",
       "derivation": "设脱轨处与圆心连线和竖直向上方向夹角为 α，高度 h = R + R cos α。\n脱轨时 N = 0，重力沿半径的分量提供向心力：mg cos α = mv²/R。\n能量：v² = v₀² − 2gh。\n联立：g(h − R) = v₀² − 2gh，得 h = (v₀² + gR)/(3g)。"
     },
     {
       "id": "C7",
-      "title": "杆模型最高点杆对球的力",
+      "title": "轻杆模型最高点杆对球的力",
       "formula": "v顶 > √(gR) 拉；= √(gR) 无力；< √(gR) 推",
       "derivation": "最高点 F + mg = mv顶²/R（F 以指向圆心为正）。\nF = m(v顶²/R − g)：v顶 > √(gR) 时 F > 0，杆拉球；相等时 F = 0；小于时 F < 0，杆推球。"
     }
@@ -350,7 +356,7 @@
     },
     {
       "id": "V5",
-      "title": "杆模型最高点受力",
+      "title": "轻杆模型最高点受力",
       "cs": [
         "C7"
       ],
@@ -380,7 +386,7 @@
     },
     {
       "id": "R2",
-      "title": "电场中的等效最高点",
+      "title": "等效重力场：电场中的等效最高点",
       "map": "用等效重力 g' 替代 g",
       "anim": true,
       "source": "原创，未改编自具体真题",
@@ -390,11 +396,11 @@
     },
     {
       "id": "R3",
-      "title": "汽车过凸形桥",
+      "title": "汽车过拱形桥",
       "map": "小球在轨道外侧，约束方向反过来",
       "anim": false,
       "source": "原创，未改编自具体真题",
-      "stem": "汽车以速度 v 通过半径 R 的凸形桥顶，v 多大时车对桥面无压力？",
+      "stem": "汽车以速度 v 通过半径 R 的拱形桥顶，v 多大时车对桥面无压力？",
       "answer": "v = √(gR)",
       "analysis": "桥顶 mg − N = mv²/R，令 N = 0，v = √(gR)。与 C1 是同一临界，但外侧轨道要求 v ≤ √(gR) 才不离开，内侧轨道要求 v ≥ √(gR) 才不脱离。"
     }
@@ -430,7 +436,7 @@
   --paper:#f2f4f3; --grid:#e4e9e6; --card:#ffffff; --sunk:#f6f8f7;
   --ink:#142030; --muted:#5b6979; --faint:#8a96a3; --line:#d6dedA; --hair:#e7ece9;
   --accent:#2443a6; --accent-soft:#e9eefb; --mark:#f7e9b0;
-  --g:#c4382f; --n:#18845a; --v:#2443a6; --track:#34404f; --warn:#a85a14; --ok:#18845a;
+  --g:#c0502a; --n:#17806a; --v:#2f62b3; --a:#a0661a; --track:#34404f; --fig-ink:#1d232b; --fig-aux:#75808c; --warn:#a85a14; --ok:#18845a;
   --shadow:0 1px 0 rgba(20,32,48,.04),0 10px 28px -18px rgba(20,32,48,.28);
   --f-display:"Noto Serif SC","Songti SC","STSong",serif;
   --f-body:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
@@ -440,13 +446,13 @@
   --paper:#10161d; --grid:#18202a; --card:#171f28; --sunk:#131a22;
   --ink:#e4e9ef; --muted:#9aa7b6; --faint:#6f7d8c; --line:#2a3542; --hair:#212b36;
   --accent:#93acff; --accent-soft:#1f2a44; --mark:#4a4020;
-  --g:#ff7d71; --n:#52d39c; --v:#93acff; --track:#c3ccd8; --warn:#f0a35a; --ok:#52d39c;
+  --g:#ef8f6e; --n:#5cc7a0; --v:#8db0ef; --a:#e3ac5c; --track:#c3ccd8; --fig-ink:#dde3ea; --fig-aux:#8794a2; --warn:#f0a35a; --ok:#52d39c;
   --shadow:0 1px 0 rgba(0,0,0,.25),0 12px 30px -20px rgba(0,0,0,.7); color-scheme:dark}}
 :root[data-theme="dark"]{
   --paper:#10161d; --grid:#18202a; --card:#171f28; --sunk:#131a22;
   --ink:#e4e9ef; --muted:#9aa7b6; --faint:#6f7d8c; --line:#2a3542; --hair:#212b36;
   --accent:#93acff; --accent-soft:#1f2a44; --mark:#4a4020;
-  --g:#ff7d71; --n:#52d39c; --v:#93acff; --track:#c3ccd8; --warn:#f0a35a; --ok:#52d39c;
+  --g:#ef8f6e; --n:#5cc7a0; --v:#8db0ef; --a:#e3ac5c; --track:#c3ccd8; --fig-ink:#dde3ea; --fig-aux:#8794a2; --warn:#f0a35a; --ok:#52d39c;
   --shadow:0 1px 0 rgba(0,0,0,.25),0 12px 30px -20px rgba(0,0,0,.7); color-scheme:dark}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -528,6 +534,7 @@ canvas{width:100%;max-width:100%;aspect-ratio:1/1;display:block}
 .status::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--faint);flex:none}
 .status.warn{color:var(--warn)} .status.warn::before{background:var(--warn)}
 .status.ok{color:var(--ok)} .status.ok::before{background:var(--ok)}
+@media (max-width:640px){.status{position:static;margin:8px 10px 10px;max-width:none}}
 .legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--muted)}
 .legend i{display:inline-block;width:16px;height:3px;vertical-align:middle;margin-right:6px;border-radius:2px}
 .readout{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card)}
@@ -559,6 +566,7 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
 .seg{display:flex;padding:3px;gap:3px;border-radius:999px;background:var(--sunk);border:1px solid var(--line)}
 .seg button{flex:1;border:none;padding:6px 10px;background:transparent;color:var(--muted)}
 .seg button[aria-pressed="true"]{background:var(--card);color:var(--ink);font-weight:700;box-shadow:var(--shadow)}
+.seg button small{display:block;font-size:12px;font-weight:400;color:var(--faint);line-height:1.4}
 .presets{display:flex;flex-wrap:wrap;gap:6px}
 .presets button{font-size:13px;padding:4px 12px;background:var(--sunk)}
 .verdict{background:var(--sunk);border:1px solid var(--hair);border-radius:10px;padding:12px 14px;font-size:14px;line-height:1.8}
@@ -692,6 +700,67 @@ footer{font-size:12px;color:var(--faint);text-align:center}
 </div>
 
 <script>
+/* ================= 线稿绘图工具 FIG（所有母题共用，不改） =================
+   画法照试卷插图：装置用墨线，固定面画斜线阴影，辅助线用虚线，物理量和点的字母用斜体衬线；
+   只有矢量带颜色（--g 重力/外力，--n 弹力/约束力，--v 速度，--a 其他矢量）。
+   用法：SIM.draw 里 const F=FIG(ctx,W,tok)；坐标是画布像素，F.u = W/720 是线宽与几何的基准单位，
+   F.ut 是字号单位（窄屏时不再随画布缩小，保证字母不小于约 11 CSS 像素；自写文字函数也要用 F.ut 算字号）。
+   颜色：F.ink 墨线、F.auxColor 辅助线、F.paper 纸色（F.aux 是画辅助线的方法，不是颜色）。 */
+const FIG=(ctx,W,tok)=>{
+  const u=W/720,ink=tok('--fig-ink'),aux=tok('--fig-aux'),paper=tok('--card');
+  const dp=W/(ctx.canvas.clientWidth||W),ut=Math.max(u,dp*11/19);   // dp：每 CSS 像素的画布像素数
+  const SERIF='"Times New Roman","STIX Two Text",Times,serif',SANS=tok('--f-body');
+  const path=(fn,{w=1.6,color=ink,dash=null,fill=null}={})=>{ctx.save();ctx.beginPath();fn();
+    if(fill){ctx.fillStyle=fill;ctx.fill()}
+    if(w>0){ctx.lineWidth=w*u;ctx.strokeStyle=color;ctx.setLineDash(dash?dash.map(d=>d*u):[]);ctx.lineCap='round';ctx.lineJoin='round';ctx.stroke()}
+    ctx.restore()};
+  // 文字先描一圈底色再填色，压在线条上也清楚
+  const text=(t,x,y,font,color,align,base)=>{ctx.save();ctx.font=font;ctx.textAlign=align;ctx.textBaseline=base;
+    ctx.lineJoin="round";ctx.lineWidth=5*ut;ctx.strokeStyle=paper;ctx.strokeText(t,x,y);ctx.fillStyle=color;ctx.fillText(t,x,y);ctx.restore()};
+  const F={u,ut,ink,auxColor:aux,paper,
+    clear(){ctx.save();ctx.setLineDash([]);ctx.fillStyle=paper;ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);ctx.restore()},
+    line(x1,y1,x2,y2,o){path(()=>{ctx.moveTo(x1,y1);ctx.lineTo(x2,y2)},o)},
+    poly(pts,o){path(()=>pts.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y)),o)},
+    circle(x,y,r,o){path(()=>ctx.arc(x,y,r,0,2*Math.PI),o)},
+    arc(x,y,r,a0,a1,o){path(()=>ctx.arc(x,y,r,a0,a1),o)},
+    rect(x,y,w,h,o){path(()=>ctx.rect(x,y,w,h),o)},
+    // 辅助线（中心线、投影线等）
+    aux(x1,y1,x2,y2,o={}){F.line(x1,y1,x2,y2,{w:1,color:aux,dash:[6,5],...o})},
+    // 运动轨迹：细虚线
+    trail(pts,o={}){if(pts.length>1)F.poly(pts,{w:1.3,color:aux,dash:[5,5],...o})},
+    // 固定面斜线：沿 (x1,y1)→(x2,y2) 的直线，画在 side 一侧（屏幕坐标下，1 = 前进方向右手侧）
+    hatch(x1,y1,x2,y2,side=1,{gap=12,len=10}={}){const L=Math.hypot(x2-x1,y2-y1),n=Math.max(1,Math.round(L/(gap*u)));
+      const tx=(x2-x1)/L,ty=(y2-y1)/L,nx=-ty*side,ny=tx*side,ox=(nx-tx)*len*u/Math.SQRT2,oy=(ny-ty)*len*u/Math.SQRT2;
+      path(()=>{for(let i=0;i<=n;i++){const x=x1+(x2-x1)*i/n,y=y1+(y2-y1)*i/n;ctx.moveTo(x,y);ctx.lineTo(x+ox,y+oy)}},{w:1,color:aux})},
+    // 圆弧形固定面的斜线：out = true 画在圆外侧
+    hatchArc(cx,cy,r,a0,a1,out=true,{gap=12,len=10}={}){const n=Math.max(1,Math.round(r*Math.abs(a1-a0)/(gap*u))),s=out?1:-1;
+      path(()=>{for(let i=0;i<=n;i++){const a=a0+(a1-a0)*i/n,c=Math.cos(a),si=Math.sin(a),x=cx+r*c,y=cy+r*si;
+        const nx=c*s,ny=si*s,tx=-si,ty=c;ctx.moveTo(x,y);ctx.lineTo(x+(nx-tx)*len*u/Math.SQRT2,y+(ny-ty)*len*u/Math.SQRT2)}},{w:1,color:aux})},
+    // 矢量：从 (x,y) 画到 (x+dx,y+dy)，细杆 + 窄实心箭头；label 用斜体写在箭头外侧，
+    // 与别的矢量共线时用 off=[dx,dy]（单位 u，相对箭头尖）把标注挪到旁边
+    arrow(x,y,dx,dy,color,label,{w=2,head=12,size=19,off=null}={}){const L=Math.hypot(dx,dy);if(L<2*u)return;
+      const ux=dx/L,uy=dy/L,h=Math.min(head*u,L*.6),hw=h*.34,tx=x+dx,ty=y+dy;
+      F.line(x,y,tx-ux*h*.7,ty-uy*h*.7,{w,color});
+      path(()=>{ctx.moveTo(tx,ty);ctx.lineTo(tx-ux*h-uy*hw,ty-uy*h+ux*hw);ctx.lineTo(tx-ux*h+uy*hw,ty-uy*h-ux*hw);ctx.closePath()},{w:0,fill:color});
+      if(label)F.label(label,off?tx+off[0]*u:tx+ux*14*u,off?ty+off[1]*u:ty+uy*14*u,{color,size})},
+    // 斜体衬线字母（物理量、点名）
+    label(t,x,y,{color=ink,size=19,align='center',base='middle',italic=true}={}){text(t,x,y,`${italic?'italic ':''}${size*ut}px ${SERIF}`,color,align,base)},
+    // 中文小注
+    zh(t,x,y,{color=aux,size=14,align='center',base='middle'}={}){text(t,x,y,`${size*ut}px ${SANS}`,color,align,base)},
+    dot(x,y,r=2.6,color=ink){F.circle(x,y,r*u,{w:0,fill:color})},
+    // 带名字的点：实心小点 + 斜体字母（dx、dy 为字母相对点的偏移，单位 u）
+    point(x,y,name,dx=-13,dy=13){F.dot(x,y);if(name)F.label(name,x+dx*u,y+dy*u)},
+    // 小球：空心圆，球心另用 F.dot 标出（矢量画完后再点，表示力作用在重心）
+    ball(x,y,r){F.circle(x,y,r,{w:1.6,fill:paper})},
+    // 尺寸标注：两端带箭头的细线，文字写在中点外侧 off（单位 u）
+    dim(x1,y1,x2,y2,t,{off=14,color=ink}={}){const L=Math.hypot(x2-x1,y2-y1);if(L<4*u)return;const ux=(x2-x1)/L,uy=(y2-y1)/L,h=Math.min(8*u,L/3),hw=h*.38;
+      F.line(x1,y1,x2,y2,{w:1,color});
+      for(const[px,py,sx]of[[x1,y1,1],[x2,y2,-1]])path(()=>{ctx.moveTo(px,py);ctx.lineTo(px+sx*ux*h-uy*hw,py+sx*uy*h+ux*hw);ctx.lineTo(px+sx*ux*h+uy*hw,py+sx*uy*h-ux*hw);ctx.closePath()},{w:0,fill:color});
+      if(t)F.label(t,(x1+x2)/2-uy*off*u,(y1+y2)/2+ux*off*u,{color})},
+  };
+  return F;
+};
+
 /* ================= SIM 模块：每个母题替换这一段 =================
    约定接口：
    SIM.legend            [{label, color(CSS 变量名)}]
@@ -714,7 +783,7 @@ const SIM=(()=>{
   }
   const norm=a=>{a%=2*Math.PI;return a<0?a+2*Math.PI:a};
   return{
-    legend:[{label:'重力 G',color:'--g'},{label:'轨道弹力 N',color:'--n'},{label:'速度 v',color:'--v'}],
+    legend:[{label:'重力 mg',color:'--g'},{label:'弹力 N',color:'--n'},{label:'速度 v',color:'--v'}],
     init(P){return{th:0,w:P.v0/P.R,t:0,free:false,x:0,y:-P.R,vx:P.v0,vy:0,done:false,Q:0,maxTh:0,trail:[],status:{text:'准备就绪',cls:''}}},
     step(S,P,dt){
       if(S.done)return;
@@ -738,7 +807,7 @@ const SIM=(()=>{
       }
       S.th=nth;S.w=nw;S.t+=dt;S.maxTh=Math.max(S.maxTh,S.th);
       if(P.mode==='rope'&&Nm(P,S.th,S.w)<-1e-6){
-        S.free=true;const[x,y]=pos(P,S);S.x=x;S.y=y;
+        S.free=true;const[x,y]=pos(P,S);S.x=x;S.y=y;S.det=[x,y];
         S.vx=S.w*P.R*Math.cos(S.th);S.vy=S.w*P.R*Math.sin(S.th);
         S.status={text:`在高度 h = ${fmt(P.R+y)} m 处脱离轨道（N 减到 0）`,cls:'warn'};
       }else if(P.mode==='rod'&&P.mu===0&&Math.abs(S.w)<2e-3&&Math.cos(S.th)<-0.9999){
@@ -763,29 +832,33 @@ const SIM=(()=>{
         ['机械能 E',fmt(ek+ep,3)+' J'],['摩擦生热 Q',fmt(S.Q,3)+' J']];
     },
     draw(ctx,S,P,W,H,tok){
-      const cx=W/2,cy=H/2+W*0.01,Rp=W*0.35,sc=Rp/P.R,T=x=>cx+x*sc,TY=y=>cy-y*sc,u=W/720;
-      ctx.clearRect(0,0,W,H);ctx.fillStyle=tok('--card');ctx.fillRect(0,0,W,H);
-      ctx.setLineDash([6*u,8*u]);ctx.strokeStyle=tok('--line');ctx.lineWidth=1.5*u;
-      ctx.beginPath();ctx.moveTo(cx-Rp-30*u,cy);ctx.lineTo(cx+Rp+30*u,cy);ctx.moveTo(cx,cy-Rp-30*u);ctx.lineTo(cx,cy+Rp+30*u);ctx.stroke();ctx.setLineDash([]);
-      ctx.font=`${16*u}px ${tok('--f-body')}`;ctx.fillStyle=tok('--muted');
-      ctx.fillText('圆心',cx+8*u,cy-8*u);ctx.fillText('最高点',cx+10*u,cy-Rp-16*u);ctx.fillText('最低点',cx+10*u,cy+Rp+28*u);
-      ctx.strokeStyle=tok('--track');
-      if(P.mode==='rod'){ctx.lineWidth=2*u;ctx.beginPath();ctx.arc(cx,cy,Rp+14*u,0,7);ctx.stroke();ctx.beginPath();ctx.arc(cx,cy,Rp-14*u,0,7);ctx.stroke()}
-      else{ctx.lineWidth=4*u;ctx.beginPath();ctx.arc(cx,cy,Rp+12*u,0,7);ctx.stroke();ctx.lineWidth=1.2*u;
-        for(let i=0;i<72;i++){const a=i/72*2*Math.PI;ctx.beginPath();ctx.moveTo(cx+(Rp+12*u)*Math.cos(a),cy+(Rp+12*u)*Math.sin(a));
-          ctx.lineTo(cx+(Rp+22*u)*Math.cos(a+.06),cy+(Rp+22*u)*Math.sin(a+.06));ctx.stroke()}}
-      if(S.trail.length>1){ctx.strokeStyle=tok('--accent');ctx.globalAlpha=.35;ctx.lineWidth=2.5*u;ctx.beginPath();
-        S.trail.forEach(([x,y],i)=>i?ctx.lineTo(T(x),TY(y)):ctx.moveTo(T(x),TY(y)));ctx.stroke();ctx.globalAlpha=1}
-      const c=cur(S,P),bx=T(c.x),by=TY(c.y),mg=P.m*g,fs=55*u/mg;
-      const arrow=(dx,dy,col,lab)=>{const L=Math.hypot(dx,dy);if(L<3*u)return;ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=3*u;ctx.lineCap='round';
-        ctx.beginPath();ctx.moveTo(bx,by);ctx.lineTo(bx+dx,by+dy);ctx.stroke();const a=Math.atan2(dy,dx),hs=10*u;
-        ctx.beginPath();ctx.moveTo(bx+dx,by+dy);ctx.lineTo(bx+dx-hs*Math.cos(a-.4),by+dy-hs*Math.sin(a-.4));ctx.lineTo(bx+dx-hs*Math.cos(a+.4),by+dy-hs*Math.sin(a+.4));ctx.closePath();ctx.fill();
-        ctx.font=`600 ${17*u}px ${tok('--f-mono')}`;ctx.fillText(lab,bx+dx+10*u*Math.cos(a)-4*u,by+dy+10*u*Math.sin(a)+6*u)};
-      arrow(0,mg*fs,tok('--g'),'G');
-      if(!S.free&&Math.abs(c.N)>1e-6){const ux=-c.x/P.R,uy=-c.y/P.R;let L=c.N*fs;const cap=Rp*.95;if(Math.abs(L)>cap)L=Math.sign(L)*cap;arrow(ux*L,-uy*L,tok('--n'),'N')}
-      arrow(c.vx*22*u,-c.vy*22*u,tok('--v'),'v');
-      ctx.fillStyle=tok('--ink');ctx.beginPath();ctx.arc(bx,by,12*u,0,7);ctx.fill();
-      ctx.fillStyle=tok('--card');ctx.beginPath();ctx.arc(bx-4*u,by-4*u,3.5*u,0,7);ctx.fill();
+      // 小球按质点计算，球心沿半径 R 运动；画图时小球整个落在轨道内侧（或圆管中），与轨道相切
+      const F=FIG(ctx,W,tok),u=F.u,cx=W/2,cy=H/2,Rp=W*0.32,sc=Rp/P.R,X=x=>cx+x*sc,Y=y=>cy-y*sc,rb=10*u;
+      // 标注偏移按字号单位放大（F.arrow 的 off、F.point 的偏移以 u 计），窄屏时字大了，空隙也跟着大
+      const k=F.ut/u,tip=(dx,dy,g=15)=>{const L=Math.hypot(dx,dy)||1;return[dx/L*g*k,dy/L*g*k]};
+      F.clear();
+      F.aux(cx-Rp-54*u,cy,cx+Rp+54*u,cy);F.aux(cx,cy-Rp-54*u,cx,cy+Rp+54*u);
+      const rOut=P.mode==='rod'?Rp+rb+3*u:Rp+rb;
+      if(P.mode==='rod'){F.circle(cx,cy,rOut,{w:1.8});F.circle(cx,cy,Rp-rb-3*u,{w:1.8})}
+      else{F.circle(cx,cy,rOut,{w:2});F.hatchArc(cx,cy,rOut,0,2*Math.PI,true)}
+      F.zh('最高点',cx-6*u,cy-rOut-22*F.ut,{align:'right'});F.zh('最低点',cx-6*u,cy+rOut+22*F.ut,{align:'right'});
+      // 半径 R：从圆心画到左下方的球心轨迹上
+      const ra=Math.PI*.75,ex=cx+Rp*Math.cos(ra),ey=cy+Rp*Math.sin(ra);
+      F.line(cx,cy,ex,ey,{w:1.1});F.label('R',(cx+ex)/2+12*F.ut,(cy+ey)/2+12*F.ut);
+      F.point(cx,cy,'O',-15*k,-15*k);
+      // 脱轨点与脱轨高度 h（从最低点量起）
+      if(S.det){const px=X(S.det[0]),py=Y(S.det[1]),xr=cx+rOut+34*u;
+        F.aux(px,py,xr+8*u,py);F.aux(cx,Y(-P.R),xr+8*u,Y(-P.R));F.dim(xr,Y(-P.R),xr,py,'h',{off:-12*k});
+        F.dot(px,py,2.4);F.zh('脱轨点',px+(px<cx?-30:30)*F.ut,py-16*F.ut)}
+      F.trail(S.trail.map(([x,y])=>[X(x),Y(y)]));
+      const c=cur(S,P),bx=X(c.x),by=Y(c.y),mg=P.m*g,fs=46*u/mg;
+      if(!S.free)F.line(cx,cy,bx,by,{w:1,color:F.auxColor,dash:[3,4]});
+      F.ball(bx,by,rb);
+      // N 先画、mg 后画：两者共线时较短的 mg 叠在上面，两支都看得见
+      if(!S.free&&Math.abs(c.N)>1e-6){const ux=-c.x/P.R,uy=-c.y/P.R;let L=c.N*fs;const cap=Rp*.6;if(Math.abs(L)>cap)L=Math.sign(L)*cap;F.arrow(bx,by,ux*L,-uy*L,tok('--n'),'N',{off:tip(ux*L,-uy*L)})}
+      F.arrow(bx,by,0,mg*fs,tok('--g'),'mg',{off:[18*k,-8]});
+      F.arrow(bx,by,c.vx*22*u,-c.vy*22*u,tok('--v'),S.t>0?'v':'v₀',{off:tip(c.vx,-c.vy)});
+      F.dot(bx,by,2.2);
     },
     verdict(P){
       const{v0,R,m}=P,gR=g*R,v2=v0*v0,mg=m*g,k=v2/gR;
@@ -849,7 +922,7 @@ const box=$('params');
 PS.forEach(p=>{
   if(p.type==='choice'){
     const d=document.createElement('div');d.className='seg';d.setAttribute('role','group');d.setAttribute('aria-label',p.label);
-    d.innerHTML=p.options.map(o=>`<button id="opt-${p.key}-${o.value}" data-k="${p.key}" data-v="${o.value}">${esc(o.label)}</button>`).join('');
+    d.innerHTML=p.options.map(o=>`<button id="opt-${p.key}-${o.value}" data-k="${p.key}" data-v="${o.value}">${esc(o.label)}${o.hint?`<small>${esc(o.hint)}</small>`:""}</button>`).join('');
     box.appendChild(d);
   }else{
     const d=document.createElement('div');d.className='field';d.id=`f-${p.key}`;

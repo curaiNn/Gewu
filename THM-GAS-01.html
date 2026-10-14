@@ -1,18 +1,22 @@
-<title>格物 THM-GAS-01 封闭气体</title>
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>格物 THM-GAS-01 气缸活塞类问题</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;800&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;800&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" media="print" onload="this.media='all'">
 
 <!-- ================= 母题数据（由 {编号}.md 转换，页面只改这里和 SIM 模块） ================= -->
 <script type="application/json" id="data">
 {
   "id": "THM-GAS-01",
-  "name": "封闭气体状态变化（竖直气缸 / 液柱）",
+  "name": "气缸活塞类问题（气体实验定律）",
   "module": "热学",
   "chapter": "选择性必修三 · 气体、固体和液体",
   "freq": "高",
   "difficulty": 3,
-  "version": "v0.1",
+  "version": "v0.2",
   "related": [
     "MEC-SHM-01 气缸活塞小振动",
     "MEC-NEW-01 受力平衡求压强"
@@ -490,7 +494,7 @@
   --paper:#f2f4f3; --grid:#e4e9e6; --card:#ffffff; --sunk:#f6f8f7;
   --ink:#142030; --muted:#5b6979; --faint:#8a96a3; --line:#d6dedA; --hair:#e7ece9;
   --accent:#2443a6; --accent-soft:#e9eefb; --mark:#f7e9b0;
-  --g:#c4382f; --n:#18845a; --v:#2443a6; --track:#34404f; --warn:#a85a14; --ok:#18845a;
+  --g:#c0502a; --n:#17806a; --v:#2f62b3; --a:#a0661a; --track:#34404f; --fig-ink:#1d232b; --fig-aux:#75808c; --warn:#a85a14; --ok:#18845a;
   --shadow:0 1px 0 rgba(20,32,48,.04),0 10px 28px -18px rgba(20,32,48,.28);
   --f-display:"Noto Serif SC","Songti SC","STSong",serif;
   --f-body:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
@@ -500,13 +504,13 @@
   --paper:#10161d; --grid:#18202a; --card:#171f28; --sunk:#131a22;
   --ink:#e4e9ef; --muted:#9aa7b6; --faint:#6f7d8c; --line:#2a3542; --hair:#212b36;
   --accent:#93acff; --accent-soft:#1f2a44; --mark:#4a4020;
-  --g:#ff7d71; --n:#52d39c; --v:#93acff; --track:#c3ccd8; --warn:#f0a35a; --ok:#52d39c;
+  --g:#ef8f6e; --n:#5cc7a0; --v:#8db0ef; --a:#e3ac5c; --track:#c3ccd8; --fig-ink:#dde3ea; --fig-aux:#8794a2; --warn:#f0a35a; --ok:#52d39c;
   --shadow:0 1px 0 rgba(0,0,0,.25),0 12px 30px -20px rgba(0,0,0,.7); color-scheme:dark}}
 :root[data-theme="dark"]{
   --paper:#10161d; --grid:#18202a; --card:#171f28; --sunk:#131a22;
   --ink:#e4e9ef; --muted:#9aa7b6; --faint:#6f7d8c; --line:#2a3542; --hair:#212b36;
   --accent:#93acff; --accent-soft:#1f2a44; --mark:#4a4020;
-  --g:#ff7d71; --n:#52d39c; --v:#93acff; --track:#c3ccd8; --warn:#f0a35a; --ok:#52d39c;
+  --g:#ef8f6e; --n:#5cc7a0; --v:#8db0ef; --a:#e3ac5c; --track:#c3ccd8; --fig-ink:#dde3ea; --fig-aux:#8794a2; --warn:#f0a35a; --ok:#52d39c;
   --shadow:0 1px 0 rgba(0,0,0,.25),0 12px 30px -20px rgba(0,0,0,.7); color-scheme:dark}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -588,6 +592,7 @@ canvas{width:100%;max-width:100%;aspect-ratio:1/1;display:block}
 .status::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--faint);flex:none}
 .status.warn{color:var(--warn)} .status.warn::before{background:var(--warn)}
 .status.ok{color:var(--ok)} .status.ok::before{background:var(--ok)}
+@media (max-width:640px){.status{position:static;margin:8px 10px 10px;max-width:none}}
 .legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--muted)}
 .legend i{display:inline-block;width:16px;height:3px;vertical-align:middle;margin-right:6px;border-radius:2px}
 .readout{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card)}
@@ -619,6 +624,7 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
 .seg{display:flex;padding:3px;gap:3px;border-radius:999px;background:var(--sunk);border:1px solid var(--line)}
 .seg button{flex:1;border:none;padding:6px 10px;background:transparent;color:var(--muted)}
 .seg button[aria-pressed="true"]{background:var(--card);color:var(--ink);font-weight:700;box-shadow:var(--shadow)}
+.seg button small{display:block;font-size:12px;font-weight:400;color:var(--faint);line-height:1.4}
 .presets{display:flex;flex-wrap:wrap;gap:6px}
 .presets button{font-size:13px;padding:4px 12px;background:var(--sunk)}
 .verdict{background:var(--sunk);border:1px solid var(--hair);border-radius:10px;padding:12px 14px;font-size:14px;line-height:1.8}
@@ -752,6 +758,67 @@ footer{font-size:12px;color:var(--faint);text-align:center}
 </div>
 
 <script>
+/* ================= 线稿绘图工具 FIG（所有母题共用，不改） =================
+   画法照试卷插图：装置用墨线，固定面画斜线阴影，辅助线用虚线，物理量和点的字母用斜体衬线；
+   只有矢量带颜色（--g 重力/外力，--n 弹力/约束力，--v 速度，--a 其他矢量）。
+   用法：SIM.draw 里 const F=FIG(ctx,W,tok)；坐标是画布像素，F.u = W/720 是线宽与几何的基准单位，
+   F.ut 是字号单位（窄屏时不再随画布缩小，保证字母不小于约 11 CSS 像素；自写文字函数也要用 F.ut 算字号）。
+   颜色：F.ink 墨线、F.auxColor 辅助线、F.paper 纸色（F.aux 是画辅助线的方法，不是颜色）。 */
+const FIG=(ctx,W,tok)=>{
+  const u=W/720,ink=tok('--fig-ink'),aux=tok('--fig-aux'),paper=tok('--card');
+  const dp=W/(ctx.canvas.clientWidth||W),ut=Math.max(u,dp*11/19);   // dp：每 CSS 像素的画布像素数
+  const SERIF='"Times New Roman","STIX Two Text",Times,serif',SANS=tok('--f-body');
+  const path=(fn,{w=1.6,color=ink,dash=null,fill=null}={})=>{ctx.save();ctx.beginPath();fn();
+    if(fill){ctx.fillStyle=fill;ctx.fill()}
+    if(w>0){ctx.lineWidth=w*u;ctx.strokeStyle=color;ctx.setLineDash(dash?dash.map(d=>d*u):[]);ctx.lineCap='round';ctx.lineJoin='round';ctx.stroke()}
+    ctx.restore()};
+  // 文字先描一圈底色再填色，压在线条上也清楚
+  const text=(t,x,y,font,color,align,base)=>{ctx.save();ctx.font=font;ctx.textAlign=align;ctx.textBaseline=base;
+    ctx.lineJoin="round";ctx.lineWidth=5*ut;ctx.strokeStyle=paper;ctx.strokeText(t,x,y);ctx.fillStyle=color;ctx.fillText(t,x,y);ctx.restore()};
+  const F={u,ut,ink,auxColor:aux,paper,
+    clear(){ctx.save();ctx.setLineDash([]);ctx.fillStyle=paper;ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);ctx.restore()},
+    line(x1,y1,x2,y2,o){path(()=>{ctx.moveTo(x1,y1);ctx.lineTo(x2,y2)},o)},
+    poly(pts,o){path(()=>pts.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y)),o)},
+    circle(x,y,r,o){path(()=>ctx.arc(x,y,r,0,2*Math.PI),o)},
+    arc(x,y,r,a0,a1,o){path(()=>ctx.arc(x,y,r,a0,a1),o)},
+    rect(x,y,w,h,o){path(()=>ctx.rect(x,y,w,h),o)},
+    // 辅助线（中心线、投影线等）
+    aux(x1,y1,x2,y2,o={}){F.line(x1,y1,x2,y2,{w:1,color:aux,dash:[6,5],...o})},
+    // 运动轨迹：细虚线
+    trail(pts,o={}){if(pts.length>1)F.poly(pts,{w:1.3,color:aux,dash:[5,5],...o})},
+    // 固定面斜线：沿 (x1,y1)→(x2,y2) 的直线，画在 side 一侧（屏幕坐标下，1 = 前进方向右手侧）
+    hatch(x1,y1,x2,y2,side=1,{gap=12,len=10}={}){const L=Math.hypot(x2-x1,y2-y1),n=Math.max(1,Math.round(L/(gap*u)));
+      const tx=(x2-x1)/L,ty=(y2-y1)/L,nx=-ty*side,ny=tx*side,ox=(nx-tx)*len*u/Math.SQRT2,oy=(ny-ty)*len*u/Math.SQRT2;
+      path(()=>{for(let i=0;i<=n;i++){const x=x1+(x2-x1)*i/n,y=y1+(y2-y1)*i/n;ctx.moveTo(x,y);ctx.lineTo(x+ox,y+oy)}},{w:1,color:aux})},
+    // 圆弧形固定面的斜线：out = true 画在圆外侧
+    hatchArc(cx,cy,r,a0,a1,out=true,{gap=12,len=10}={}){const n=Math.max(1,Math.round(r*Math.abs(a1-a0)/(gap*u))),s=out?1:-1;
+      path(()=>{for(let i=0;i<=n;i++){const a=a0+(a1-a0)*i/n,c=Math.cos(a),si=Math.sin(a),x=cx+r*c,y=cy+r*si;
+        const nx=c*s,ny=si*s,tx=-si,ty=c;ctx.moveTo(x,y);ctx.lineTo(x+(nx-tx)*len*u/Math.SQRT2,y+(ny-ty)*len*u/Math.SQRT2)}},{w:1,color:aux})},
+    // 矢量：从 (x,y) 画到 (x+dx,y+dy)，细杆 + 窄实心箭头；label 用斜体写在箭头外侧，
+    // 与别的矢量共线时用 off=[dx,dy]（单位 u，相对箭头尖）把标注挪到旁边
+    arrow(x,y,dx,dy,color,label,{w=2,head=12,size=19,off=null}={}){const L=Math.hypot(dx,dy);if(L<2*u)return;
+      const ux=dx/L,uy=dy/L,h=Math.min(head*u,L*.6),hw=h*.34,tx=x+dx,ty=y+dy;
+      F.line(x,y,tx-ux*h*.7,ty-uy*h*.7,{w,color});
+      path(()=>{ctx.moveTo(tx,ty);ctx.lineTo(tx-ux*h-uy*hw,ty-uy*h+ux*hw);ctx.lineTo(tx-ux*h+uy*hw,ty-uy*h-ux*hw);ctx.closePath()},{w:0,fill:color});
+      if(label)F.label(label,off?tx+off[0]*u:tx+ux*14*u,off?ty+off[1]*u:ty+uy*14*u,{color,size})},
+    // 斜体衬线字母（物理量、点名）
+    label(t,x,y,{color=ink,size=19,align='center',base='middle',italic=true}={}){text(t,x,y,`${italic?'italic ':''}${size*ut}px ${SERIF}`,color,align,base)},
+    // 中文小注
+    zh(t,x,y,{color=aux,size=14,align='center',base='middle'}={}){text(t,x,y,`${size*ut}px ${SANS}`,color,align,base)},
+    dot(x,y,r=2.6,color=ink){F.circle(x,y,r*u,{w:0,fill:color})},
+    // 带名字的点：实心小点 + 斜体字母（dx、dy 为字母相对点的偏移，单位 u）
+    point(x,y,name,dx=-13,dy=13){F.dot(x,y);if(name)F.label(name,x+dx*u,y+dy*u)},
+    // 小球：空心圆，球心另用 F.dot 标出（矢量画完后再点，表示力作用在重心）
+    ball(x,y,r){F.circle(x,y,r,{w:1.6,fill:paper})},
+    // 尺寸标注：两端带箭头的细线，文字写在中点外侧 off（单位 u）
+    dim(x1,y1,x2,y2,t,{off=14,color=ink}={}){const L=Math.hypot(x2-x1,y2-y1);if(L<4*u)return;const ux=(x2-x1)/L,uy=(y2-y1)/L,h=Math.min(8*u,L/3),hw=h*.38;
+      F.line(x1,y1,x2,y2,{w:1,color});
+      for(const[px,py,sx]of[[x1,y1,1],[x2,y2,-1]])path(()=>{ctx.moveTo(px,py);ctx.lineTo(px+sx*ux*h-uy*hw,py+sx*uy*h+ux*hw);ctx.lineTo(px+sx*ux*h+uy*hw,py+sx*uy*h-ux*hw);ctx.closePath()},{w:0,fill:color});
+      if(t)F.label(t,(x1+x2)/2-uy*off*u,(y1+y2)/2+ux*off*u,{color})},
+  };
+  return F;
+};
+
 /* ================= SIM 模块：每个母题替换这一段 =================
    约定接口：
    SIM.legend            [{label, color(CSS 变量名)}]
@@ -785,17 +852,12 @@ const SIM=(()=>{
   const Tat=(P,K,t)=>K.iso?P.T0:P.T0+(K.Tf-P.T0)*Math.min(t/TR,1);
   const pres=(K,T,x)=>K.C*T/x;
   function force(P,K,t,x,v){return(pres(K,Tat(P,K,t),x)-p0)*K.A-K.Mt*g-K.c*v}
-  function rng(seed){let s=seed;return()=>{s=(s*16807)%2147483647;return(s-1)/2147483646}}
-  function mix(a,b,f){const h=s=>{s=s.replace('#','');if(s.length===3)s=s.split('').map(c=>c+c).join('');return[0,2,4].map(i=>parseInt(s.slice(i,i+2),16))};
-    try{const A=h(a),B=h(b);return`rgb(${A.map((v,i)=>Math.round(v+(B[i]-v)*f)).join(',')})`}catch(e){return a}}
   function nice(x){const e=Math.pow(10,Math.floor(Math.log10(x))),f=x/e;return(f<=1?1:f<=2?2:f<=5?5:10)*e}
   return{
-    legend:[{label:'气体（蓝冷 → 红热）',color:'--v'},{label:'活塞 / 气缸',color:'--track'},{label:'砝码 m',color:'--warn'},{label:'p–V 过程路径',color:'--accent'}],
+    legend:[{label:'砝码重力 mg',color:'--g'},{label:'卡口对活塞的力（卡口等容）',color:'--n'}],
     init(P){
-      const K=cfg(P),r=rng(7),parts=[];
-      for(let i=0;i<90;i++)parts.push([r(),r(),r()*6.283,0.6+r()]);
-      const T=P.T0;
-      return{t:0,x:K.h0,v:0,T,p:K.p1,W:0,loaded:!K.iso,onStop:false,Nstop:0,done:false,parts,
+      const K=cfg(P),T=P.T0;
+      return{t:0,x:K.h0,v:0,T,p:K.p1,W:0,loaded:!K.iso,onStop:false,Nstop:0,done:false,
         path:[[K.h0*K.A*1e6,K.p1]],lastRec:0,K,status:{text:'准备就绪',cls:''}};
     },
     step(S,P,dt){
@@ -851,94 +913,132 @@ const SIM=(()=>{
       return r;
     },
     draw(ctx,S,P,W,H,tok){
-      const K=S.K,u=W/720,mono=tok('--f-mono'),body=tok('--f-body');
-      ctx.clearRect(0,0,W,H);ctx.fillStyle=tok('--card');ctx.fillRect(0,0,W,H);
-      const txt=(s,x,y,col,sz=18,al='left',w='')=>{ctx.fillStyle=col;ctx.font=`${w}${sz*u}px ${body}`;ctx.textAlign=al;ctx.fillText(s,x,y);ctx.textAlign='left'};
-      const mtxt=(s,x,y,col,sz=17,al='left',w='')=>{ctx.fillStyle=col;ctx.font=`${w}${sz*u}px ${mono}`;ctx.textAlign=al;ctx.fillText(s,x,y);ctx.textAlign='left'};
-      /* ---------- 左：气缸 ---------- */
-      const hmax=Math.max(K.h0,K.hf)*1.15,yb=575*u,pt=22*u,cx0=118*u,cw=180*u,sc=(370*u)/hmax;
-      const X=Math.min(S.x,hmax*1.08),yPb=yb-X*sc,yPt=yPb-pt,wallTop=Math.min(yPt-70*u,yb-hmax*sc-pt-70*u);
-      // 温度颜色
-      const f=Math.max(0,Math.min(1,(S.T-200)/400)),gc=mix(tok('--v'),tok('--g'),f);
-      ctx.globalAlpha=.16;ctx.fillStyle=gc;ctx.fillRect(cx0,yPb,cw,yb-yPb);ctx.globalAlpha=1;
-      ctx.fillStyle=gc;const amp=2.5*u*Math.sqrt(S.T/300);
-      for(const[a,b,ph,sp]of S.parts){
-        const px=cx0+7*u+a*(cw-14*u)+amp*Math.sin(S.t*40*sp+ph),py=yb-5*u-b*(yb-yPb-10*u)+amp*Math.cos(S.t*37*sp+ph*1.7);
-        ctx.beginPath();ctx.arc(px,py,3.6*u,0,7);ctx.fill()}
-      // 器壁
-      ctx.strokeStyle=tok('--track');ctx.lineWidth=6*u;ctx.lineCap='square';ctx.beginPath();
-      ctx.moveTo(cx0-3*u,wallTop);ctx.lineTo(cx0-3*u,yb+3*u);ctx.lineTo(cx0+cw+3*u,yb+3*u);ctx.lineTo(cx0+cw+3*u,wallTop);ctx.stroke();
-      // 卡口
-      if(K.stop){const ys=yb-K.h0*sc-pt;ctx.fillStyle=tok('--ink');
-        ctx.fillRect(cx0,ys-12*u,14*u,12*u);ctx.fillRect(cx0+cw-14*u,ys-12*u,14*u,12*u);
-        txt('卡口',cx0+cw+14*u,ys-2*u,tok('--ink'),16,'left','600 ')}
-      // 活塞
-      ctx.fillStyle=tok('--track');ctx.fillRect(cx0+1*u,yPt,cw-2*u,pt);
-      txt('M',cx0+cw/2,yPt+pt-5*u,tok('--card'),16,'center','700 ');
-      // 砝码
-      if(P.m>0){const bw=cw*.55,bh=34*u,bx=cx0+(cw-bw)/2;
-        if(S.loaded){ctx.fillStyle=tok('--warn');ctx.fillRect(bx,yPt-bh,bw,bh);txt('m',bx+bw/2,yPt-bh/2+6*u,tok('--card'),18,'center','700 ')}
-        else{const by=yPt-bh-60*u;ctx.setLineDash([5*u,5*u]);ctx.strokeStyle=tok('--warn');ctx.lineWidth=2*u;ctx.strokeRect(bx,by,bw,bh);ctx.setLineDash([]);
-          txt('m（待放）',bx+bw/2,by+bh/2+6*u,tok('--warn'),16,'center','600 ')}}
-      // 大气压
-      txt('p₀ = 1.0×10⁵ Pa',cx0+cw/2,Math.max(70*u,wallTop-14*u),tok('--muted'),16,'center');
-      // 刻度尺（cm）
-      const rx=cx0-34*u,hcm=hmax*100,st=nice(hcm/8),mn=st/5;
-      ctx.strokeStyle=tok('--muted');ctx.fillStyle=tok('--muted');ctx.lineWidth=1.5*u;ctx.beginPath();ctx.moveTo(rx,yb);ctx.lineTo(rx,yb-hmax*sc);ctx.stroke();
-      for(let v=0;v<=hcm+1e-9;v+=mn){const y=yb-v/100*sc,major=Math.abs(v/st-Math.round(v/st))<1e-6;
-        ctx.beginPath();ctx.moveTo(rx,y);ctx.lineTo(rx+(major?12:6)*u,y);ctx.stroke();
-        if(major)mtxt(String(+v.toFixed(2)),rx-6*u,y+5*u,tok('--muted'),14,'right')}
-      txt('cm',rx,yb-hmax*sc-12*u,tok('--muted'),14,'center');
-      // h₀ 虚线与当前 h 标注
-      const y0=yb-K.h0*sc;ctx.setLineDash([6*u,6*u]);ctx.strokeStyle=tok('--faint');ctx.lineWidth=1.5*u;
-      ctx.beginPath();ctx.moveTo(cx0,y0);ctx.lineTo(cx0+cw+26*u,y0);ctx.stroke();ctx.setLineDash([]);
-      mtxt('h₀',cx0+cw+30*u,y0+5*u,tok('--faint'),15);
-      const ax=cx0+cw+48*u;ctx.strokeStyle=tok('--accent');ctx.fillStyle=tok('--accent');ctx.lineWidth=2*u;
-      ctx.beginPath();ctx.moveTo(ax,yb);ctx.lineTo(ax,yPb);ctx.stroke();
-      for(const[yy,d]of[[yb,1],[yPb,-1]]){ctx.beginPath();ctx.moveTo(ax,yy);ctx.lineTo(ax-5*u,yy-d*9*u);ctx.lineTo(ax+5*u,yy-d*9*u);ctx.closePath();ctx.fill()}
-      ctx.save();ctx.translate(ax+20*u,(yb+yPb)/2);ctx.rotate(-Math.PI/2);mtxt(`h = ${fmt(S.x*100,1)} cm`,0,0,tok('--accent'),16,'center','600 ');ctx.restore();
-      // 底部热源
-      const heat=!K.iso&&K.Tf!==P.T0,hc=!heat?tok('--track'):K.Tf>P.T0?tok('--g'):tok('--v');
-      ctx.fillStyle=hc;ctx.globalAlpha=heat&&S.t<TR&&S.t>0?1:.45;ctx.fillRect(cx0-6*u,yb+10*u,cw+12*u,12*u);ctx.globalAlpha=1;
-      txt(K.iso?'导热良好，T 保持 T₀':heat?(K.Tf>P.T0?'加热：T₀ → T':'降温：T₀ → T'):'温度不变',cx0+cw/2,yb+48*u,tok('--muted'),16,'center');
-      txt(KPROC[P.proc],cx0+cw/2,yb+76*u,tok('--ink'),18,'center','700 ');
-      /* ---------- 右：p–V 图 ---------- */
-      const gx0=432*u,gx1=692*u,gy0=110*u,gy1=410*u;
-      const V1=K.h0*K.A*1e6,Vf=K.hf*K.A*1e6;
-      let Vm=Math.max(V1,Vf,S.x*K.A*1e6)*1.2,pm=Math.max(K.p1,K.pf,S.p)*1.2;
+      // 几何用 u；文字字号、文字相关的偏移和行距用 t = F.ut（窄屏时 t > u，字不跟着画布缩小）
+      const K=S.K,F=FIG(ctx,W,tok),u=F.u,t=F.ut,kt=t/u,SERIF='"Times New Roman","STIX Two Text",Times,serif',SANS=tok('--f-body');
+      // 桌面宽度状态条浮在画布左上角，顶上留出它的高度；窄屏（≤ 640px）状态条排到画布下方，顶端空间还给图形
+      const narrow=typeof matchMedia==='function'&&matchMedia('(max-width:640px)').matches;
+      const dp=W/(ctx.canvas.clientWidth||W),top=narrow?6*u:Math.max(50*dp,40*u);
+      F.clear();
+      // 混排一行：segs=[[文字, 'i' 斜体字母 | 'r' 正体数字与单位 | 'z' 中文小注, 可选颜色]]；先给整行描底色再统一填字，相邻段的底色不会盖住前一段
+      const fnt=(kind,size)=>kind==='z'?`${(size-2)*t}px ${SANS}`:`${kind==='i'?'italic ':''}${size*t}px ${SERIF}`;
+      const widths=(segs,size)=>{ctx.save();const ws=segs.map(([s,kind])=>{ctx.font=fnt(kind,size);return ctx.measureText(s).width});ctx.restore();return ws};
+      const width=(segs,size=17)=>widths(segs,size).reduce((a,b)=>a+b,0);
+      const rich=(segs,x,y,{size=17,align='center',color=F.ink}={})=>{
+        const ws=widths(segs,size),tw=ws.reduce((a,b)=>a+b,0);
+        let x0=align==='left'?x:align==='right'?x-tw:x-tw/2;const xs=ws.map(w=>{const s=x0;x0+=w;return s});
+        ctx.save();ctx.textAlign='left';ctx.textBaseline='middle';ctx.lineJoin='round';ctx.lineWidth=5*t;ctx.strokeStyle=F.paper;
+        for(const fill of[false,true])segs.forEach(([s,kind,c],i)=>{ctx.font=fnt(kind,size);ctx.fillStyle=c||color;fill?ctx.fillText(s,xs[i],y):ctx.strokeText(s,xs[i],y)});
+        ctx.restore();return tw};
+      const num=(s,x,y,o={})=>F.label(s,x,y,{size:16,italic:false,...o});
+      /* ---------- 左：气缸（开口向上，壁和底外侧画斜线） ---------- */
+      const L=100*u,R=310*u,cw=R-L,cxm=(L+R)/2,pt=14*u+10*t,bh=18*u+20*t,bw=cw*.46;
+      const yb=H-36*u-48*t,capY=yb+18*u+12*t,noteY=capY+26*t;           // 底下两行图注
+      const gh=Math.min((narrow?410:380)*u,(yb-(top+32*t)-pt-bh-8*u)/1.08);           // 气柱最大显示高度（活塞过冲上限 1.08 倍）
+      const hmax=Math.max(K.h0,K.hf)*1.15,sc=gh/hmax;
+      const X=Math.min(S.x,hmax*1.08),yPb=yb-X*sc,yPt=yPb-pt,y0=yb-K.h0*sc;
+      const wallTop=yb-1.08*gh-pt-bh-8*u,moved=Math.abs(yPb-y0)>3*u;
+      F.poly([[L,wallTop],[L,yb],[R,yb],[R,wallTop]],{w:2});
+      F.hatch(L,wallTop,L,yb,1);F.hatch(L,yb,R,yb,1);F.hatch(R,yb,R,wallTop,1);
+      rich([['p₀','i'],[' = 1.0×10⁵ Pa','r']],cxm,wallTop-20*t);
+      // 卡口：初态活塞上表面处壁上的两个小挡块
+      const sw=14*u,sh=10*u,ys=y0-pt;
+      if(K.stop){F.rect(L,ys-sh,sw,sh,{w:1.4});F.rect(R-sw,ys-sh,sw,sh,{w:1.4});
+        F.line(L,ys,L+sw,ys-sh,{w:1});F.line(R-sw,ys-sh,R,ys,{w:1});
+        F.zh('卡口',R+16*u,ys-sh/2,{align:'left',size:15})}
+      // 活塞初位置（离开后画虚线框）
+      if(moved)F.rect(L,y0-pt,cw,pt,{w:1,color:F.auxColor,dash:[5,4]});
+      // 气体：固定位置的稀疏小点（只随气柱整体伸缩，不变色、不抖动）+ 当前温度
+      // 温度小注放在气柱中部；活塞初位置的虚线框挡住时，改放到虚线框上下较宽的那段气体中间
+      let gy=(yb+yPb)/2;
+      if(moved&&y0-pt<yb&&y0>yPb&&Math.abs(gy-(y0-pt/2))<pt/2+10*t){const a=Math.max(0,y0-pt-yPb),b=Math.max(0,yb-y0);gy=a>b?(yPb+y0-pt)/2:(y0+yb)/2}
+      const Tlab=[['T','i'],[` = ${fmt(S.T,0)} K`,'r']],tw=width(Tlab,18);
+      const fr=i=>{const s=Math.sin(i*127.1+311.7)*43758.5453;return s-Math.floor(s)};
+      for(let r=0;r<5;r++)for(let c=0;c<6;c++){const i=r*6+c,a=(c+.2+.6*fr(2*i))/6,b=(r+.2+.6*fr(2*i+1))/5;
+        const px=L+9*u+a*(cw-18*u),py=yb-7*u-b*(yb-yPb-14*u);
+        if(Math.abs(px-cxm)<tw/2+14*u&&Math.abs(py-gy)<5*u+10*t||moved&&py>y0-pt-4*u&&py<y0+4*u)continue;
+        F.dot(px,py,2.1,F.auxColor)}
+      rich(Tlab,cxm,gy,{size:18});
+      // 活塞 M、砝码 m
+      F.rect(L,yPt,cw,pt,{w:1.6,fill:F.paper});F.label('M',L+cw*.15,yPt+pt/2,{size:18});
+      const bx=cxm-bw/2,fs=40*u/Math.max(P.m*g,10);let wc=null;
+      if(P.m>0){
+        if(S.loaded){const by=yPt-bh;F.rect(bx,by,bw,bh,{w:1.6,fill:F.paper});F.label('m',bx+bw*.24,by+bh/2,{size:18});wc=[cxm,by+bh/2]}
+        else{const by=yPt-bh-46*u;F.rect(bx,by,bw,bh,{w:1.2,dash:[5,4]});F.label('m',bx+bw*.28,by+bh/2,{size:18});F.zh('待放',bx+bw*.68,by+bh/2)}}
+      // 气柱高度：右侧 h（当前），离开初位置后左侧再标 h₀
+      const xr=R+38*u;
+      F.aux(R+3*u,yb,xr+7*u,yb);F.aux(R+3*u,yPb,xr+7*u,yPb);F.dim(xr,yb,xr,yPb,moved?'h':'h₀',{off:15*kt});
+      if(moved){const xl=L-38*u;F.aux(L-3*u,yb,xl-7*u,yb);F.aux(L-3*u,y0,xl-7*u,y0);F.dim(xl,yb,xl,y0,'h₀',{off:-17*kt})}
+      // 力：砝码重力 mg（--g）；卡口压活塞的力（--n，两个卡口各画一支）
+      if(K.stop&&S.Nstop>1e-6){const Ln=Math.min(70*u,S.Nstop/2*fs);
+        F.arrow(L+sw/2,ys,0,Ln,tok('--n'),null);F.arrow(R-sw/2,ys,0,Ln,tok('--n'),null)}
+      if(wc){const Lg=P.m*g*fs;F.arrow(wc[0],wc[1],0,Lg,tok('--g'),'mg',{off:[(8*u+12*t)/u,(yPt+pt/2-wc[1]-Lg)/u]});F.dot(wc[0],wc[1],2.2)}
+      // 图注：过程名 + 温度小注
+      F.zh(KPROC[P.proc],cxm,capY,{color:F.ink,size:16});
+      const dir=K.iso||Math.abs(P.T-P.T0)<0.5?'':P.T>P.T0?'加热':'降温';
+      const note=!dir?[['导热良好，','z'],['T','i'],[' 保持不变','z']]
+        :S.t<=0?[[`待${dir}：`,'z'],['T₀','i'],[' → ','r'],['T','i']]
+        :S.t<TR?[[`缓慢${dir}中：`,'z'],['T₀','i'],[' → ','r'],['T','i']]
+        :[[`已${dir}到 `,'z'],['T','i']];
+      rich(note,cxm,noteY,{size:17});
+      /* ---------- 右：p–V 图（试卷画法）+ 状态表；末行与左侧图注对齐 ---------- */
+      const tx0=400*u,tx1=712*u,pvY=noteY,ty=pvY-102*t,VnY=ty-16*t,tickY=VnY-22*t;
+      const gx0=448*u,gx1=670*u,gy1=tickY-6*u-10*t,gy0=Math.max(gy1-(narrow?340:320)*u,top+10*t+28*u);
+      const V1=K.h0*K.A*1e6,Vc=S.x*K.A*1e6,Vf=K.hf*K.A*1e6;
+      let Vm=Math.max(V1,Vf,Vc)*1.2,pm=Math.max(K.p1,K.pf,S.p)*1.2;
       const vs=nice(Vm/4),ps=nice(pm/1e5/4)*1e5;Vm=Math.ceil(Vm/vs)*vs;pm=Math.ceil(pm/ps)*ps;
       const GX=V=>gx0+V/Vm*(gx1-gx0),GY=p=>gy1-p/pm*(gy1-gy0);
-      txt('p–V 图',gx0,gy0-42*u,tok('--ink'),22,'left','700 ');txt('虚线为等温线',gx1,gy0-42*u,tok('--faint'),15,'right');
-      ctx.strokeStyle=tok('--hair');ctx.lineWidth=1*u;
-      for(let v=vs;v<=Vm+1e-9;v+=vs){ctx.beginPath();ctx.moveTo(GX(v),gy0);ctx.lineTo(GX(v),gy1);ctx.stroke()}
-      for(let p=ps;p<=pm+1e-9;p+=ps){ctx.beginPath();ctx.moveTo(gx0,GY(p));ctx.lineTo(gx1,GY(p));ctx.stroke()}
-      ctx.strokeStyle=tok('--muted');ctx.lineWidth=1.8*u;ctx.beginPath();ctx.moveTo(gx0,gy0-8*u);ctx.lineTo(gx0,gy1);ctx.lineTo(gx1+8*u,gy1);ctx.stroke();
-      for(let v=0;v<=Vm+1e-9;v+=vs)mtxt(String(+v.toFixed(1)),GX(v),gy1+22*u,tok('--muted'),16,'center');
-      for(let p=ps;p<=pm+1e-9;p+=ps)mtxt((p/1e5).toFixed(ps<1e5?1:0),gx0-6*u,GY(p)+5*u,tok('--muted'),16,'right');
-      txt('V / cm³',gx1,gy1+48*u,tok('--muted'),16,'right');
-      txt('p / ×10⁵ Pa',gx0-6*u,gy0-16*u,tok('--muted'),16,'left');
-      // 等温线（虚线）：T₀，及末温 T
-      const iso=(T,lab)=>{const k=K.C*T*K.A*1e6;ctx.beginPath();let st=false;
-        for(let i=0;i<=120;i++){const V=Vm*(0.02+0.98*i/120),p=k/V;if(p>pm){st=false;continue}st?ctx.lineTo(GX(V),GY(p)):ctx.moveTo(GX(V),GY(p));st=true}ctx.stroke();
-        const Vl=Vm;mtxt(lab,GX(Vl)-2*u,GY(k/Vl)-8*u,tok('--faint'),16,'right')};
-      ctx.setLineDash([5*u,5*u]);ctx.strokeStyle=tok('--faint');ctx.lineWidth=1.4*u;
-      iso(P.T0,'T₀');if(!K.iso&&Math.abs(P.T-P.T0)>0.5)iso(P.T,'T');ctx.setLineDash([]);
-      // 路径
-      ctx.strokeStyle=tok('--accent');ctx.lineWidth=3*u;ctx.lineJoin='round';ctx.beginPath();
-      S.path.forEach(([V,p],i)=>i?ctx.lineTo(GX(V),GY(p)):ctx.moveTo(GX(V),GY(p)));ctx.lineTo(GX(S.x*K.A*1e6),GY(S.p));ctx.stroke();
-      ctx.lineWidth=2*u;ctx.fillStyle=tok('--card');ctx.beginPath();ctx.arc(GX(V1),GY(K.p1),6*u,0,7);ctx.fill();ctx.stroke();
-      mtxt('1',GX(V1)-10*u,GY(K.p1)+20*u,tok('--accent'),18,'right','700 ');
-      ctx.fillStyle=tok('--accent');ctx.beginPath();ctx.arc(GX(S.x*K.A*1e6),GY(S.p),6.5*u,0,7);ctx.fill();
-      if(S.done)mtxt('2',GX(S.x*K.A*1e6)-10*u,GY(S.p)-10*u,tok('--accent'),18,'right','700 ');
-      // 状态表
-      const ty=500*u,lx=gx0-40*u;
-      const row=(lab,p,V,T,y,col)=>{txt(lab,lx,y,col,17,'left','700 ');mtxt(`p ${fmt(p/1e5,3)} V ${fmt(V,1)} T ${fmt(T,0)}`,lx+62*u,y,col,17)};
-      txt('单位：p ×10⁵ Pa，V cm³，T K',lx,ty-32*u,tok('--faint'),16);
-      row('状态 1',K.p1,V1,P.T0,ty,tok('--muted'));
-      row('当前',S.p,S.x*K.A*1e6,S.T,ty+34*u,tok('--ink'));
-      mtxt(`pV/T：${fmt(K.p1*K.h0*K.A/P.T0,4)} → ${fmt(S.p*S.x*K.A/S.T,4)} J/K`,lx,ty+70*u,tok('--muted'),17);
-      if(K.stop)mtxt(`卡口力 N = ${fmt(S.Nstop)} N`,lx,ty+104*u,tok('--ink'),17);
-      ctx.lineCap='butt';
+      // 等温线：细虚线（T₀，变温时再画末温 T）
+      const isoLine=T=>{const k=K.C*T*K.A*1e6,seg=[];let pts=[];
+        for(let i=0;i<=160;i++){const V=Vm*(0.02+0.98*i/160),p=k/V;if(p>pm){if(pts.length>1)seg.push(pts);pts=[];continue}pts.push([GX(V),GY(p)])}
+        if(pts.length>1)seg.push(pts);seg.forEach(s=>F.poly(s,{w:1.2,color:F.auxColor,dash:[6,5]}));return GY(k/Vm)};
+      let yT0=isoLine(P.T0),yT=null;
+      if(!K.iso&&Math.abs(P.T-P.T0)>0.5)yT=isoLine(P.T);
+      const sep=19*t;if(yT!==null&&Math.abs(yT-yT0)<sep){const m=(yT+yT0)/2,s=yT<yT0?-1:1;yT=m+s*sep/2;yT0=m-s*sep/2}
+      F.label('T₀',gx1+4*u,yT0-4*u-5*t,{size:17,color:F.auxColor,align:'left'});
+      if(yT!==null)F.label('T',gx1+4*u,yT-4*u-5*t,{size:17,color:F.auxColor,align:'left'});
+      // 坐标轴、刻度、轴名
+      F.arrow(gx0,gy1,gx1+30*u-gx0,0,F.ink,null,{w:1.4,head:11});
+      F.arrow(gx0,gy1,0,gy0-28*u-gy1,F.ink,null,{w:1.4,head:11});
+      for(let v=vs;v<=Vm+1e-9;v+=vs){const x=GX(v);F.line(x,gy1,x,gy1-5*u,{w:1});num(String(+v.toFixed(1)),x,tickY)}
+      for(let p=ps;p<=pm+1e-9;p+=ps){const y=GY(p);F.line(gx0,y,gx0+5*u,y,{w:1});num((p/1e5).toFixed(ps<1e5?1:0),gx0-4*u-4*t,y,{align:'right'})}
+      F.label('O',gx0-4*u-6*t,gy1+4*u+8*t,{size:17});
+      rich([['p','i'],['/(×10⁵ Pa)','r']],gx0+10*u,gy0-28*u,{align:'left'});
+      rich([['V','i'],['/cm³','r']],gx1+32*u,VnY,{align:'right'});
+      // 状态点投影线
+      const p1x=GX(V1),p1y=GY(K.p1),pcx=GX(Vc),pcy=GY(S.p),far=Math.hypot(pcx-p1x,pcy-p1y)>4*u;
+      F.aux(p1x,p1y,p1x,gy1,{dash:[3,4]});F.aux(p1x,p1y,gx0,p1y,{dash:[3,4]});
+      if(far){F.aux(pcx,pcy,pcx,gy1,{dash:[3,4]});F.aux(pcx,pcy,gx0,pcy,{dash:[3,4]})}
+      // 过程路径：墨线，中段加一个方向箭头
+      const pts=S.path.map(([V,p])=>[GX(V),GY(p)]);pts.push([pcx,pcy]);
+      F.poly(pts,{w:1.8});
+      const d12=Math.hypot(pcx-p1x,pcy-p1y);
+      if(d12>26*u){const dist=q=>Math.hypot(q[0]-p1x,q[1]-p1y);
+        const i=pts.findIndex(q=>dist(q)>=d12/2),j=pts.findIndex(q=>dist(q)>=d12/2-10*u);
+        if(i>0&&j>=0&&i!==j){let dx=pts[i][0]-pts[j][0],dy=pts[i][1]-pts[j][1];const l=Math.hypot(dx,dy);
+          if(l>1e-6){dx/=l;dy/=l;const[hx,hy]=pts[i],a=9*u,b=3.4*u;
+            F.poly([[hx+dx*a/2,hy+dy*a/2],[hx-dx*a/2-dy*b,hy-dy*a/2+dx*b],[hx-dx*a/2+dy*b,hy-dy*a/2-dx*b]],{w:0,fill:F.ink})}}}
+      // 状态点：小实心点 + 编号，编号放在路径外侧（背离原点一侧），离点的距离随编号宽度加大
+      let nx=1,ny=-1;
+      if(d12>2*u){nx=(pcy-p1y)/d12;ny=-(pcx-p1x)/d12;if(nx*(p1x-gx0)+ny*(p1y-gy1)<0){nx=-nx;ny=-ny}}
+      const nl=Math.hypot(nx,ny);nx/=nl;ny/=nl;
+      const tag=(s,x,y)=>{const w=width([[s,'r']],17),d=6*u+Math.abs(nx)*w/2+Math.abs(ny)*6*t+3*t;num(s,x+nx*d,y+ny*d,{size:17})};
+      F.dot(p1x,p1y,3);tag(S.done&&!far?'1(2)':'1',p1x,p1y);
+      if(far){F.dot(pcx,pcy,3);if(S.done)tag('2',pcx,pcy)}
+      // 状态表（三线表）：按实际字宽排列；放不下时先缩小字号，再改用短表头
+      const lab=s=>s==='当前'?[[s,'z']]:[[s,'r']];
+      const cells=[['1',K.p1,V1,P.T0],[S.done?'2':'当前',S.p,Vc,S.T]].map(([l,p,V,T])=>[lab(l),[[fmt(p/1e5,3),'r']],[[fmt(V,1),'r']],[[fmt(T,0),'r']]]);
+      const hd=pu=>[[['状态','z']],[['p','i'],[pu,'r']],[['V','i'],['/cm³','r']],[['T','i'],['/K','r']]];
+      let lay;
+      for(const[hs,cs,hdr]of[[16,17,hd('/(×10⁵ Pa)')],[15,16,hd('/(×10⁵ Pa)')],[14,15,hd('/10⁵ Pa')],[13,14,hd('/10⁵Pa')]]){
+        const ws=hdr.map((h,j)=>Math.max(width(h,hs),...cells.map(r=>width(r[j],cs)))),gap=(tx1-tx0-ws.reduce((a,b)=>a+b,0))/4;
+        lay={hs,cs,hdr,ws,gap};if(gap>=12*t)break}
+      let xc=tx0+lay.gap/2;const cx=lay.ws.map(w=>{const c=xc+w/2;xc+=w+lay.gap;return c});
+      F.line(tx0,ty,tx1,ty,{w:1.4});F.line(tx0,ty+30*t,tx1,ty+30*t,{w:.9});F.line(tx0,ty+82*t,tx1,ty+82*t,{w:1.4});
+      lay.hdr.forEach((h,j)=>rich(h,cx[j],ty+15*t,{size:lay.hs}));
+      cells.forEach((r,i)=>r.forEach((c,j)=>rich(c,cx[j],ty+(44+24*i)*t,{size:lay.cs})));
+      // pV/T 小注：放不下时省去「始终不变」
+      const pv=[['pV','i'],['/','r'],['T','i'],[` = ${fmt(S.p*S.x*K.A/S.T,4)} J/K`,'r']],pvz=[...pv,['（始终不变）','z',F.auxColor]];
+      rich(width(pvz,17)<=tx1-tx0?pvz:pv,(tx0+tx1)/2,pvY,{size:17});
     },
     verdict(P){
       const K=cfg(P),V1=K.h0*K.A*1e6,Vf=K.hf*K.A*1e6,Sm=fmt(P.S*1e-4,4);
@@ -1003,7 +1103,7 @@ const box=$('params');
 PS.forEach(p=>{
   if(p.type==='choice'){
     const d=document.createElement('div');d.className='seg';d.setAttribute('role','group');d.setAttribute('aria-label',p.label);
-    d.innerHTML=p.options.map(o=>`<button id="opt-${p.key}-${o.value}" data-k="${p.key}" data-v="${o.value}">${esc(o.label)}</button>`).join('');
+    d.innerHTML=p.options.map(o=>`<button id="opt-${p.key}-${o.value}" data-k="${p.key}" data-v="${o.value}">${esc(o.label)}${o.hint?`<small>${esc(o.hint)}</small>`:""}</button>`).join('');
     box.appendChild(d);
   }else{
     const d=document.createElement('div');d.className='field';d.id=`f-${p.key}`;

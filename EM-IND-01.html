@@ -1,22 +1,26 @@
-<title>格物 EM-IND-01 单棒切割</title>
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>格物 EM-IND-01 单杆模型</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;800&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;800&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" media="print" onload="this.media='all'">
 
 <!-- ================= 母题数据（由 {编号}.md 转换，页面只改这里和 SIM 模块） ================= -->
 <script type="application/json" id="data">
 {
   "id": "EM-IND-01",
-  "name": "单棒切割磁感线（导轨 + 导体棒）",
+  "name": "电磁感应中的单杆模型（阻尼式 / 发电式）",
   "module": "电磁学",
   "chapter": "选择性必修二 · 电磁感应",
   "freq": "高",
   "difficulty": 4,
-  "version": "v0.1",
+  "version": "v0.2",
   "related": [
     "MEC-MOM-02 动量定理求变力冲量",
-    "MEC-ENG-01 速度相关阻力与收尾速度",
-    "EM-ACG-01 线圈转动发电机"
+    "MEC-ENG-01 机车启动（收尾速度）",
+    "EM-ACG-01 交变电流的产生"
   ],
   "tags": [
     "法拉第电磁感应定律 E = BLv",
@@ -26,7 +30,7 @@
     "能量守恒求焦耳热"
   ],
   "problem": {
-    "stem": "光滑水平面上两根足够长的平行金属导轨间距 L = {L}，左端接电阻 R = {R}，整个区域有竖直向下的匀强磁场 B = {B}。质量 m = {m}、电阻 r = {r} 的导体棒 ab 垂直导轨放置（俯视时 a 端在上方导轨），{constraint}。初速度 v₀ = {v0}（滑行时用），恒力 F = {F}（拉动时用），导轨电阻不计。问：① 棒中感应电流沿什么方向？速度为 v 时电流多大？② 棒做什么运动，加速度怎样变化，最终速度多大？③ 滑行情形：棒滑行的总距离、通过电阻 R 的电量、R 上产生的焦耳热各多大？拉动情形：达到收尾速度后 R 的电功率多大？",
+    "stem": "光滑水平面上两根足够长的平行金属导轨间距 L = {L}，左端接电阻 R = {R}，整个区域有竖直向下的匀强磁场 B = {B}。质量 m = {m}、电阻 r = {r} 的导体棒 ab 垂直导轨放置（俯视时 a 端在上方导轨），{constraint}。初速度 v₀ = {v0}（阻尼式用），恒力 F = {F}（发电式用），导轨电阻不计。问：① 棒中感应电流沿什么方向？速度为 v 时电流多大？② 棒做什么运动，加速度怎样变化，最终速度多大？③ 阻尼式：棒滑行的总距离、通过电阻 R 的电量、R 上产生的焦耳热各多大？发电式：达到收尾速度后 R 的电功率多大？",
     "note": "g 取 10 m/s²。μ 为拓展参数（棒与导轨间的动摩擦因数），默认 0；结论以光滑为准。",
     "params": [
       {
@@ -38,12 +42,14 @@
         "options": [
           {
             "value": "slide",
-            "label": "初速度滑行",
+            "label": "阻尼式",
+            "hint": "初速度滑行",
             "text": "现给棒一个向右的初速度 v₀，此后棒不受其他水平外力"
           },
           {
             "value": "force",
-            "label": "恒力拉动",
+            "label": "发电式",
+            "hint": "恒力拉动",
             "text": "棒由静止开始受到水平向右的恒力 F 作用"
           }
         ]
@@ -106,7 +112,7 @@
       {
         "key": "v0",
         "sym": "v₀",
-        "label": "初速度（滑行）",
+        "label": "初速度（阻尼式）",
         "unit": "m/s",
         "def": 5,
         "min": 0,
@@ -120,7 +126,7 @@
       {
         "key": "F",
         "sym": "F",
-        "label": "恒力（拉动）",
+        "label": "恒力（发电式）",
         "unit": "N",
         "def": 0.5,
         "min": 0,
@@ -160,7 +166,7 @@
   },
   "presets": [
     {
-      "label": "母题：v₀ = 5 m/s 滑行",
+      "label": "阻尼式母题：v₀ = 5 m/s",
       "note": "v、I、F安 同时减小，加速度越来越小；滑行距离 x = mv₀(R+r)/(B²L²) = 2 m。",
       "load": {
         "mode": "slide",
@@ -220,7 +226,7 @@
       }
     },
     {
-      "label": "母题：F = 0.5 N 拉动",
+      "label": "发电式母题：F = 0.5 N",
       "note": "加速度逐渐减小，最终匀速 vm = F(R+r)/(B²L²) = 2 m/s。",
       "load": {
         "mode": "force",
@@ -265,7 +271,7 @@
       }
     },
     {
-      "label": "有摩擦拉动",
+      "label": "发电式 + 摩擦",
       "note": "vm = (F − μmg)(R+r)/(B²L²) = 2 m/s，和无摩擦、F = 0.5 N 时相同。",
       "load": {
         "mode": "force",
@@ -301,13 +307,13 @@
     },
     {
       "id": "C4",
-      "title": "恒力拉动的收尾速度",
+      "title": "发电式：恒力拉动的收尾速度",
       "formula": "vm = F(R + r)/(B²L²)；有摩擦时 vm = (F − μmg)(R + r)/(B²L²)",
       "derivation": "a 减到 0 时速度不再变化：F = F安 = B²L²vm/(R + r)，得 vm = F(R + r)/(B²L²)。\n有摩擦时 F = F安 + μmg，把 F 换成 F − μmg 即可。\n收尾时 F·vm = I²(R + r)（+ μmg·vm）：外力的功率全部转化为焦耳热（和摩擦热）。"
     },
     {
       "id": "C5",
-      "title": "初速度滑行的总距离",
+      "title": "阻尼式：初速度滑行的总距离",
       "formula": "x = mv₀(R + r)/(B²L²)",
       "derivation": "对棒用动量定理，取向右为正：−ΣBIL·Δt = 0 − mv₀，即 BLq = mv₀。\n又 q = ΣIΔt = ΣBLvΔt/(R + r) = BLx/(R + r)。\n联立 B²L²x/(R + r) = mv₀，得 x = mv₀(R + r)/(B²L²)。\n推论：速度变化量与滑过的距离成正比，Δv = B²L²Δx/[m(R + r)]。"
     },
@@ -429,7 +435,7 @@
       "source": "改编自 2026 届浦东区二模 五-5(2)",
       "stem": "边长 L = 0.5 m、总电阻 R = 1 Ω 的正方形单匝线框，从磁场左边界外由静止开始，以 a = 2 m/s² 向右匀加速进入 B = 1 T 的单边匀强磁场（右侧足够宽）。求：(1) 感应电流持续的时间；(2) 克服安培力做功的最大功率。",
       "answer": "(1) t = √(2L/a) ≈ 0.71 s；(2) P_max = 2B²L³a/R = 0.5 W",
-      "analysis": "只有进入磁场过程有电流：L = ½at²，t = √(2 × 0.5 m ÷ 2 m/s²) = √0.5 s ≈ 0.71 s。P = F安·v = B²L²v²/R，v 越大功率越大，刚好完全进入时 v² = 2aL = 2 m²/s²，P_max = 1 T² × 0.25 m² × 2 m²/s² ÷ 1 Ω = 0.5 W。线框进入时只有右边切割，等效单棒。动画不能做匀加速，加载母题恒力情形（R + r = 1 Ω）观察 F安 随 v 增大，可用读数验证 P = F安·v = B²L²v²/(R + r)。",
+      "analysis": "只有进入磁场过程有电流：L = ½at²，t = √(2 × 0.5 m ÷ 2 m/s²) = √0.5 s ≈ 0.71 s。P = F安·v = B²L²v²/R，v 越大功率越大，刚好完全进入时 v² = 2aL = 2 m²/s²，P_max = 1 T² × 0.25 m² × 2 m²/s² ÷ 1 Ω = 0.5 W。线框进入时只有右边切割，等效单杆。动画不能做匀加速，加载母题恒力情形（R + r = 1 Ω）观察 F安 随 v 增大，可用读数验证 P = F安·v = B²L²v²/(R + r)。",
       "load": {
         "mode": "force",
         "B": 1,
@@ -447,7 +453,7 @@
     {
       "id": "R1",
       "title": "线框滑入有界磁场",
-      "map": "进入过程只有前边切割，等效单棒滑过 x = 边长；完全进入后无电流、匀速",
+      "map": "进入过程只有前边切割，等效单杆滑过 x = 边长；完全进入后无电流、匀速",
       "anim": true,
       "source": "原创（情境取自 2022 上海等级考第 12 题、2023 第 19 题）",
       "stem": "光滑水平面上，边长 L = 0.5 m、质量 m = 0.1 kg、电阻 R = 1 Ω 的正方形线框以 v₀ = 5 m/s 滑入 B = 1 T 的竖直向下单边匀强磁场。求线框刚好完全进入时的速度，以及进入过程通过线框的电量和产生的焦耳热。",
@@ -514,7 +520,7 @@
   --paper:#f2f4f3; --grid:#e4e9e6; --card:#ffffff; --sunk:#f6f8f7;
   --ink:#142030; --muted:#5b6979; --faint:#8a96a3; --line:#d6dedA; --hair:#e7ece9;
   --accent:#2443a6; --accent-soft:#e9eefb; --mark:#f7e9b0;
-  --g:#c4382f; --n:#18845a; --v:#2443a6; --track:#34404f; --warn:#a85a14; --ok:#18845a;
+  --g:#c0502a; --n:#17806a; --v:#2f62b3; --a:#a0661a; --track:#34404f; --fig-ink:#1d232b; --fig-aux:#75808c; --warn:#a85a14; --ok:#18845a;
   --shadow:0 1px 0 rgba(20,32,48,.04),0 10px 28px -18px rgba(20,32,48,.28);
   --f-display:"Noto Serif SC","Songti SC","STSong",serif;
   --f-body:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
@@ -524,13 +530,13 @@
   --paper:#10161d; --grid:#18202a; --card:#171f28; --sunk:#131a22;
   --ink:#e4e9ef; --muted:#9aa7b6; --faint:#6f7d8c; --line:#2a3542; --hair:#212b36;
   --accent:#93acff; --accent-soft:#1f2a44; --mark:#4a4020;
-  --g:#ff7d71; --n:#52d39c; --v:#93acff; --track:#c3ccd8; --warn:#f0a35a; --ok:#52d39c;
+  --g:#ef8f6e; --n:#5cc7a0; --v:#8db0ef; --a:#e3ac5c; --track:#c3ccd8; --fig-ink:#dde3ea; --fig-aux:#8794a2; --warn:#f0a35a; --ok:#52d39c;
   --shadow:0 1px 0 rgba(0,0,0,.25),0 12px 30px -20px rgba(0,0,0,.7); color-scheme:dark}}
 :root[data-theme="dark"]{
   --paper:#10161d; --grid:#18202a; --card:#171f28; --sunk:#131a22;
   --ink:#e4e9ef; --muted:#9aa7b6; --faint:#6f7d8c; --line:#2a3542; --hair:#212b36;
   --accent:#93acff; --accent-soft:#1f2a44; --mark:#4a4020;
-  --g:#ff7d71; --n:#52d39c; --v:#93acff; --track:#c3ccd8; --warn:#f0a35a; --ok:#52d39c;
+  --g:#ef8f6e; --n:#5cc7a0; --v:#8db0ef; --a:#e3ac5c; --track:#c3ccd8; --fig-ink:#dde3ea; --fig-aux:#8794a2; --warn:#f0a35a; --ok:#52d39c;
   --shadow:0 1px 0 rgba(0,0,0,.25),0 12px 30px -20px rgba(0,0,0,.7); color-scheme:dark}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -612,6 +618,7 @@ canvas{width:100%;max-width:100%;aspect-ratio:1/1;display:block}
 .status::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--faint);flex:none}
 .status.warn{color:var(--warn)} .status.warn::before{background:var(--warn)}
 .status.ok{color:var(--ok)} .status.ok::before{background:var(--ok)}
+@media (max-width:640px){.status{position:static;margin:8px 10px 10px;max-width:none}}
 .legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--muted)}
 .legend i{display:inline-block;width:16px;height:3px;vertical-align:middle;margin-right:6px;border-radius:2px}
 .readout{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card)}
@@ -643,6 +650,7 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
 .seg{display:flex;padding:3px;gap:3px;border-radius:999px;background:var(--sunk);border:1px solid var(--line)}
 .seg button{flex:1;border:none;padding:6px 10px;background:transparent;color:var(--muted)}
 .seg button[aria-pressed="true"]{background:var(--card);color:var(--ink);font-weight:700;box-shadow:var(--shadow)}
+.seg button small{display:block;font-size:12px;font-weight:400;color:var(--faint);line-height:1.4}
 .presets{display:flex;flex-wrap:wrap;gap:6px}
 .presets button{font-size:13px;padding:4px 12px;background:var(--sunk)}
 .verdict{background:var(--sunk);border:1px solid var(--hair);border-radius:10px;padding:12px 14px;font-size:14px;line-height:1.8}
@@ -776,6 +784,67 @@ footer{font-size:12px;color:var(--faint);text-align:center}
 </div>
 
 <script>
+/* ================= 线稿绘图工具 FIG（所有母题共用，不改） =================
+   画法照试卷插图：装置用墨线，固定面画斜线阴影，辅助线用虚线，物理量和点的字母用斜体衬线；
+   只有矢量带颜色（--g 重力/外力，--n 弹力/约束力，--v 速度，--a 其他矢量）。
+   用法：SIM.draw 里 const F=FIG(ctx,W,tok)；坐标是画布像素，F.u = W/720 是线宽与几何的基准单位，
+   F.ut 是字号单位（窄屏时不再随画布缩小，保证字母不小于约 11 CSS 像素；自写文字函数也要用 F.ut 算字号）。
+   颜色：F.ink 墨线、F.auxColor 辅助线、F.paper 纸色（F.aux 是画辅助线的方法，不是颜色）。 */
+const FIG=(ctx,W,tok)=>{
+  const u=W/720,ink=tok('--fig-ink'),aux=tok('--fig-aux'),paper=tok('--card');
+  const dp=W/(ctx.canvas.clientWidth||W),ut=Math.max(u,dp*11/19);   // dp：每 CSS 像素的画布像素数
+  const SERIF='"Times New Roman","STIX Two Text",Times,serif',SANS=tok('--f-body');
+  const path=(fn,{w=1.6,color=ink,dash=null,fill=null}={})=>{ctx.save();ctx.beginPath();fn();
+    if(fill){ctx.fillStyle=fill;ctx.fill()}
+    if(w>0){ctx.lineWidth=w*u;ctx.strokeStyle=color;ctx.setLineDash(dash?dash.map(d=>d*u):[]);ctx.lineCap='round';ctx.lineJoin='round';ctx.stroke()}
+    ctx.restore()};
+  // 文字先描一圈底色再填色，压在线条上也清楚
+  const text=(t,x,y,font,color,align,base)=>{ctx.save();ctx.font=font;ctx.textAlign=align;ctx.textBaseline=base;
+    ctx.lineJoin="round";ctx.lineWidth=5*ut;ctx.strokeStyle=paper;ctx.strokeText(t,x,y);ctx.fillStyle=color;ctx.fillText(t,x,y);ctx.restore()};
+  const F={u,ut,ink,auxColor:aux,paper,
+    clear(){ctx.save();ctx.setLineDash([]);ctx.fillStyle=paper;ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);ctx.restore()},
+    line(x1,y1,x2,y2,o){path(()=>{ctx.moveTo(x1,y1);ctx.lineTo(x2,y2)},o)},
+    poly(pts,o){path(()=>pts.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y)),o)},
+    circle(x,y,r,o){path(()=>ctx.arc(x,y,r,0,2*Math.PI),o)},
+    arc(x,y,r,a0,a1,o){path(()=>ctx.arc(x,y,r,a0,a1),o)},
+    rect(x,y,w,h,o){path(()=>ctx.rect(x,y,w,h),o)},
+    // 辅助线（中心线、投影线等）
+    aux(x1,y1,x2,y2,o={}){F.line(x1,y1,x2,y2,{w:1,color:aux,dash:[6,5],...o})},
+    // 运动轨迹：细虚线
+    trail(pts,o={}){if(pts.length>1)F.poly(pts,{w:1.3,color:aux,dash:[5,5],...o})},
+    // 固定面斜线：沿 (x1,y1)→(x2,y2) 的直线，画在 side 一侧（屏幕坐标下，1 = 前进方向右手侧）
+    hatch(x1,y1,x2,y2,side=1,{gap=12,len=10}={}){const L=Math.hypot(x2-x1,y2-y1),n=Math.max(1,Math.round(L/(gap*u)));
+      const tx=(x2-x1)/L,ty=(y2-y1)/L,nx=-ty*side,ny=tx*side,ox=(nx-tx)*len*u/Math.SQRT2,oy=(ny-ty)*len*u/Math.SQRT2;
+      path(()=>{for(let i=0;i<=n;i++){const x=x1+(x2-x1)*i/n,y=y1+(y2-y1)*i/n;ctx.moveTo(x,y);ctx.lineTo(x+ox,y+oy)}},{w:1,color:aux})},
+    // 圆弧形固定面的斜线：out = true 画在圆外侧
+    hatchArc(cx,cy,r,a0,a1,out=true,{gap=12,len=10}={}){const n=Math.max(1,Math.round(r*Math.abs(a1-a0)/(gap*u))),s=out?1:-1;
+      path(()=>{for(let i=0;i<=n;i++){const a=a0+(a1-a0)*i/n,c=Math.cos(a),si=Math.sin(a),x=cx+r*c,y=cy+r*si;
+        const nx=c*s,ny=si*s,tx=-si,ty=c;ctx.moveTo(x,y);ctx.lineTo(x+(nx-tx)*len*u/Math.SQRT2,y+(ny-ty)*len*u/Math.SQRT2)}},{w:1,color:aux})},
+    // 矢量：从 (x,y) 画到 (x+dx,y+dy)，细杆 + 窄实心箭头；label 用斜体写在箭头外侧，
+    // 与别的矢量共线时用 off=[dx,dy]（单位 u，相对箭头尖）把标注挪到旁边
+    arrow(x,y,dx,dy,color,label,{w=2,head=12,size=19,off=null}={}){const L=Math.hypot(dx,dy);if(L<2*u)return;
+      const ux=dx/L,uy=dy/L,h=Math.min(head*u,L*.6),hw=h*.34,tx=x+dx,ty=y+dy;
+      F.line(x,y,tx-ux*h*.7,ty-uy*h*.7,{w,color});
+      path(()=>{ctx.moveTo(tx,ty);ctx.lineTo(tx-ux*h-uy*hw,ty-uy*h+ux*hw);ctx.lineTo(tx-ux*h+uy*hw,ty-uy*h-ux*hw);ctx.closePath()},{w:0,fill:color});
+      if(label)F.label(label,off?tx+off[0]*u:tx+ux*14*u,off?ty+off[1]*u:ty+uy*14*u,{color,size})},
+    // 斜体衬线字母（物理量、点名）
+    label(t,x,y,{color=ink,size=19,align='center',base='middle',italic=true}={}){text(t,x,y,`${italic?'italic ':''}${size*ut}px ${SERIF}`,color,align,base)},
+    // 中文小注
+    zh(t,x,y,{color=aux,size=14,align='center',base='middle'}={}){text(t,x,y,`${size*ut}px ${SANS}`,color,align,base)},
+    dot(x,y,r=2.6,color=ink){F.circle(x,y,r*u,{w:0,fill:color})},
+    // 带名字的点：实心小点 + 斜体字母（dx、dy 为字母相对点的偏移，单位 u）
+    point(x,y,name,dx=-13,dy=13){F.dot(x,y);if(name)F.label(name,x+dx*u,y+dy*u)},
+    // 小球：空心圆，球心另用 F.dot 标出（矢量画完后再点，表示力作用在重心）
+    ball(x,y,r){F.circle(x,y,r,{w:1.6,fill:paper})},
+    // 尺寸标注：两端带箭头的细线，文字写在中点外侧 off（单位 u）
+    dim(x1,y1,x2,y2,t,{off=14,color=ink}={}){const L=Math.hypot(x2-x1,y2-y1);if(L<4*u)return;const ux=(x2-x1)/L,uy=(y2-y1)/L,h=Math.min(8*u,L/3),hw=h*.38;
+      F.line(x1,y1,x2,y2,{w:1,color});
+      for(const[px,py,sx]of[[x1,y1,1],[x2,y2,-1]])path(()=>{ctx.moveTo(px,py);ctx.lineTo(px+sx*ux*h-uy*hw,py+sx*uy*h+ux*hw);ctx.lineTo(px+sx*ux*h+uy*hw,py+sx*uy*h-ux*hw);ctx.closePath()},{w:0,fill:color});
+      if(t)F.label(t,(x1+x2)/2-uy*off*u,(y1+y2)/2+ux*off*u,{color})},
+  };
+  return F;
+};
+
 /* ================= SIM 模块：每个母题替换这一段 =================
    约定接口：
    SIM.legend            [{label, color(CSS 变量名)}]
@@ -808,7 +877,7 @@ const SIM=(()=>{
     return Math.min(4,Math.max(.3,x));
   }
   return{
-    legend:[{label:'安培力 F安',color:'--g'},{label:'外力 F',color:'--n'},{label:'速度 v',color:'--v'},{label:'感应电流 I',color:'--warn'}],
+    legend:[{label:'外力 F',color:'--g'},{label:'安培力 F安',color:'--n'},{label:'速度 v',color:'--v'},{label:'感应电流 I',color:'--a'}],
     init(P){
       const v=P.mode==='slide'?P.v0:0,tM=tEst(P);
       const S={x:0,v,q:0,Q:0,Qf:0,t:0,a:der(P,[0,v,0,0])[1],done:false,tReach:null,
@@ -850,79 +919,89 @@ const SIM=(()=>{
       return r;
     },
     draw(ctx,S,P,W,H,tok){
-      const u=W/720,font=(s,w='')=>`${w}${s*u}px ${tok('--f-body')}`,mono=(s,w='600 ')=>`${w}${s*u}px ${tok('--f-mono')}`;
-      ctx.clearRect(0,0,W,H);ctx.fillStyle=tok('--card');ctx.fillRect(0,0,W,H);
-      ctx.lineCap='round';ctx.lineJoin='round';
-      const arrow=(x0,y0,dx,dy,col,lab,lw=3.5,ly=null)=>{const Lr=Math.hypot(dx,dy);if(Lr<4*u)return;
-        ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=lw*u;ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x0+dx,y0+dy);ctx.stroke();
-        const a=Math.atan2(dy,dx),hs=12*u;ctx.beginPath();ctx.moveTo(x0+dx,y0+dy);
-        ctx.lineTo(x0+dx-hs*Math.cos(a-.42),y0+dy-hs*Math.sin(a-.42));ctx.lineTo(x0+dx-hs*Math.cos(a+.42),y0+dy-hs*Math.sin(a+.42));ctx.closePath();ctx.fill();
-        if(lab){ctx.font=mono(18);ctx.textAlign='center';ctx.textBaseline='middle';
-          if(ly===null)ctx.fillText(lab,x0+dx+(dx?Math.sign(dx)*24*u:0),y0+dy+(dy?Math.sign(dy)*18*u:0));else ctx.fillText(lab,x0+dx-Math.sign(dx)*18*u,y0+ly);ctx.textAlign='left';ctx.textBaseline='alphabetic'}};
-      /* ---------- 俯视电路 ---------- */
-      const gap=60*u+90*u*(Math.min(1,Math.max(.1,P.L))-.1)/.9;
-      const yT=135*u,yB=yT+gap,yM=(yT+yB)/2,xRes=64*u,x0=220*u,xMax=520*u,xEnd=W-16*u;
-      const sc=(xMax-x0)/spanX(P),px=x0+S.x*sc,cam=Math.max(0,px-xMax),X=xw=>x0+xw*sc-cam,xr=px-cam;
-      // 磁场：竖直向下，俯视为 ×（随画面平移）
-      const sp=44*u,off=cam%sp,nr=Math.max(2,Math.round((gap+60*u)/(40*u)));ctx.strokeStyle=tok('--faint');ctx.lineWidth=1.6*u;
-      for(let xx=xRes+40*u-off;xx<xEnd;xx+=sp){if(xx<xRes+26*u)continue;
-        for(let j=0;j<=nr;j++){const yy=yT-30*u+j*(gap+60*u)/nr;
-          ctx.beginPath();ctx.moveTo(xx-5*u,yy-5*u);ctx.lineTo(xx+5*u,yy+5*u);ctx.moveTo(xx+5*u,yy-5*u);ctx.lineTo(xx-5*u,yy+5*u);ctx.stroke()}}
-      ctx.font=font(15);ctx.fillStyle=tok('--muted');ctx.textAlign='right';
-      ctx.textAlign='left';
-      // 导轨与电阻
-      ctx.strokeStyle=tok('--track');ctx.lineWidth=4*u;
-      ctx.beginPath();ctx.moveTo(xRes,yT);ctx.lineTo(xEnd,yT);ctx.moveTo(xRes,yB);ctx.lineTo(xEnd,yB);ctx.moveTo(xRes,yT);ctx.lineTo(xRes,yB);ctx.stroke();
-      const rh=Math.min(64*u,gap-24*u);ctx.fillStyle=tok('--card');ctx.lineWidth=3*u;
-      ctx.fillRect(xRes-11*u,yM-rh/2,22*u,rh);ctx.strokeRect(xRes-11*u,yM-rh/2,22*u,rh);
-      ctx.fillStyle=tok('--ink');ctx.font=mono(17);ctx.textAlign='right';ctx.fillText('R',xRes-18*u,yM+6*u);ctx.textAlign='left';
-      if(cam>0){ctx.fillStyle=tok('--card');ctx.strokeStyle=tok('--track');ctx.lineWidth=2*u;   // 断开符号：导轨很长
-        for(const yy of[yT,yB]){ctx.fillRect(126*u,yy-8*u,10*u,16*u);ctx.beginPath();ctx.moveTo(122*u,yy+8*u);ctx.lineTo(130*u,yy-8*u);ctx.moveTo(132*u,yy+8*u);ctx.lineTo(140*u,yy-8*u);ctx.stroke()}}
-      // 刻度尺（从棒的起点量起）
-      const yR=yB+46*u,st=nice(spanX(P)/4);ctx.strokeStyle=tok('--line');ctx.lineWidth=1.5*u;
-      ctx.beginPath();ctx.moveTo(Math.max(xRes+30*u,X(0)),yR);ctx.lineTo(xEnd,yR);ctx.stroke();
-      ctx.font=mono(14,'');ctx.fillStyle=tok('--muted');ctx.textAlign='center';
-      for(let i=Math.max(0,Math.floor((cam-x0+xRes)/sc/st));;i++){const xx=X(i*st);if(xx>xEnd)break;if(xx<xRes+30*u)continue;
-        ctx.beginPath();ctx.moveTo(xx,yR-6*u);ctx.lineTo(xx,yR+6*u);ctx.stroke();ctx.fillText(`${+(i*st).toFixed(3)} m`,xx,yR+24*u)}
-      ctx.textAlign='left';ctx.font=font(16);ctx.fillStyle=tok('--muted');
-      ctx.fillText(`磁场 B = ${fmt(P.B)} T，竖直向下（俯视为 ×）；棒从 0 m 处出发`,xRes-20*u,yR+54*u);
-      // 导体棒
-      ctx.strokeStyle=tok('--ink');ctx.lineWidth=8*u;ctx.beginPath();ctx.moveTo(xr,yT-14*u);ctx.lineTo(xr,yB+14*u);ctx.stroke();
-      ctx.font=mono(17);ctx.fillStyle=tok('--ink');ctx.fillText('a',xr-24*u,yT-12*u);ctx.fillText('b',xr-24*u,yB+28*u);
-      // 电流：棒中 b→a，回路俯视逆时针
-      const E=P.B*P.L*S.v,I=E/(P.R+P.r);
-      if(I>1e-6){const c=tok('--warn');
-        arrow(xr+18*u,yM+26*u,0,-52*u,c,'');ctx.fillStyle=c;ctx.font=mono(17);ctx.fillText('I',xr+28*u,yM+34*u);
-        const mx=(xRes+xr)/2;if(xr-xRes>150*u){arrow(mx+22*u,yT-14*u,-44*u,0,c,'',3);arrow(mx-22*u,yB+14*u,44*u,0,c,'',3)}
-        arrow(xRes+22*u,yM-18*u,0,36*u,c,'',3)}
-      // 力与速度
-      const FA=P.B*I*P.L,Fe=Fx(P),f=(S.v>0||(P.mode==='force'&&!S.done))?fric(P):0;
-      const Fs=Math.max(Fe,P.mode==='slide'?K(P)*P.v0:0,fric(P),1e-9),fs=100*u/Fs;
-      arrow(xr,yM,-FA*fs,0,tok('--g'),'F安',3.5,-18*u);
-      if(Fe>0)arrow(xr,yM-16*u,Fe*fs,0,tok('--n'),'F');
-      if(f>0)arrow(xr,yM+18*u,-f*fs,0,tok('--faint'),'f',3,18*u);
-      const Vs=Math.max(P.mode==='slide'?P.v0:vm(P),1e-9);arrow(xr,yT-34*u,S.v/Vs*110*u,0,tok('--v'),'v');
+      const F=FIG(ctx,W,tok),u=F.u,ut=F.ut,k=ut/u,cG=tok('--g'),cN=tok('--n'),cV=tok('--v'),cA=tok('--a'),cX=F.auxColor;
+      F.clear();
+      // 字号、测宽和跟文字大小有关的偏移都用 F.ut（窄屏时字不随画布缩小），几何仍用 u
+      const SERIF='"Times New Roman","STIX Two Text",Times,serif',SANS=tok('--f-body');
+      const wid=(str,s,o={})=>{ctx.save();ctx.font=o.zh?`${s*ut}px ${SANS}`:`${o.i===false?'':'italic '}${s*ut}px ${SERIF}`;const w=ctx.measureText(str).width;ctx.restore();return w};
+      // 一行混排：parts = [[文字, {i:false 正体, s 字号, sub 下标, zh 中文}]]，按 align 对齐到 (x,y)
+      const run=(parts,x,y,{color=F.ink,align='left'}={})=>{
+        const it=parts.map(([str,o={}])=>{const s=(o.s||19)*(o.sub?.66:1);return{str,o,s,w:wid(str,s,o)}});
+        let cx=x-(align==='center'?.5:align==='right'?1:0)*it.reduce((a,b)=>a+b.w,0);
+        for(const{str,o,s,w}of it){const y1=y+(o.sub?6*ut:0);
+          if(o.zh)F.zh(str,cx,y1,{color,size:s,align:'left'});else F.label(str,cx,y1,{color,size:s,align:'left',italic:o.i!==false});cx+=w}};
+      const num=x=>String(+x.toFixed(3)),nw=s=>wid(s,14,{i:false});
+      const every=(d,w)=>[1,2,5,10,20,50].find(m=>d*m>=w+8*ut)||100;   // 刻度数字放不下时隔几个标一个
+      /* ---------- 俯视图：导轨、电阻 R、导体棒 ab；磁场竖直向下，俯视为 × ---------- */
+      // 桌面宽度时状态条（一行，底边 46 CSS px）浮在画布左上角，图从它下面开始；窄屏（≤ 640px）时状态条排在画布下方，不用让
+      const narrow=matchMedia('(max-width:640px)').matches,cw=ctx.canvas.clientWidth||640;
+      const Lc=Math.min(1,Math.max(.1,P.L)),gap=(72+78*(Lc-.1)/.9)*u;
+      const yT=narrow?36*u+14*ut:Math.max(150,46*720/cw+36)*u,yB=yT+gap,yM=(yT+yB)/2,xRes=72*u,x0=250*u,xMax=530*u,xEnd=W-22*u,xb=xRes+66*u;
+      const sc=(xMax-x0)/spanX(P),px=x0+S.x*sc,cam=Math.max(0,px-xMax),X=xw=>x0+xw*sc-cam,xr=px-cam,xs=X(0);
+      const E=P.B*P.L*S.v,I=E/(P.R+P.r),FA=P.B*I*P.L,Fe=Fx(P);
+      const Vs=Math.max(P.mode==='slide'?P.v0:vm(P),1e-9),showI=I>.01*P.B*P.L*Vs/(P.R+P.r);
+      const fs=105*u/Math.max(Fe,P.mode==='slide'?K(P)*P.v0:0,1e-9),lF=Fe*fs,lA=FA*fs,lv=S.v/Vs*(P.mode==='force'?70:100)*u;
+      const mx=xRes+36*u,yR=yB+60*u,yTop=yT-24*u,yBot=yB+24*u,xA=Math.min(xr-lA-2*u,xr-20*ut);
+      const wZ=wid('竖直向下',14,{zh:1}),note=`导轨粗糙 μ = ${fmt(P.mu)}`,wN=wid(note,14,{zh:1}),xN=x0-34*ut;
+      // × 不画在字母、箭头和棒的位置上
+      const keep=[],ko=(x1,y1,x2,y2)=>keep.push([x1,y1,x2,y2]),kc=(x,y,hw,hh)=>ko(x-hw*ut,y-hh*ut,x+hw*ut,y+hh*ut);
+      ko(xr-9*u,yT-22*u,xr+9*u,yR);kc(xr-15*ut,yT-15*ut,8,11);kc(xr-15*ut,yB+16*ut,8,11);
+      if(lF>=2*u)kc(xr+lF+5*ut,yM-15*ut,10,11);
+      if(lv>=2*u)kc(xr+lv+5*ut,yM+15*ut,10,11);
+      if(Math.max(lF,lv)>=2*u)ko(xr,yM-7*u,xr+Math.max(lF,lv)+2*u,yM+7*u);
+      if(lA>=2*u){ko(xr-lA-2*u,yM-7*u,xr,yM+7*u);kc(xA,yM-15*ut,16,11)}
+      if(showI){ko(xr-11*u-18*ut,yM+gap*.14,xr-5*u,yM+gap*.46);ko(mx-24*u,yT+3*u,mx+24*u,yT+17*u);ko(mx-24*u,yB-17*u,mx+24*u,yB-3*u)}
+      ko(xEnd-wZ-28*ut,yTop-11*ut,xEnd,yTop+11*ut);
+      if(P.mu>0)ko(xN-wN-2*u,yBot-10*ut,xN+8*ut,yBot+10*ut);
+      const n=Math.max(2,2*Math.round(gap/(92*u))),rows=[yTop,yBot];for(let i=0;i<n;i++)rows.push(yT+gap*(i+.5)/n);
+      const cross=(x,y)=>{if(keep.some(([a,b,c,d])=>x>a-5*u&&x<c+5*u&&y>b-5*u&&y<d+5*u))return;const e=3.6*u;
+        F.line(x-e,y-e,x+e,y+e,{w:1,color:cX});F.line(x+e,y-e,x-e,y+e,{w:1,color:cX})};
+      const field=(xa,xz,shift)=>{const p=46*u,b=x0-23*u-shift;for(let x=b+Math.ceil((xa-b)/p)*p;x<=xz;x+=p)rows.forEach(y=>cross(x,y))};
+      if(cam>0){field(xRes+28*u,xb-14*u,0);field(xb+14*u,xEnd-4*u,cam)}else field(xRes+28*u,xEnd-4*u,0);
+      F.zh('竖直向下',xEnd,yTop,{align:'right'});F.label('B',xEnd-wZ-12*ut,yTop);
+      // 导轨与电阻（国标矩形符号）
+      F.poly([[xEnd,yT],[xRes,yT],[xRes,yB],[xEnd,yB]],{w:1.8});
+      const rh=Math.min(38*u,gap-30*u);F.rect(xRes-7*u,yM-rh/2,14*u,rh,{w:1.6,fill:F.paper});F.label('R',xRes-7*u-12*ut,yM);
+      if(cam>0)for(const y of[yT,yB]){F.rect(xb-4*u,y-3*u,8*u,6*u,{w:0,fill:F.paper});   // 折断符号：导轨很长，中间省略
+        F.line(xb-7*u,y+6*u,xb-1*u,y-6*u,{w:1.2});F.line(xb+1*u,y+6*u,xb+7*u,y-6*u,{w:1.2})}
+      if(P.mu>0)F.zh(note,xN,yBot,{align:'right'});
+      // 位置标尺（从棒的初位置量起）+ 棒的位置读数线
+      const st=nice(spanX(P)/4),mn=st*sc/5>=9*u?5:2,r0=cam>0?xb+16*u:xs,xmW=wid('x',19)+wid('/m',15,{i:false}),r1=xEnd-xmW-10*u;
+      F.line(r0,yR,r1,yR,{w:1});
+      const tk=[];for(let i=Math.max(0,Math.ceil((r0-xs)/sc/(st/mn)-1e-6));;i++){const x=X(i*st/mn);if(x>r1+.5*u)break;tk.push([i,x])}
+      const re=every(st*sc,Math.max(0,...tk.filter(([i])=>i%mn===0).map(([i])=>nw(num(i/mn*st)))));
+      for(const[i,x]of tk){const m=i%mn===0,s=num(i/mn*st);F.line(x,yR,x,yR-(m?6:3)*u,{w:1});
+        if(m&&(i/mn)%re===0&&x+nw(s)/2<xEnd-xmW-12*ut)F.label(s,x,yR+14*ut,{italic:false,size:14})}
+      run([['x'],['/m',{i:false,s:15}]],xEnd,yR,{align:'right'});
+      F.aux(xr,yB+16*u,xr,yR-1*u,{dash:[3,3]});
+      // 初位置（虚线）与导体棒 ab
+      if(S.x*sc>6*u&&xs>(cam>0?xb+10*u:xRes+20*u))F.line(xs,yT-12*u,xs,yB+12*u,{w:1.3,color:cX,dash:[5,4]});
+      F.line(xr,yT-14*u,xr,yB+14*u,{w:4});F.label('a',xr-15*ut,yT-15*ut);F.label('b',xr-15*ut,yB+16*ut);
+      // 感应电流：棒中 b → a，回路俯视逆时针（只标方向；导轨上的两支画在电阻一端）
+      if(showI){const o={w:1.5,head:9},ya=yM+gap*.44,yb=yM+gap*.16;
+        F.arrow(xRes+15*u,yM-14*u,0,28*u,cA,null,o);F.arrow(mx+16*u,yT+10*u,-32*u,0,cA,null,o);F.arrow(mx-16*u,yB-10*u,32*u,0,cA,null,o);
+        F.arrow(xr-11*u,ya,0,yb-ya,cA,null,o);F.label('I',xr-11*u-11*ut,yM+gap*.3,{color:cA})}
+      // 力与速度：都从棒的中点画出；F 与 v 共线，F 标在上方、v 标在下方
+      if(lF>=2*u)F.arrow(xr,yM,lF,0,cG,'F',{off:[5*k,-15*k]});
+      if(lv>=2*u){F.arrow(xr,yM,lv,0,cV,null);run(S.t>0?[['v']]:[['v'],['0',{sub:1,i:false}]],xr+lv+5*ut,yM+15*ut,{color:cV,align:'center'})}
+      if(lA>=2*u){F.arrow(xr,yM,-lA,0,cN,null);run([['F'],['安',{zh:1,sub:1}]],xA,yM-15*ut,{color:cN,align:'center'})}
       /* ---------- v–t 图 ---------- */
-      const bx0=20*u,by0=402*u,bx1=W-16*u,by1=H-14*u,gx0=96*u,gx1=W-48*u,gy0=by0+80*u,gy1=H-62*u;
-      ctx.fillStyle=tok('--sunk');ctx.strokeStyle=tok('--hair');ctx.lineWidth=1.5*u;
-      ctx.beginPath();ctx.roundRect?ctx.roundRect(bx0,by0,bx1-bx0,by1-by0,12*u):ctx.rect(bx0,by0,bx1-bx0,by1-by0);ctx.fill();ctx.stroke();
-      ctx.fillStyle=tok('--ink');ctx.font=font(18,'700 ');ctx.fillText('v–t 图（实时描点）',bx0+18*u,by0+32*u);
-      const ref=P.mode==='slide'?P.v0:vm(P),vMax=(ref>0?ref:1)*1.18,tMax=S.tMax;
-      const TX=t=>gx0+t/tMax*(gx1-gx0),VY=v=>gy1-v/vMax*(gy1-gy0);
-      ctx.strokeStyle=tok('--line');ctx.lineWidth=1*u;ctx.font=mono(15,'');ctx.fillStyle=tok('--muted');
-      const vs=nice(vMax/4);ctx.textAlign='right';
-      for(let v=0;v<=vMax+1e-9;v+=vs){const yy=VY(v);ctx.beginPath();ctx.moveTo(gx0,yy);ctx.lineTo(gx1,yy);ctx.stroke();ctx.fillText(+v.toFixed(3)+'',gx0-10*u,yy+5*u)}
-      const ts=nice(tMax/5);ctx.textAlign='center';
-      for(let t=0;t<=tMax+1e-9;t+=ts){const xx=TX(t);ctx.beginPath();ctx.moveTo(xx,gy0);ctx.lineTo(xx,gy1);ctx.stroke();ctx.fillText(+t.toFixed(3)+'',xx,gy1+22*u)}
-      ctx.strokeStyle=tok('--ink');ctx.lineWidth=2*u;ctx.beginPath();ctx.moveTo(gx0,gy0-10*u);ctx.lineTo(gx0,gy1);ctx.lineTo(gx1+14*u,gy1);ctx.stroke();
-      ctx.fillStyle=tok('--muted');ctx.font=mono(15,'');ctx.textAlign='left';ctx.fillText('v / (m·s⁻¹)',gx0-64*u,gy0-20*u);
-      ctx.textAlign='right';ctx.fillText('t / s',gx1+30*u,gy1+44*u);
-      if(ref>0){ctx.setLineDash([8*u,7*u]);ctx.strokeStyle=tok('--accent');ctx.lineWidth=2*u;ctx.beginPath();ctx.moveTo(gx0,VY(ref));ctx.lineTo(gx1,VY(ref));ctx.stroke();ctx.setLineDash([]);
-        ctx.fillStyle=tok('--accent');ctx.font=mono(16);ctx.fillText(P.mode==='slide'?`v₀ = ${fmt(ref)} m/s`:`收尾速度 vm = ${fmt(ref)} m/s`,gx1,VY(ref)-8*u)}
-      ctx.textAlign='left';
-      if(S.hist.length){ctx.strokeStyle=tok('--v');ctx.lineWidth=3*u;ctx.beginPath();
-        S.hist.forEach(([t,v],i)=>i?ctx.lineTo(TX(t),VY(v)):ctx.moveTo(TX(t),VY(v)));ctx.lineTo(TX(S.t),VY(S.v));ctx.stroke();
-        ctx.fillStyle=tok('--v');ctx.beginPath();ctx.arc(TX(S.t),VY(S.v),6*u,0,7);ctx.fill()}
+      const gx0=84*u,gy1=H-34*ut,gyT=yR+26*ut+30*u,gxR=W-26*u,gx1=W-78*u,gyP=gyT+38*u;
+      const ref=P.mode==='slide'?P.v0:vm(P),vMax=(ref>0?ref:1)*1.12,tMax=S.tMax;
+      const TX=t=>gx0+t/tMax*(gx1-gx0),VY=v=>gy1-v/vMax*(gy1-gyP),vs=nice(vMax/4),ts=nice(tMax/5);
+      const ve=(gy1-gyP)/vMax*vs>=24*ut?1:2;
+      for(let i=1;i*vs<=vMax*1.0001;i++){const y=VY(i*vs);F.line(gx0,y,gx0+5*u,y,{w:1});if(i%ve===0)F.label(num(i*vs),gx0-7*u,y,{italic:false,size:14,align:'right'})}
+      const tn=[];for(let i=1;i*ts<=tMax*1.0001;i++)tn.push(i);
+      const te=every(TX(ts)-gx0,Math.max(0,...tn.map(i=>nw(num(i*ts))))),tsW=wid('t',19)+wid('/s',15,{i:false});
+      for(const i of tn){const x=TX(i*ts),s=num(i*ts);F.line(x,gy1,x,gy1-5*u,{w:1});if(i%te===0&&x+nw(s)/2<gxR-tsW-6*ut)F.label(s,x,gy1+15*ut,{italic:false,size:14})}
+      F.arrow(gx0,gy1,0,gyT-gy1,F.ink,null,{w:1.3,head:10});F.arrow(gx0,gy1,gxR-gx0,0,F.ink,null,{w:1.3,head:10});
+      F.label('O',gx0-10*ut,gy1+12*ut);
+      run([['v'],['/(m·s⁻¹)',{i:false,s:15}]],gx0+10*u,gyT+6*u);run([['t'],['/s',{i:false,s:15}]],gxR,gy1+17*ut,{align:'right'});
+      if(ref>0){const y=VY(ref);
+        if(P.mode==='force'){F.aux(gx0,y,gx1+8*u,y);run([['v'],['m',{sub:1}],[` = ${fmt(ref)} m/s`,{i:false,s:15}]],gx1+8*u,y-13*ut,{align:'right'})}
+        else run([['v'],['0',{sub:1,i:false}],[` = ${fmt(ref)} m/s`,{i:false,s:15}]],gx0+10*u,y-14*ut)}
+      const pts=S.hist.map(([t,v])=>[TX(t),VY(v)]);pts.push([TX(S.t),VY(S.v)]);
+      F.poly(pts,{w:2,color:cV});F.dot(TX(S.t),VY(S.v),3,cV);
     },
     verdict(P){
       const k=K(P),tau=P.m/k,Rt=P.R+P.r,BL=P.B*P.L;
@@ -985,7 +1064,7 @@ const box=$('params');
 PS.forEach(p=>{
   if(p.type==='choice'){
     const d=document.createElement('div');d.className='seg';d.setAttribute('role','group');d.setAttribute('aria-label',p.label);
-    d.innerHTML=p.options.map(o=>`<button id="opt-${p.key}-${o.value}" data-k="${p.key}" data-v="${o.value}">${esc(o.label)}</button>`).join('');
+    d.innerHTML=p.options.map(o=>`<button id="opt-${p.key}-${o.value}" data-k="${p.key}" data-v="${o.value}">${esc(o.label)}${o.hint?`<small>${esc(o.hint)}</small>`:""}</button>`).join('');
     box.appendChild(d);
   }else{
     const d=document.createElement('div');d.className='field';d.id=`f-${p.key}`;

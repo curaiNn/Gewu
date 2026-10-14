@@ -1,7 +1,11 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>格物 Gewu 母题库</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;800&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;800&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" media="print" onload="this.media='all'">
 <style>
 /* Layout: 与母题页同一套实验报告风格；题头 + 按模块分组的母题卡片目录 */
 :root{
@@ -50,6 +54,7 @@ a.card:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
 .st{font-size:12px;color:var(--ok);display:inline-flex;align-items:center;gap:6px}
 .st::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--ok)}
 .card h3{font-size:18px}
+.kind{margin-top:2px;font-size:13px;color:var(--muted)}
 .card p{font-size:14px;color:var(--muted)}
 .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}
 .tag{font-size:12px;border:1px solid var(--hair);background:var(--sunk);padding:1px 9px;border-radius:999px;color:var(--muted)}
@@ -69,26 +74,27 @@ footer{font-size:12px;color:var(--faint);text-align:center}
   </header>
   <div id="list" class="wrap" style="padding:0;gap:28px"></div>
   <div class="next" id="next"></div>
-  <footer>格物 Gewu · 更新于 2026-10-13 · g 取 10 m/s²</footer>
+  <footer>格物 Gewu · 更新于 2026-10-14 · g 取 10 m/s²</footer>
 </div>
 
 <script>
 const ITEMS=[
-  {mod:'力学',id:'MEC-CIR-01',name:'竖直圆轨道',sub:'绳 / 杆模型',desc:'小球能不能转过最高点？脱轨位置、两点弹力差 6mg、杆模型推拉判断。',tags:['最高点临界','脱轨判断','机械能守恒'],url:'https://claude.ai/artifact/VZ4UGrUj6Y2LJkEAcXcCMw',file:'MEC-CIR-01.html'},
-  {mod:'力学',id:'MEC-GRV-01',name:'天体圆轨道',sub:'参量比较',desc:'两颗卫星同屏对比 v、ω、T、a 与能量；高轨低速大周期，可切到椭圆与逃逸。',tags:['万有引力','黄金代换','开普勒第三定律'],url:'https://claude.ai/artifact/1KPpyax8eazq7WgP7hsobL',file:'MEC-GRV-01.html'},
-  {mod:'电磁学',id:'EM-IND-01',name:'单棒切割磁感线',sub:'导轨 + 导体棒',desc:'初速度滑行或恒力拉动：收尾速度、滑行距离、电量与焦耳热，实时 v–t 图。',tags:['E = BLv','安培力','动量定理求电量'],url:'https://claude.ai/artifact/EJetaamUEirvKzTJKYrYni',file:'EM-IND-01.html'},
-  {mod:'热学',id:'THM-GAS-01',name:'封闭气体状态变化',sub:'竖直气缸 / 液柱',desc:'等温加砝码、等压变温、卡口等容三种过程，活塞动画与实时 p–V 图。',tags:['玻意耳定律','盖–吕萨克定律','热力学第一定律'],url:'https://claude.ai/artifact/Ft3k7dnsFGaEsbRw7w5YG1',file:'THM-GAS-01.html'}
+  {mod:'力学',id:'MEC-CIR-01',name:'轻绳模型与轻杆模型',sub:'竖直面内圆周运动',desc:'小球能不能转过最高点？脱轨位置、两点弹力差 6mg、轻杆模型推拉判断。',tags:['最高点临界','脱轨判断','机械能守恒'],url:'https://claude.ai/artifact/VZ4UGrUj6Y2LJkEAcXcCMw',file:'MEC-CIR-01.html'},
+  {mod:'力学',id:'MEC-GRV-01',name:'卫星运行参量的比较',sub:'高轨低速长周期',desc:'两颗卫星同屏对比 v、ω、T、a 与能量；高轨低速长周期，可切到椭圆与逃逸。',tags:['万有引力','黄金代换','开普勒第三定律'],url:'https://claude.ai/artifact/1KPpyax8eazq7WgP7hsobL',file:'MEC-GRV-01.html'},
+  {mod:'电磁学',id:'EM-IND-01',name:'电磁感应中的单杆模型',sub:'阻尼式 / 发电式',desc:'阻尼式（初速度滑行）与发电式（恒力拉动）：收尾速度、滑行距离、电量与焦耳热，实时 v–t 图。',tags:['E = BLv','安培力','动量定理求电量'],url:'https://claude.ai/artifact/EJetaamUEirvKzTJKYrYni',file:'EM-IND-01.html'},
+  {mod:'热学',id:'THM-GAS-01',name:'气缸活塞类问题',sub:'气体实验定律',desc:'等温加砝码、等压变温、卡口等容三种过程，活塞动画与实时 p–V 图。',tags:['玻意耳定律','盖–吕萨克定律','热力学第一定律'],url:'https://claude.ai/artifact/Ft3k7dnsFGaEsbRw7w5YG1',file:'THM-GAS-01.html'}
 ];
-const NEXT=['OPT-LGT-01 双缝干涉','EM-ACG-01 线圈转动发电机与负载','EM-MAG-01 带电粒子在有界磁场中的圆周运动'];
-// 在 claude.ai 上打开时用发布链接；从代码仓本地打开时用同目录文件
-const local=location.protocol==='file:'||/github\.io$/.test(location.hostname);
+const NEXT=['OPT-LGT-01 双缝干涉','EM-ACG-01 交变电流的产生','EM-MAG-01 带电粒子在有界磁场中的圆周运动'];
+// 在 claude.ai 上打开时用发布链接；从代码仓本地打开或在自建服务器上时用同目录文件
+const SELF_HOSTS=['8.133.160.230'];
+const local=location.protocol==='file:'||/github\.io$/.test(location.hostname)||SELF_HOSTS.includes(location.hostname);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const mods=[...new Set(ITEMS.map(i=>i.mod))];
 document.getElementById('stats').innerHTML=`<span>已完成 <b>${ITEMS.length}</b> 道</span>`+mods.map(m=>`<span>${m} <b>${ITEMS.filter(i=>i.mod===m).length}</b></span>`).join('');
 document.getElementById('list').innerHTML=mods.map(m=>`<section class="group"><div class="gh"><h2>${m}</h2><small>${ITEMS.filter(i=>i.mod===m).length} 道</small></div><div class="cards">${
   ITEMS.filter(i=>i.mod===m).map(i=>`<a class="card" href="${local?i.file:i.url}" target="_blank" rel="noopener">
     <div class="top"><span class="code">${i.id}</span><span class="st">页面完成</span></div>
-    <h3>${esc(i.name)}<span style="font-size:14px;font-weight:600;color:var(--muted)">（${esc(i.sub)}）</span></h3>
+    <div><h3>${esc(i.name)}</h3><div class="kind">${esc(i.sub)}</div></div>
     <p>${esc(i.desc)}</p>
     <div class="tags">${i.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}</div>
     <span class="go">打开母题 →</span></a>`).join('')}</div></section>`).join('');

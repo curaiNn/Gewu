@@ -1,26 +1,30 @@
-<title>格物 MEC-GRV-01 天体圆轨道</title>
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>格物 MEC-GRV-01 卫星运行参量的比较</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;800&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;800&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" media="print" onload="this.media='all'">
 
 <!-- ================= 母题数据（由 {编号}.md 转换，页面只改这里和 SIM 模块） ================= -->
 <script type="application/json" id="data">
 {
   "id": "MEC-GRV-01",
-  "name": "天体圆轨道参量比较",
+  "name": "卫星运行参量的比较（高轨低速长周期）",
   "module": "力学",
   "chapter": "必修二 · 万有引力与宇宙航行",
   "freq": "高",
   "difficulty": 2,
-  "version": "v0.1",
+  "version": "v0.2",
   "related": [
-    "MEC-GRV-02 椭圆轨道与逃逸",
+    "MEC-GRV-02 卫星变轨问题",
     "MEC-CIR-01 向心力方程",
     "EM-MAG-01 qvB 提供向心力"
   ],
   "tags": [
     "万有引力提供向心力",
-    "高轨低速大周期",
+    "高轨低速长周期",
     "开普勒第三定律",
     "黄金代换 GM = gR²",
     "轨道能量 Ek、Ep、E"
@@ -246,7 +250,7 @@
     },
     {
       "id": "C4",
-      "title": "高轨低速大周期：r 越大，v、ω、a 越小，T 越大",
+      "title": "高轨低速长周期：r 越大，v、ω、a 越小，T 越大",
       "formula": "v ∝ r^(−1/2)，ω ∝ r^(−3/2)，a ∝ r^(−2)，T ∝ r^(3/2)",
       "derivation": "由 C1–C3，GM 是常量，v、ω、a 都是 r 的负幂次，r 增大时减小；T 是 r 的正幂次，r 增大时增大。\n比例：r_B/r_A = n 时，v_B/v_A = 1/√n，ω_B/ω_A = 1/n^(3/2)，a_B/a_A = 1/n²，T_B/T_A = n^(3/2)。\n注意：只有 v、ω、a、T 由 r 唯一决定；引力 F、动能 Ek 还和卫星质量有关，比较时必须先确认 m 相同。"
     },
@@ -439,7 +443,7 @@
   --paper:#f2f4f3; --grid:#e4e9e6; --card:#ffffff; --sunk:#f6f8f7;
   --ink:#142030; --muted:#5b6979; --faint:#8a96a3; --line:#d6dedA; --hair:#e7ece9;
   --accent:#2443a6; --accent-soft:#e9eefb; --mark:#f7e9b0;
-  --g:#c4382f; --n:#18845a; --v:#2443a6; --track:#34404f; --warn:#a85a14; --ok:#18845a;
+  --g:#c0502a; --n:#17806a; --v:#2f62b3; --a:#a0661a; --track:#34404f; --fig-ink:#1d232b; --fig-aux:#75808c; --warn:#a85a14; --ok:#18845a;
   --shadow:0 1px 0 rgba(20,32,48,.04),0 10px 28px -18px rgba(20,32,48,.28);
   --f-display:"Noto Serif SC","Songti SC","STSong",serif;
   --f-body:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
@@ -449,13 +453,13 @@
   --paper:#10161d; --grid:#18202a; --card:#171f28; --sunk:#131a22;
   --ink:#e4e9ef; --muted:#9aa7b6; --faint:#6f7d8c; --line:#2a3542; --hair:#212b36;
   --accent:#93acff; --accent-soft:#1f2a44; --mark:#4a4020;
-  --g:#ff7d71; --n:#52d39c; --v:#93acff; --track:#c3ccd8; --warn:#f0a35a; --ok:#52d39c;
+  --g:#ef8f6e; --n:#5cc7a0; --v:#8db0ef; --a:#e3ac5c; --track:#c3ccd8; --fig-ink:#dde3ea; --fig-aux:#8794a2; --warn:#f0a35a; --ok:#52d39c;
   --shadow:0 1px 0 rgba(0,0,0,.25),0 12px 30px -20px rgba(0,0,0,.7); color-scheme:dark}}
 :root[data-theme="dark"]{
   --paper:#10161d; --grid:#18202a; --card:#171f28; --sunk:#131a22;
   --ink:#e4e9ef; --muted:#9aa7b6; --faint:#6f7d8c; --line:#2a3542; --hair:#212b36;
   --accent:#93acff; --accent-soft:#1f2a44; --mark:#4a4020;
-  --g:#ff7d71; --n:#52d39c; --v:#93acff; --track:#c3ccd8; --warn:#f0a35a; --ok:#52d39c;
+  --g:#ef8f6e; --n:#5cc7a0; --v:#8db0ef; --a:#e3ac5c; --track:#c3ccd8; --fig-ink:#dde3ea; --fig-aux:#8794a2; --warn:#f0a35a; --ok:#52d39c;
   --shadow:0 1px 0 rgba(0,0,0,.25),0 12px 30px -20px rgba(0,0,0,.7); color-scheme:dark}
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -537,6 +541,7 @@ canvas{width:100%;max-width:100%;aspect-ratio:1/1;display:block}
 .status::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--faint);flex:none}
 .status.warn{color:var(--warn)} .status.warn::before{background:var(--warn)}
 .status.ok{color:var(--ok)} .status.ok::before{background:var(--ok)}
+@media (max-width:640px){.status{position:static;margin:8px 10px 10px;max-width:none}}
 .legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--muted)}
 .legend i{display:inline-block;width:16px;height:3px;vertical-align:middle;margin-right:6px;border-radius:2px}
 .readout{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card)}
@@ -568,6 +573,7 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
 .seg{display:flex;padding:3px;gap:3px;border-radius:999px;background:var(--sunk);border:1px solid var(--line)}
 .seg button{flex:1;border:none;padding:6px 10px;background:transparent;color:var(--muted)}
 .seg button[aria-pressed="true"]{background:var(--card);color:var(--ink);font-weight:700;box-shadow:var(--shadow)}
+.seg button small{display:block;font-size:12px;font-weight:400;color:var(--faint);line-height:1.4}
 .presets{display:flex;flex-wrap:wrap;gap:6px}
 .presets button{font-size:13px;padding:4px 12px;background:var(--sunk)}
 .verdict{background:var(--sunk);border:1px solid var(--hair);border-radius:10px;padding:12px 14px;font-size:14px;line-height:1.8}
@@ -701,6 +707,67 @@ footer{font-size:12px;color:var(--faint);text-align:center}
 </div>
 
 <script>
+/* ================= 线稿绘图工具 FIG（所有母题共用，不改） =================
+   画法照试卷插图：装置用墨线，固定面画斜线阴影，辅助线用虚线，物理量和点的字母用斜体衬线；
+   只有矢量带颜色（--g 重力/外力，--n 弹力/约束力，--v 速度，--a 其他矢量）。
+   用法：SIM.draw 里 const F=FIG(ctx,W,tok)；坐标是画布像素，F.u = W/720 是线宽与几何的基准单位，
+   F.ut 是字号单位（窄屏时不再随画布缩小，保证字母不小于约 11 CSS 像素；自写文字函数也要用 F.ut 算字号）。
+   颜色：F.ink 墨线、F.auxColor 辅助线、F.paper 纸色（F.aux 是画辅助线的方法，不是颜色）。 */
+const FIG=(ctx,W,tok)=>{
+  const u=W/720,ink=tok('--fig-ink'),aux=tok('--fig-aux'),paper=tok('--card');
+  const dp=W/(ctx.canvas.clientWidth||W),ut=Math.max(u,dp*11/19);   // dp：每 CSS 像素的画布像素数
+  const SERIF='"Times New Roman","STIX Two Text",Times,serif',SANS=tok('--f-body');
+  const path=(fn,{w=1.6,color=ink,dash=null,fill=null}={})=>{ctx.save();ctx.beginPath();fn();
+    if(fill){ctx.fillStyle=fill;ctx.fill()}
+    if(w>0){ctx.lineWidth=w*u;ctx.strokeStyle=color;ctx.setLineDash(dash?dash.map(d=>d*u):[]);ctx.lineCap='round';ctx.lineJoin='round';ctx.stroke()}
+    ctx.restore()};
+  // 文字先描一圈底色再填色，压在线条上也清楚
+  const text=(t,x,y,font,color,align,base)=>{ctx.save();ctx.font=font;ctx.textAlign=align;ctx.textBaseline=base;
+    ctx.lineJoin="round";ctx.lineWidth=5*ut;ctx.strokeStyle=paper;ctx.strokeText(t,x,y);ctx.fillStyle=color;ctx.fillText(t,x,y);ctx.restore()};
+  const F={u,ut,ink,auxColor:aux,paper,
+    clear(){ctx.save();ctx.setLineDash([]);ctx.fillStyle=paper;ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);ctx.restore()},
+    line(x1,y1,x2,y2,o){path(()=>{ctx.moveTo(x1,y1);ctx.lineTo(x2,y2)},o)},
+    poly(pts,o){path(()=>pts.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y)),o)},
+    circle(x,y,r,o){path(()=>ctx.arc(x,y,r,0,2*Math.PI),o)},
+    arc(x,y,r,a0,a1,o){path(()=>ctx.arc(x,y,r,a0,a1),o)},
+    rect(x,y,w,h,o){path(()=>ctx.rect(x,y,w,h),o)},
+    // 辅助线（中心线、投影线等）
+    aux(x1,y1,x2,y2,o={}){F.line(x1,y1,x2,y2,{w:1,color:aux,dash:[6,5],...o})},
+    // 运动轨迹：细虚线
+    trail(pts,o={}){if(pts.length>1)F.poly(pts,{w:1.3,color:aux,dash:[5,5],...o})},
+    // 固定面斜线：沿 (x1,y1)→(x2,y2) 的直线，画在 side 一侧（屏幕坐标下，1 = 前进方向右手侧）
+    hatch(x1,y1,x2,y2,side=1,{gap=12,len=10}={}){const L=Math.hypot(x2-x1,y2-y1),n=Math.max(1,Math.round(L/(gap*u)));
+      const tx=(x2-x1)/L,ty=(y2-y1)/L,nx=-ty*side,ny=tx*side,ox=(nx-tx)*len*u/Math.SQRT2,oy=(ny-ty)*len*u/Math.SQRT2;
+      path(()=>{for(let i=0;i<=n;i++){const x=x1+(x2-x1)*i/n,y=y1+(y2-y1)*i/n;ctx.moveTo(x,y);ctx.lineTo(x+ox,y+oy)}},{w:1,color:aux})},
+    // 圆弧形固定面的斜线：out = true 画在圆外侧
+    hatchArc(cx,cy,r,a0,a1,out=true,{gap=12,len=10}={}){const n=Math.max(1,Math.round(r*Math.abs(a1-a0)/(gap*u))),s=out?1:-1;
+      path(()=>{for(let i=0;i<=n;i++){const a=a0+(a1-a0)*i/n,c=Math.cos(a),si=Math.sin(a),x=cx+r*c,y=cy+r*si;
+        const nx=c*s,ny=si*s,tx=-si,ty=c;ctx.moveTo(x,y);ctx.lineTo(x+(nx-tx)*len*u/Math.SQRT2,y+(ny-ty)*len*u/Math.SQRT2)}},{w:1,color:aux})},
+    // 矢量：从 (x,y) 画到 (x+dx,y+dy)，细杆 + 窄实心箭头；label 用斜体写在箭头外侧，
+    // 与别的矢量共线时用 off=[dx,dy]（单位 u，相对箭头尖）把标注挪到旁边
+    arrow(x,y,dx,dy,color,label,{w=2,head=12,size=19,off=null}={}){const L=Math.hypot(dx,dy);if(L<2*u)return;
+      const ux=dx/L,uy=dy/L,h=Math.min(head*u,L*.6),hw=h*.34,tx=x+dx,ty=y+dy;
+      F.line(x,y,tx-ux*h*.7,ty-uy*h*.7,{w,color});
+      path(()=>{ctx.moveTo(tx,ty);ctx.lineTo(tx-ux*h-uy*hw,ty-uy*h+ux*hw);ctx.lineTo(tx-ux*h+uy*hw,ty-uy*h-ux*hw);ctx.closePath()},{w:0,fill:color});
+      if(label)F.label(label,off?tx+off[0]*u:tx+ux*14*u,off?ty+off[1]*u:ty+uy*14*u,{color,size})},
+    // 斜体衬线字母（物理量、点名）
+    label(t,x,y,{color=ink,size=19,align='center',base='middle',italic=true}={}){text(t,x,y,`${italic?'italic ':''}${size*ut}px ${SERIF}`,color,align,base)},
+    // 中文小注
+    zh(t,x,y,{color=aux,size=14,align='center',base='middle'}={}){text(t,x,y,`${size*ut}px ${SANS}`,color,align,base)},
+    dot(x,y,r=2.6,color=ink){F.circle(x,y,r*u,{w:0,fill:color})},
+    // 带名字的点：实心小点 + 斜体字母（dx、dy 为字母相对点的偏移，单位 u）
+    point(x,y,name,dx=-13,dy=13){F.dot(x,y);if(name)F.label(name,x+dx*u,y+dy*u)},
+    // 小球：空心圆，球心另用 F.dot 标出（矢量画完后再点，表示力作用在重心）
+    ball(x,y,r){F.circle(x,y,r,{w:1.6,fill:paper})},
+    // 尺寸标注：两端带箭头的细线，文字写在中点外侧 off（单位 u）
+    dim(x1,y1,x2,y2,t,{off=14,color=ink}={}){const L=Math.hypot(x2-x1,y2-y1);if(L<4*u)return;const ux=(x2-x1)/L,uy=(y2-y1)/L,h=Math.min(8*u,L/3),hw=h*.38;
+      F.line(x1,y1,x2,y2,{w:1,color});
+      for(const[px,py,sx]of[[x1,y1,1],[x2,y2,-1]])path(()=>{ctx.moveTo(px,py);ctx.lineTo(px+sx*ux*h-uy*hw,py+sx*uy*h+ux*hw);ctx.lineTo(px+sx*ux*h+uy*hw,py+sx*uy*h-ux*hw);ctx.closePath()},{w:0,fill:color});
+      if(t)F.label(t,(x1+x2)/2-uy*off*u,(y1+y2)/2+ux*off*u,{color})},
+  };
+  return F;
+};
+
 /* ================= SIM 模块：每个母题替换这一段 =================
    约定接口：
    SIM.legend            [{label, color(CSS 变量名)}]
@@ -734,7 +801,7 @@ const SIM=(()=>{
   const orbitOf=(rA,k)=>{const k2=k*k,bound=k2<2-1e-12,other=bound?rA*k2/(2-k2):Infinity;
     return{bound,other,rp:Math.min(rA,other),ra:Math.max(rA,other),a:bound?(rA+other)/2:Infinity}};
   return{
-    legend:[{label:'卫星 A',color:'--v'},{label:'卫星 B',color:'--warn'},{label:'速度 v',color:'--n'},{label:'加速度 a（指向地心）',color:'--g'}],
+    legend:[{label:'速度 v',color:'--v'},{label:'加速度 a（指向地心）',color:'--a'}],
     init(P){
       const one=P.mode==='one',rA=P.rA*1e3,rB=P.rB*1e3,S={t:0,done:false,one,status:{text:'准备就绪',cls:''}};
       if(!one){
@@ -760,6 +827,8 @@ const SIM=(()=>{
           if(d>Math.PI)d-=TAU;else if(d<-Math.PI)d+=TAU;
           if(o.T1===null&&o.cum<TAU&&o.cum+d>=TAU)o.T1=tt-h+h*(TAU-o.cum)/d;   // 首次转满一圈的时刻（线性插值）
           o.cum+=d;o.last=ang;o.rmin=Math.min(o.rmin,r);o.rmax=Math.max(o.rmax,r);
+          if(S.one&&!S.apx&&Math.abs(P.k-1)>1e-9){const rv=o.x*o.vx+o.y*o.vy;   // 只供画图：记下转到对面的拱点（径向速度变号处）
+            if(S.rs===undefined)S.rs=Math.sign(rv);else if(rv*S.rs<0)S.apx=[o.x,o.y]}
           if(S.one&&r<RE){o.x*=RE/r;o.y*=RE/r;S.done=true;S.t=tt;
             S.status={text:`撞上地球表面（近地点地心距 ${km(S.rp)} < R地）`,cls:'warn'};o.trail.push([o.x,o.y]);return}
           if(S.one&&r>S.view*1.04){S.done=true;S.t=tt;
@@ -789,65 +858,140 @@ const SIM=(()=>{
         ['动能 Ek',sci(ek)+' J'],['势能 Ep',sci(ep)+' J'],['机械能 E',sci(ek+ep)+' J']];
     },
     draw(ctx,S,P,W,H,tok){
-      const u=W/720,css=(ctx.canvas&&ctx.canvas.clientWidth)||W,px=W/css,fz=Math.max(15*u,11*px);
-      const fb=tok('--f-body'),fm=tok('--f-mono');
-      ctx.clearRect(0,0,W,H);ctx.fillStyle=tok('--card');ctx.fillRect(0,0,W,H);
-      // 底部对比条形图占一条，轨道画在其上方
-      const Hs=5.4*fz,top=0,avail=H-Hs-14*u;
-      const cx=W/2,cy=top+avail/2+8*u,Rv=Math.min(W*0.46,avail/2-6*u),sc=Rv/S.view,X=x=>cx+x*sc,Y=y=>cy-y*sc;
-      // 刻度圈：R地 的整数倍
-      const nmax=S.view/RE,steps=[1,2,5,10,20,50,100,200];let st=steps.find(s=>nmax/s<=7)||500;
-      ctx.setLineDash([4*u,7*u]);ctx.lineWidth=1.2*u;ctx.strokeStyle=tok('--line');ctx.font=`${Math.max(12*u,10*px)}px ${fb}`;ctx.fillStyle=tok('--faint');
-      for(let n=st===1?2:st;n*RE<=S.view*1.06;n+=st){const rr=n*RE*sc;ctx.beginPath();ctx.arc(cx,cy,rr,0,TAU);ctx.stroke();
-        if(rr>22*u)ctx.fillText(`${n}R地`,cx-rr*0.707-8*u,cy+rr*0.707+14*u)}
-      ctx.setLineDash([]);
-      // 地球
-      const re=Math.max(RE*sc,5*u);ctx.fillStyle=tok('--accent-soft');ctx.strokeStyle=tok('--accent');ctx.lineWidth=2*u;
-      ctx.beginPath();ctx.arc(cx,cy,re,0,TAU);ctx.fill();ctx.stroke();
-      ctx.globalAlpha=.3;ctx.lineWidth=1*u;ctx.beginPath();ctx.ellipse(cx,cy,re,re*.35,0,0,TAU);ctx.moveTo(cx,cy-re);ctx.lineTo(cx,cy+re);ctx.stroke();ctx.globalAlpha=1;
-      if(re>26*u){ctx.fillStyle=tok('--accent');ctx.font=`600 ${Math.max(14*u,11*px)}px ${fb}`;ctx.textAlign='center';ctx.fillText('地球',cx,cy+re*0.62+5*u);ctx.textAlign='left'}
-      const cols=S.one?['--v']:['--v','--warn'];
-      // 轨道
-      if(!S.one){S.sats.forEach((o,i)=>{const r0=(i?P.rB:P.rA)*1e3;ctx.strokeStyle=tok(cols[i]);ctx.globalAlpha=.55;ctx.lineWidth=2.2*u;ctx.beginPath();ctx.arc(cx,cy,r0*sc,0,TAU);ctx.stroke();ctx.globalAlpha=1})}
-      else{ctx.setLineDash([3*u,6*u]);ctx.strokeStyle=tok('--muted');ctx.lineWidth=1.5*u;ctx.beginPath();ctx.arc(cx,cy,P.rA*1e3*sc,0,TAU);ctx.stroke();ctx.setLineDash([]);
-        const tr=S.sats[0].trail;if(tr.length>1){ctx.strokeStyle=tok('--v');ctx.lineWidth=2.5*u;ctx.beginPath();tr.forEach(([x,y],i)=>i?ctx.lineTo(X(x),Y(y)):ctx.moveTo(X(x),Y(y)));
-          const o=S.sats[0];ctx.lineTo(X(o.x),Y(o.y));ctx.stroke()}}
-      // 矢量
-      const arrow=(bx,by,dx,dy,col,lab)=>{const Lg=Math.hypot(dx,dy);if(Lg<3*u)return;ctx.strokeStyle=col;ctx.fillStyle=col;ctx.lineWidth=3*u;ctx.lineCap='round';
-        ctx.beginPath();ctx.moveTo(bx,by);ctx.lineTo(bx+dx,by+dy);ctx.stroke();const a=Math.atan2(dy,dx),hs=10*u;
-        ctx.beginPath();ctx.moveTo(bx+dx,by+dy);ctx.lineTo(bx+dx-hs*Math.cos(a-.4),by+dy-hs*Math.sin(a-.4));ctx.lineTo(bx+dx-hs*Math.cos(a+.4),by+dy-hs*Math.sin(a+.4));ctx.closePath();ctx.fill();
-        ctx.font=`600 ${Math.max(16*u,11*px)}px ${fm}`;ctx.fillText(lab,bx+dx+10*u*Math.cos(a)-5*u,by+dy+10*u*Math.sin(a)+6*u)};
-      const Q=S.sats.map(q);
-      const vref=S.one?vc(P.rA*1e3):Math.max(...Q.map(c=>c.v)),aref=S.one?GM/Math.pow(P.rA*1e3,2):Math.max(...Q.map(c=>c.a));
-      S.sats.forEach((o,i)=>{const c=Q[i],bx=X(o.x),by=Y(o.y);
-        const Lv=Math.max(10*u,Math.min(200*u,80*u*c.v/vref)),La=Math.max(10*u,Math.min(160*u,70*u*c.a/aref));   // 按两星之比画，过小时取最短 10 单位以便看见
-        arrow(bx,by,-o.x/c.r*La,o.y/c.r*La,tok('--g'),'a');
-        arrow(bx,by,o.vx/c.v*Lv,-o.vy/c.v*Lv,tok('--n'),'v');
-        ctx.fillStyle=tok(cols[i]);ctx.strokeStyle=tok('--card');ctx.lineWidth=2.5*u;ctx.beginPath();ctx.arc(bx,by,9*u,0,TAU);ctx.fill();ctx.stroke();
-        ctx.font=`700 ${Math.max(17*u,12*px)}px ${fm}`;ctx.fillText(S.one?'A':(i?'B':'A'),bx+o.x/c.r*20*u-6*u,by-o.y/c.r*20*u+6*u)});
-      // 对比条形图
-      const x0=10*u,y0=H-Hs-4*u,w=W-20*u;
-      ctx.fillStyle=tok('--sunk');ctx.strokeStyle=tok('--line');ctx.lineWidth=1*u;ctx.beginPath();
-      if(ctx.roundRect)ctx.roundRect(x0,y0,w,Hs,8*u);else ctx.rect(x0,y0,w,Hs);ctx.fill();ctx.stroke();
-      let groups;
-      if(!S.one){const[A,B]=Q;
-        groups=[{h:'线速度 v（km/s）',rows:[['A',A.v/1e3,'--v'],['B',B.v/1e3,'--warn']],d:2},
-          {h:'周期 T（'+(Math.max(A.T,B.T)<7200?'min':'h')+'）',rows:[['A',A.T,'--v'],['B',B.T,'--warn']],T:Math.max(A.T,B.T)<7200?60:3600,d:Math.max(A.T,B.T)<7200?1:2},
-          {h:'加速度 a（m/s²）',rows:[['A',A.a,'--v'],['B',B.a,'--warn']],d:Math.min(A.a,B.a)<1?3:2}];
-      }else{const c=Q[0],v1=vc(c.r);
-        groups=[{h:'当前 v（km/s）',rows:[['v',c.v/1e3,'--n']],d:2,max:Math.SQRT2*v1/1e3},
-          {h:'该处 v圆（km/s）',rows:[['v圆',v1/1e3,'--v']],d:2,max:Math.SQRT2*v1/1e3},
-          {h:'该处 v逃 = √2 v圆',rows:[['v逃',Math.SQRT2*v1/1e3,'--g']],d:2,max:Math.SQRT2*v1/1e3}];}
-      const gw=w/3,pad=0.6*fz;
-      groups.forEach((G,gi)=>{const gx=x0+gi*gw+pad,gW=gw-1.6*pad;let yy=y0+pad+fz*0.85;
-        ctx.fillStyle=tok('--muted');ctx.font=`600 ${fz*0.92}px ${fb}`;ctx.fillText(G.h,gx,yy,gW);
-        const vals=G.rows.map(r=>r[1]/(G.T||1)),mx=G.max||Math.max(...vals),lw=(S.one?2.4:1.1)*fz,vw=3.3*fz,bw=Math.max(4*u,gW-lw-vw);
-        G.rows.forEach((r,ri)=>{yy=y0+pad+fz*(2.05+ri*1.45);const val=vals[ri];
-          ctx.fillStyle=tok(r[2]);ctx.font=`700 ${fz*0.9}px ${fm}`;ctx.fillText(r[0],gx,yy);
-          ctx.fillStyle=tok('--hair');ctx.fillRect(gx+lw,yy-fz*0.72,bw,fz*0.8);
-          ctx.fillStyle=tok(r[2]);ctx.fillRect(gx+lw,yy-fz*0.72,Math.max(1.5*u,bw*Math.min(1,val/mx)),fz*0.8);
-          ctx.fillStyle=tok('--ink');ctx.font=`600 ${fz*0.9}px ${fm}`;ctx.fillText(fmt(val,G.d),gx+lw+bw+0.35*fz,yy)});
-      });
+      // 试卷线稿：地球为墨线圆（内侧短斜线表示实体），圆轨道为细墨线，卫星为空心小圆 + 球心点，名字用斜体字母；
+      // 只有矢量带颜色：速度 v（--v）、加速度 a（--a，指向地心）。底部对比栏也用墨线条形，不用色块。
+      // 几何（轨道、矢量长度、线宽）用 u；文字和依赖文字尺寸的版面量用 ut（FIG 已保证窄屏时字母约 ≥ 11 CSS px）
+      const F=FIG(ctx,W,tok),u=F.u,ut=F.ut,css=(ctx.canvas&&ctx.canvas.clientWidth)||W,px=W/css;
+      const LS=19,ZS=15,wide=!matchMedia('(max-width:640px)').matches;   // 宽屏时状态标签浮在画布左上角，窄屏时排在画布下方
+      const SERIF='"Times New Roman","STIX Two Text",Times,serif',SANS=tok('--f-body');
+      const one=S.one,Q=S.sats.map(q),cV=tok('--v'),cA=tok('--a'),AUX=F.auxColor;
+      F.clear();
+      // 带下标的符号：sg = [[文字, 类型]]，类型 i 斜体、r 正体、s 斜体下标、z 中文下标、c 中文
+      const fs=k=>k==='s'||k==='z'?.66:k==='c'?.8:1;
+      const font=(k,sz)=>k==='z'||k==='c'?`${fs(k)*sz*ut}px ${SANS}`:`${k==='r'?'':'italic '}${fs(k)*sz*ut}px ${SERIF}`;
+      const adv=(t,k,sz)=>{ctx.save();ctx.font=font(k,sz);const w=ctx.measureText(t).width;ctx.restore();return w};
+      const wid=(sg,sz=LS)=>sg.reduce((w,[t,k],i)=>w+adv(t,k,sz)+(i?ut:0),0);
+      const rich=(sg,x,y,{color=F.ink,size=LS,align='center'}={})=>{
+        let xx=align==='left'?x:align==='right'?x-wid(sg,size):x-wid(sg,size)/2;
+        sg.forEach(([t,k])=>{const yy=y+(k==='s'||k==='z'?.3*size*ut:0),o={color,size:fs(k)*size,align:'left'};
+          if(k==='z'||k==='c')F.zh(t,xx,yy,o);else F.label(t,xx,yy,{...o,italic:k!=='r'});xx+=adv(t,k,size)+ut})};
+
+      // —— 版面：底部对比栏，上方画轨道；宽屏时顶端让开状态标签 ——
+      const pad=8*ut,headH=ZS*ut*1.55,rowH=LS*ut*1.25,nr=one?3:2,Hs=pad*1.6+headH+nr*rowH,yP=H-Hs;
+      const yT=wide?46*px:8*u,yB=yP-6*u,cx=W/2,cy=(yT+yB)/2;
+      const Rv=Math.max(40*u,Math.min(W*.44,(yB-yT)/2-24*ut)),sc=Rv/S.view,X=x=>cx+x*sc,Y=y=>cy-y*sc;
+      const gapR=one||P.rA===P.rB?Infinity:Math.abs(P.rA-P.rB)*1e3*sc;      // 两轨道太近时把卫星画小些，免得两圈相叠
+      const rb=Math.min(Math.max(6.5*u,3.6*px),Math.max(3.2*u,.45*gapR)),Lmin=rb+12*u;
+
+      // —— 标注排布：每个字母给几个候选位置，取第一个不压球、不压矢量、不压别的字、且离自己的锚点最近的；
+      //    能不压圆（地球、轨道）更好。所有字最后统一写上 ——
+      const obs=[],discs=[],lines=[],rings=[],anchors=[],todo=[];
+      // 宽屏时左上角的状态标签（13px 粗体，左上各 12px，过长会折行）也当作障碍
+      if(wide){ctx.save();ctx.font=`700 13px ${SANS}`;const tw=ctx.measureText(S.status.text).width;ctx.restore();
+        const pw=Math.min(tw+42,css-24),pl=tw+42>css-24?Math.ceil(tw/(css-66)):1;obs.push({x:0,y:0,w:(16+pw)*px,h:(28+22.1*pl)*px})}
+      const meet=(a,b)=>a.x<b.x+b.w&&b.x<a.x+a.w&&a.y<b.y+b.h&&b.y<a.y+a.h;
+      const onLine=(b,[x1,y1,x2,y2])=>{const n=Math.ceil(Math.hypot(x2-x1,y2-y1)/(2*u));
+        for(let k=0;k<=n;k++){const x=x1+(x2-x1)*k/n,y=y1+(y2-y1)*k/n;if(x>b.x&&x<b.x+b.w&&y>b.y&&y<b.y+b.h)return true}return false};
+      const onRing=(b,[r1,r2])=>{const dx=Math.max(b.x-cx,0,cx-b.x-b.w),dy=Math.max(b.y-cy,0,cy-b.y-b.h);
+        const far=Math.hypot(Math.max(Math.abs(b.x-cx),Math.abs(b.x+b.w-cx)),Math.max(Math.abs(b.y-cy),Math.abs(b.y+b.h-cy)));
+        return Math.hypot(dx,dy)<=r2&&far>=r1};
+      const put=(sg,pts,own=null,o={})=>{const sz=o.size||LS,w=wid(sg,sz),h=sz*ut*.9,box=([x,y])=>({x:x-w/2-ut,y:y-h/2-ut,w:w+2*ut,h:h+2*ut});
+        const hard=p=>{const b=box(p);return b.x<0||b.y<0||b.x+b.w>W||b.y+b.h>yP-2*u||obs.some(c=>meet(b,c))||lines.some(l=>onLine(b,l))||
+          discs.some(([x,y,r])=>Math.hypot(Math.max(b.x-x,0,x-b.x-b.w),Math.max(b.y-y,0,y-b.y-b.h))<r)||
+          (own&&anchors.some(a=>a!==own&&Math.hypot(p[0]-a[0],p[1]-a[1])<Math.hypot(p[0]-own[0],p[1]-own[1])))};
+        const p=pts.find(p=>!hard(p)&&!rings.some(r=>onRing(box(p),r)))||pts.find(p=>!hard(p))||pts[0];
+        obs.push(box(p));todo.push([sg,p[0],p[1],o])};
+      // 候选位置：紧贴点 (x,y)，沿各方向留 gap
+      const around=(sg,x,y,dirs,gap,sz=LS)=>{const w=wid(sg,sz)+2*ut,h=sz*ut*.9+2*ut;
+        return dirs.map(([dx,dy])=>{const n=Math.hypot(dx,dy);dx/=n;dy/=n;const e=Math.abs(dx)*w/2+Math.abs(dy)*h/2+gap;return[x+dx*e,y+dy*e]})};
+      // 矢量：先画（F.arrow，不带字），字的候选位置稍后排：箭头尖外 → 斜外 → 箭头尖两侧
+      const vecs=[],names=[];
+      const vec=(bx,by,dx,dy,col,sg,nx,ny)=>{const L=Math.hypot(dx,dy);if(L<2*u)return;F.arrow(bx,by,dx,dy,col,null);
+        const tip=[bx+dx,by+dy],ux=dx/L,uy=dy/L;lines.push([bx,by,tip[0],tip[1]]);anchors.push(tip);
+        vecs.push(()=>put(sg,around(sg,tip[0],tip[1],[[ux,uy],[ux+nx*.7,uy+ny*.7],[ux-nx*.7,uy-ny*.7],[nx,ny],[-nx,-ny],[nx-ux*.6,ny-uy*.6],[-nx-ux*.6,-ny-uy*.6]],5*ut),tip,{color:col}))};
+      const sat=(o,c,lv,la,sgV,sgA,sgN,vref,aref,Lamax)=>{       // 一颗卫星：空心小圆 → v、a → 球心点
+        const bx=X(o.x),by=Y(o.y),rx=o.x/c.r,ry=-o.y/c.r,tx=o.vx/c.v,ty=-o.vy/c.v;   // 屏幕坐标：径向朝外、速度方向
+        const Lv=Math.max(Lmin,Math.min(200*u,lv*c.v/vref)),La=Math.min(.8*c.r*sc,Math.max(Lmin,Math.min(Lamax,la*c.a/aref)));
+        F.ball(bx,by,rb);
+        vec(bx,by,tx*Lv,ty*Lv,cV,sgV,rx,ry);
+        vec(bx,by,-rx*La,-ry*La,cA,sgA,tx,ty);
+        F.dot(bx,by,2.2);
+        const own=[bx,by];anchors.push(own);discs.push([bx,by,rb+1.5*u]);
+        if(sgN){const d=(a,b)=>[a*rx+b*tx,a*ry+b*ty];   // a：径向朝外分量，b：沿速度分量
+          names.push(()=>put(sgN,around(sgN,bx,by,[d(.7,-.7),d(-.7,-.7),d(0,-1),d(1,0),d(.7,.7),d(-1,0),d(-.7,.7),d(0,1)],rb+3*ut),own))}};
+
+      ctx.save();ctx.beginPath();ctx.rect(0,0,W,yP-2*u);ctx.clip();
+      // 地球：墨线圆 + 内侧短斜线，中心点为地心
+      const re=Math.max(RE*sc,4*u);
+      F.circle(cx,cy,re,{w:1.6});rings.push([re-6*u,re+u]);
+      if(re>20*u)F.hatchArc(cx,cy,re,0,TAU,false,{gap:11,len:6});
+      F.dot(cx,cy,2.2);
+      const zhN=(t,pts,own)=>put([[t,'c']],pts,own,{size:ZS/.8,color:AUX});
+      if(re>60*ut)zhN('地球',[[cx,cy+re*.42]]);
+      // 半径尺寸：从地心画向左上方；字母放在地面与轨道之间的空当里，空当太窄放在中点，整段太短放到端点外
+      const dimR=(r,ang,sg,side)=>{const c=Math.cos(ang),s=Math.sin(ang),L=r*sc,ex=cx+L*c,ey=cy+L*s;F.dim(cx,cy,ex,ey,null);lines.push([cx,cy,ex,ey]);
+        if(L<64*ut)return put(sg,around(sg,ex,ey,[[c,s],[c-s,s+c],[c+s,s-c]],5*ut));
+        const m=L-re>40*ut?(L+re)/2:L*.56;put(sg,[[cx+m*c-s*side*ut,cy+m*s+c*side*ut]])};
+
+      if(!one){
+        const rr=[P.rA*1e3,P.rB*1e3],same=Math.abs(P.rA-P.rB)<1e-9,inn=P.rA<=P.rB?0:1;
+        rr.forEach((r,i)=>{if(!(same&&i)){F.circle(cx,cy,r*sc,{w:1.2});rings.push([r*sc-u,r*sc+u])}});
+        if(same)dimR(rr[0],Math.PI*1.2,[['r','i'],['A','s'],[' = ','r'],['r','i'],['B','s']],-15);
+        else rr.forEach((r,i)=>dimR(r,Math.PI*(i===inn?1.12:1.27),[['r','i'],[i?'B':'A','s']],i===inn?-14:14));
+        if(re<=60*ut)zhN('地球',around([['地球','c']],cx,cy,[[1,1],[-1,1],[1,-1],[0,1]],re+5*ut,ZS/.8));
+        // v、a 按两星之比画（过短时取最短长度以便看见）；a 最长不越过地心
+        const vref=Math.max(...Q.map(c=>c.v)),aref=Math.max(...Q.map(c=>c.a)),ia=Q[0].a>=Q[1].a?0:1;
+        const Lamax=Math.min(70*u,.72*Q[ia].r*sc);
+        (same?[0]:[1-inn,inn]).forEach(i=>{const n=i?'B':'A';
+          sat(S.sats[i],Q[i],80*u,Lamax,same?[['v','i']]:[['v','i'],[n,'s']],same?[['a','i']]:[['a','i'],[n,'s']],
+            same?[['A','i'],['(','r'],['B','i'],[')','r']]:[[n,'i']],vref,aref,Lamax)});
+      }else{
+        const o=S.sats[0],r0=P.rA*1e3*sc,ax=cx+r0,ay=cy,kk=P.k;
+        // 参照圆轨道（k = 1 时的轨道）+ 半径 r_A；实际轨迹用细虚线
+        F.circle(cx,cy,r0,{w:1.2});rings.push([r0-u,r0+u]);
+        dimR(P.rA*1e3,Math.PI*1.2,[['r','i'],['A','s']],-14);
+        F.trail([...o.trail.map(([x,y])=>[X(x),Y(y)]),[X(o.x),Y(o.y)]]);
+        // 发射点 A：k ≠ 1 时它是近地点或远地点；转到对面的拱点后再标出另一个（这几处先排字，「地球」「圆轨道」再找空地）
+        const pA=[ax,ay];F.dot(ax,ay,2.4);anchors.push(pA);
+        put([['A','i']],around([['A','i']],ax,ay,[[1,1],[1,0],[1,-1]],5*ut),pA);
+        const apA=Math.abs(kk-1)<1e-9?'':kk>1?'近地点':'远地点';
+        if(apA)zhN(apA,[...around([[apA,'c']],ax,ay+LS*ut,[[.5,1],[1,.6],[1,1]],8*ut,ZS/.8),
+          ...around([[apA,'c']],ax,ay,[[1,0],[1,-1],[0,1],[0,-1],[-1,1]],LS*ut*.6+8*ut,ZS/.8)],pA);
+        if(S.apx){const pq=[X(S.apx[0]),Y(S.apx[1])],nt=kk>1?'远地点':'近地点',dx=pq[0]<cx?-1:1;F.dot(pq[0],pq[1],2.4);anchors.push(pq);
+          zhN(nt,around([[nt,'c']],pq[0],pq[1],[[dx,.4],[dx,-.6],[dx,1.2],[-dx,.4]],6*ut,ZS/.8),pq)}
+        if(re<=60*ut)zhN('地球',around([['地球','c']],cx,cy,[[-1,1],[1,1],[0,1],[-1,0],[0,-1]],re+5*ut,ZS/.8));
+        zhN('圆轨道',[.7,.58,.82,.42,.95,.3,.5,1.05,.2].flatMap(f=>{const g=Math.PI*f,c=Math.cos(g),s=Math.sin(g);return around([['圆轨道','c']],cx+r0*c,cy+r0*s,[[c,s]],6*ut,ZS/.8)}));
+        const a1=GM/Math.pow(P.rA*1e3,2);
+        sat(o,Q[0],80*u,70*u,[['v','i']],[['a','i']],null,vc(P.rA*1e3),a1,160*u);
+      }
+      vecs.forEach(f=>f());names.forEach(f=>f());
+      todo.forEach(([sg,x,y,o])=>rich(sg,x,y,o));
+      ctx.restore();
+
+      // —— 对比栏：标题用中文小注，条形为墨线框 + 斜线 ——
+      const bar=(x,y,w,h)=>{if(w<.5)return;ctx.save();ctx.beginPath();ctx.rect(x,y,w,h);ctx.clip();
+        ctx.beginPath();for(let t=-h;t<w;t+=3.4*u){ctx.moveTo(x+t,y+h);ctx.lineTo(x+t+h,y)}
+        ctx.lineWidth=.9*u;ctx.strokeStyle=F.ink;ctx.stroke();ctx.restore();F.rect(x,y,w,h,{w:1})};
+      const mx=12*u,y0=yP+pad*.6;
+      F.line(mx,yP,W-mx,yP,{w:.8,color:AUX});
+      const group=(G,gx,gW)=>{
+        F.zh(G.h,gx,y0+headH*.42,{size:ZS,align:'left'});
+        const VS=LS*.86,vals=G.rows.map(r=>r[1]),mxv=G.max||Math.max(...vals),txt=vals.map(v=>fmt(v,G.d));
+        const lw=Math.max(...G.rows.map(r=>wid(r[0],LS*.92)))+8*ut,vw=Math.max(...txt.map(t=>wid([[t,'r']],VS)))+8*ut,bw=Math.max(8*u,gW-lw-vw);
+        const bh=Math.min(rowH*.42,8*ut),yr=i=>y0+headH+rowH*(i+.5),x1=gx+lw;
+        G.rows.forEach((r,i)=>{const yy=yr(i),f=Math.min(1,vals[i]/mxv);
+          rich(r[0],gx,yy,{size:LS*.92,align:'left'});
+          bar(x1,yy-bh/2,bw*f,bh);
+          F.label(txt[i],x1+bw*f+6*ut,yy,{size:VS,align:'left',italic:false})});
+        F.line(x1,yr(0)-rowH*.42,x1,yr(G.rows.length-1)+rowH*.42,{w:1.2})};
+      if(!one){const[A,B]=Q,Tu=Math.max(A.T,B.T)<7200?60:3600;
+        const gs=[{h:'线速度（km/s）',rows:[[[['A','i']],A.v/1e3],[[['B','i']],B.v/1e3]],d:2},
+          {h:`周期（${Tu===60?'min':'h'}）`,rows:[[[['A','i']],A.T/Tu],[[['B','i']],B.T/Tu]],d:Tu===60?1:2},
+          {h:'加速度（m/s²）',rows:[[[['A','i']],A.a],[[['B','i']],B.a]],d:Math.min(A.a,B.a)<1?3:2}];
+        const gw=(W-2*mx)/3;gs.forEach((G,i)=>group(G,mx+i*gw+(i?10*ut:0),gw-14*ut));
+      }else{const v1=vc(Q[0].r)/1e3,v=Q[0].v/1e3;
+        group({h:'当前速度与该处的圆轨道速度、逃逸速度（km/s）',d:2,max:Math.max(Math.SQRT2*v1,v),
+          rows:[[[['v','i']],v],[[['v','i'],['圆','z']],v1],[[['v','i'],['逃','z']],Math.SQRT2*v1]]},mx,W-2*mx)}
     },
     verdict(P){
       const rA=P.rA*1e3,rB=P.rB*1e3,m=P.m;
@@ -924,7 +1068,7 @@ const box=$('params');
 PS.forEach(p=>{
   if(p.type==='choice'){
     const d=document.createElement('div');d.className='seg';d.setAttribute('role','group');d.setAttribute('aria-label',p.label);
-    d.innerHTML=p.options.map(o=>`<button id="opt-${p.key}-${o.value}" data-k="${p.key}" data-v="${o.value}">${esc(o.label)}</button>`).join('');
+    d.innerHTML=p.options.map(o=>`<button id="opt-${p.key}-${o.value}" data-k="${p.key}" data-v="${o.value}">${esc(o.label)}${o.hint?`<small>${esc(o.hint)}</small>`:""}</button>`).join('');
     box.appendChild(d);
   }else{
     const d=document.createElement('div');d.className='field';d.id=`f-${p.key}`;
