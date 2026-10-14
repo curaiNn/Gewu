@@ -1072,7 +1072,8 @@ const root=document.documentElement;
 const tok=n=>getComputedStyle(root).getPropertyValue(n).trim();
 const PS=D.problem.params;
 const P={};PS.forEach(p=>P[p.key]=p.def);
-const fmtP=p=>p.type==='choice'?p.options.find(o=>o.value===P[p.key]).label:(+P[p.key]).toFixed(p.dec??2)+(p.unit?' '+p.unit:'');
+const unitSep=u=>/^[°′″]/.test(u)?'':' ';   // 角度单位紧贴数字：90°
+const fmtP=p=>p.type==='choice'?p.options.find(o=>o.value===P[p.key]).label:(+P[p.key]).toFixed(p.dec??2)+(p.unit?unitSep(p.unit)+p.unit:'');
 
 /* 静态内容 */
 document.title=`格物 ${D.id} ${D.name.replace(/（.*）/,'')}`;
@@ -1080,7 +1081,7 @@ $('hName').textContent=D.name;
 $('hSub').textContent=`${D.module} · ${D.chapter}　关联：${D.related.join('、')}`;
 $('hTable').innerHTML=`<tr><th>编号</th><th>考查频率</th><th>难度</th><th>版本</th></tr>
 <tr><td class="code">${esc(D.id)}</td><td>${esc(D.freq)}</td><td title="${D.difficulty} / 5">${'●'.repeat(D.difficulty)}${'○'.repeat(5-D.difficulty)}</td><td>${esc(D.version)}</td></tr>`;
-$('foot').textContent=`格物 Gewu · ${D.id} · ${D.version} · g 取 10 m/s²`;
+$('foot').textContent=`格物 Gewu · ${D.id} · ${D.version} · ${D.footer??'g 取 10 m/s²'}`;   // 数据里可用 footer 改写页脚常量
 $('tags').innerHTML=D.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('');
 $('stemNote').textContent=D.problem.note||'';
 $('bCond').innerHTML=D.boundary.conditions.map(c=>`<li><span>${esc(c)}</span></li>`).join('');

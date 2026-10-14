@@ -1,0 +1,2029 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>格物 EM-MAG-01 带电粒子在有界匀强磁场中的圆周运动</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;800&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" media="print" onload="this.media='all'">
+
+<!-- ================= 母题数据（由 {编号}.md 转换，页面只改这里和 SIM 模块） ================= -->
+<script type="application/json" id="data">
+{
+  "footer": "不计重力",
+  "id": "EM-MAG-01",
+  "name": "带电粒子在有界匀强磁场中的圆周运动（直线边界 / 平行边界 / 圆形边界）",
+  "module": "电磁学",
+  "chapter": "选择性必修二 · 安培力与洛伦兹力",
+  "freq": "中",
+  "difficulty": 4,
+  "version": "v0.1",
+  "related": [
+    "EM-MAG-02 回旋加速器",
+    "EM-ESF-01 电场中的类平抛",
+    "MEC-GRV-01 一个力提供向心力",
+    "MEC-CIR-01 向心力方程"
+  ],
+  "tags": [
+    "洛伦兹力提供向心力 r = mv/(qB)",
+    "周期与速率无关 T = 2πm/(qB)",
+    "定圆心、求半径、偏转角 = 圆心角",
+    "直线边界进出对称、圆形边界径向进径向出",
+    "临界相切（旋转圆、放缩圆）"
+  ],
+  "problem": {
+    "stem": "纸面内有{Bdir}的匀强磁场，磁感应强度 B = {B}；{constraint}。比荷 q/m = {qm} 的{sign}粒子以速率 v = {v} 射入磁场，β = {beta}。不计重力。问：① 粒子做圆周运动的半径 r 和周期 T 各多大？② 粒子从哪条边界、哪一点射出？速度偏转角 θ 和粒子在磁场中运动的时间 t 各多大？③ 保持入射方向不变，只改变速率 v，出射点、偏转角和运动时间怎样变化？平行边界中，粒子恰好不从 PQ 射出时的速率 v₀ 多大？",
+    "note": "e = 1.6×10⁻¹⁹ C，质子质量取 1.67×10⁻²⁷ kg。约定：粒子偏转一侧的入射速度与边界的夹角记为 γ（正电荷且磁场向里时粒子向左偏，γ = 180° − β；电性或磁场方向改变一个时粒子向右偏，γ = β）。d、R、R₁、R₂ 的数值见动画参数；q/m、v 的输入框可填科学计数（如 4.8e7）。",
+    "params": [
+      {
+        "key": "bnd",
+        "sym": "边界",
+        "label": "磁场边界",
+        "type": "choice",
+        "def": "line",
+        "options": [
+          {
+            "value": "line",
+            "label": "直\u2060线\u200B边\u2060界",
+            "hint": "单边界",
+            "text": "磁场区域为水平直线 MN 上方足够大的区域，粒子从 MN 上的 A 点射入，β 为速度与 MN 的夹角（从 A 沿 MN 向右量起）"
+          },
+          {
+            "value": "strip",
+            "label": "平\u2060行\u200B边\u2060界",
+            "hint": "双边界",
+            "text": "磁场区域为水平直线 MN 与其上方相距 d 的直线 PQ 之间的条形区域，粒子从 MN 上的 A 点射入，β 为速度与 MN 的夹角（从 A 沿 MN 向右量起）"
+          },
+          {
+            "value": "circle",
+            "label": "圆\u2060形\u200B边\u2060界",
+            "hint": "半径 R",
+            "text": "磁场区域为以 O 为圆心、半径为 R 的圆，粒子从圆的最低点 A 射入，β 为速度与 A 点切线的夹角（β = 90° 即沿 AO 径向射入）"
+          },
+          {
+            "value": "ring",
+            "label": "环\u2060形\u200B边\u2060界",
+            "hint": "磁约束",
+            "text": "磁场区域为以 O 为圆心、半径 R₁、R₂ 的两个同心圆之间的圆环（内圆中无磁场），粒子从 O 点沿与水平向右成 φ 角的方向射出，经内圆进入磁场（此时不用 β）"
+          }
+        ]
+      },
+      {
+        "key": "show",
+        "sym": "显示",
+        "label": "显示",
+        "type": "choice",
+        "def": "single",
+        "options": [
+          {
+            "value": "single",
+            "label": "单\u2060个\u200B粒\u2060子",
+            "text": ""
+          },
+          {
+            "value": "duo",
+            "label": "两\u2060种\u200B粒\u2060子",
+            "hint": "同\u2060时\u200B射\u2060入",
+            "text": ""
+          },
+          {
+            "value": "rot",
+            "label": "旋\u2060转\u200B圆",
+            "hint": "变\u200B方\u2060向",
+            "text": ""
+          },
+          {
+            "value": "zoom",
+            "label": "放\u2060缩\u200B圆",
+            "hint": "变\u200B速\u2060率",
+            "text": ""
+          },
+          {
+            "value": "beam",
+            "label": "磁\u200B聚\u2060焦",
+            "hint": "平\u2060行\u200B束",
+            "text": ""
+          }
+        ]
+      },
+      {
+        "key": "Bdir",
+        "sym": "B",
+        "label": "磁场方向",
+        "type": "choice",
+        "def": "in",
+        "options": [
+          {
+            "value": "in",
+            "label": "垂直纸面向里",
+            "hint": "画作 ×",
+            "text": ""
+          },
+          {
+            "value": "out",
+            "label": "垂直纸面向外",
+            "hint": "画作 ·",
+            "text": ""
+          }
+        ]
+      },
+      {
+        "key": "sign",
+        "sym": "电性",
+        "label": "粒子电性",
+        "type": "choice",
+        "def": "pos",
+        "options": [
+          {
+            "value": "pos",
+            "label": "带正电",
+            "hint": "+",
+            "text": ""
+          },
+          {
+            "value": "neg",
+            "label": "带负电",
+            "hint": "−",
+            "text": ""
+          }
+        ]
+      },
+      {
+        "key": "qm",
+        "sym": "q/m",
+        "label": "比荷（大小）",
+        "unit": "C/kg",
+        "def": 100000000,
+        "min": 10000000,
+        "max": 200000000,
+        "step": 1000000,
+        "dec": 0
+      },
+      {
+        "key": "B",
+        "sym": "B",
+        "label": "磁感应强度",
+        "unit": "T",
+        "def": 0.1,
+        "min": 0.02,
+        "max": 0.5,
+        "step": 0.005,
+        "dec": 3
+      },
+      {
+        "key": "v",
+        "sym": "v",
+        "label": "入射速率",
+        "unit": "m/s",
+        "def": 1000000,
+        "min": 100000,
+        "max": 3000000,
+        "step": 10000,
+        "dec": 0
+      },
+      {
+        "key": "beta",
+        "sym": "β",
+        "label": "入射方向与边界的夹角（从 A 沿边界向右量起）",
+        "unit": "°",
+        "def": 90,
+        "min": 10,
+        "max": 170,
+        "step": 1,
+        "dec": 0,
+        "when": {
+          "bnd": [
+            "line",
+            "strip",
+            "circle"
+          ]
+        }
+      },
+      {
+        "key": "phi",
+        "sym": "φ",
+        "label": "从 O 射出的方向与水平向右的夹角",
+        "unit": "°",
+        "def": 0,
+        "min": 0,
+        "max": 360,
+        "step": 1,
+        "dec": 0,
+        "when": {
+          "bnd": "ring"
+        }
+      },
+      {
+        "key": "d",
+        "sym": "d",
+        "label": "平行边界宽度",
+        "unit": "cm",
+        "def": 6,
+        "min": 1,
+        "max": 30,
+        "step": 0.1,
+        "dec": 1,
+        "when": {
+          "bnd": "strip"
+        }
+      },
+      {
+        "key": "R",
+        "sym": "R",
+        "label": "圆形边界半径",
+        "unit": "cm",
+        "def": 10,
+        "min": 2,
+        "max": 30,
+        "step": 0.1,
+        "dec": 1,
+        "when": {
+          "bnd": "circle"
+        }
+      },
+      {
+        "key": "outer",
+        "sym": "圆外",
+        "label": "圆外磁场",
+        "type": "choice",
+        "def": "none",
+        "options": [
+          {
+            "value": "none",
+            "label": "圆外无磁场",
+            "text": ""
+          },
+          {
+            "value": "rev",
+            "label": "圆外反向磁场",
+            "hint": "等大反向",
+            "text": ""
+          }
+        ]
+      },
+      {
+        "key": "R1",
+        "sym": "R₁",
+        "label": "环形边界内半径（内圆中无磁场）",
+        "unit": "cm",
+        "def": 10,
+        "min": 2,
+        "max": 20,
+        "step": 0.1,
+        "dec": 1,
+        "when": {
+          "bnd": "ring"
+        }
+      },
+      {
+        "key": "R2",
+        "sym": "R₂",
+        "label": "环形边界外半径（至少比 R₁ 大 2 cm）",
+        "unit": "cm",
+        "def": 25,
+        "min": 4,
+        "max": 60,
+        "step": 0.1,
+        "dec": 1,
+        "when": {
+          "bnd": "ring"
+        }
+      },
+      {
+        "key": "sign2",
+        "sym": "电性₂",
+        "label": "第二种粒子电性",
+        "type": "choice",
+        "def": "pos",
+        "options": [
+          {
+            "value": "pos",
+            "label": "粒子 2 带正电",
+            "text": ""
+          },
+          {
+            "value": "neg",
+            "label": "粒子 2 带负电",
+            "text": ""
+          }
+        ]
+      },
+      {
+        "key": "qm2",
+        "sym": "q₂/m₂",
+        "label": "第二种粒子比荷",
+        "unit": "C/kg",
+        "def": 33333000,
+        "min": 10000000,
+        "max": 200000000,
+        "step": 1000000,
+        "dec": 0,
+        "when": {
+          "show": "duo"
+        }
+      },
+      {
+        "key": "v2",
+        "sym": "v₂",
+        "label": "第二种粒子速率（方向同 β）",
+        "unit": "m/s",
+        "def": 577350,
+        "min": 100000,
+        "max": 3000000,
+        "step": 10000,
+        "dec": 0,
+        "when": {
+          "show": "duo"
+        }
+      }
+    ]
+  },
+  "boundary": {
+    "conditions": [
+      "匀强磁场：区域内 B 的大小、方向处处相同；边界理想，边界外没有磁场（V4 的圆外反向磁场除外），不计边缘效应",
+      "速度垂直于磁场（v ⊥ B），粒子在垂直于 B 的平面内运动",
+      "粒子只受洛伦兹力：不计重力（微观粒子 qvB 远大于 mg），区域内没有电场，不计粒子间的相互作用和辐射",
+      "真空中运动，没有阻力（云室中粒子不断电离气体、损失能量，径迹半径越来越小）",
+      "非相对论：v 远小于光速 c，m 用静止质量"
+    ],
+    "fallback": [
+      "洛伦兹力 F = qvB sin α（α 为 v 与 B 的夹角），方向由左手定则判断，负电荷反向；牛顿第二定律 F合 = ma",
+      "v 与 B 不垂直：把 v 分解为平行于 B 的 v cos α（匀速直线）和垂直于 B 的 v sin α（匀速圆周，r = mv sin α/(qB)），合运动是螺旋线，螺距 = v cos α · T",
+      "有电场或重力：合力 F = qE + mg + 洛伦兹力，逐段用牛顿第二定律分析；qE = qvB 时匀速直线（速度选择器 v = E/B）；一般情形用数值积分",
+      "接近光速：r = p/(qB) 仍成立，但粒子质量随速度增大，周期变长（回旋加速器的限制，见 EM-MAG-02）"
+    ]
+  },
+  "presets": [
+    {
+      "label": "母题：垂直射入",
+      "note": "β = 90°，走半圈，θ = 180°，AC = 2r = 20 cm，t = T/2 ≈ 3.14×10⁻⁷ s。",
+      "load": {
+        "bnd": "line",
+        "opts": {
+          "show": "single",
+          "Bdir": "in",
+          "sign": "pos"
+        },
+        "qm": 100000000,
+        "B": 0.1,
+        "v": 1000000,
+        "beta": 90
+      }
+    },
+    {
+      "label": "β = 30°：向钝角一侧偏",
+      "note": "正电荷向左偏，γ = 150°，θ = 300°，t = 5T/6，AC = 2r sin 150° = 10 cm。",
+      "load": {
+        "bnd": "line",
+        "opts": {
+          "show": "single",
+          "Bdir": "in",
+          "sign": "pos"
+        },
+        "qm": 100000000,
+        "B": 0.1,
+        "v": 1000000,
+        "beta": 30
+      }
+    },
+    {
+      "label": "正、负粒子同向射入",
+      "note": "两种粒子，β = 30°：正粒子 θ = 300°、负粒子 θ = 60°，时间比 5∶1，出射点在 A 两侧各 10 cm。",
+      "load": {
+        "bnd": "line",
+        "opts": {
+          "show": "duo",
+          "Bdir": "in",
+          "sign": "pos",
+          "sign2": "neg"
+        },
+        "qm": 100000000,
+        "B": 0.1,
+        "v": 1000000,
+        "beta": 30,
+        "qm2": 100000000,
+        "v2": 1000000
+      }
+    },
+    {
+      "label": "放缩圆：β = 60°",
+      "note": "速率不同（0.2v ~ 2.0v），出射速度都平行，θ = 240°、t = 2T/3 都相同，AC ∝ v。",
+      "load": {
+        "bnd": "line",
+        "opts": {
+          "show": "zoom",
+          "Bdir": "in",
+          "sign": "pos"
+        },
+        "qm": 100000000,
+        "B": 0.1,
+        "v": 1000000,
+        "beta": 60
+      }
+    },
+    {
+      "label": "旋转圆：速率相同、方向不同",
+      "note": "出射点都在 A 的同一侧，AC = 2r sin γ，垂直射入时最远，为 2r = 20 cm。",
+      "load": {
+        "bnd": "line",
+        "opts": {
+          "show": "rot",
+          "Bdir": "in",
+          "sign": "pos"
+        },
+        "qm": 100000000,
+        "B": 0.1,
+        "v": 1000000,
+        "beta": 90
+      }
+    },
+    {
+      "label": "磁分析器（R1）：氘核与氚核",
+      "note": "落点 8.35 cm 与 12.5 cm；把 B 调小，两个落点一起变远。",
+      "load": {
+        "bnd": "line",
+        "opts": {
+          "show": "duo",
+          "Bdir": "in",
+          "sign": "pos",
+          "sign2": "pos"
+        },
+        "qm": 47900000,
+        "B": 0.5,
+        "v": 1000000,
+        "beta": 90,
+        "qm2": 31900000,
+        "v2": 1000000
+      }
+    },
+    {
+      "label": "流式细胞仪（R2）：斜射入",
+      "note": "β = 53°，速度与法线成 37°，r = 10 cm；速度转到与 MN 垂直（θ = 37°）时，粒子离 MN 的距离 h = r sin 37° ≈ 6.0 cm。",
+      "load": {
+        "bnd": "line",
+        "opts": {
+          "show": "single",
+          "Bdir": "in",
+          "sign": "pos"
+        },
+        "qm": 100000000,
+        "B": 0.1,
+        "v": 1000000,
+        "beta": 53
+      }
+    },
+    {
+      "label": "母题：d = 6 cm，从 PQ 射出",
+      "note": "r = 10 cm > d，sin θ = d/r = 0.6，θ ≈ 37°，t ≈ 6.4×10⁻⁸ s，出射点在 A 正上方偏左 2.0 cm。",
+      "load": {
+        "bnd": "strip",
+        "opts": {
+          "show": "single",
+          "Bdir": "in",
+          "sign": "pos"
+        },
+        "qm": 100000000,
+        "B": 0.1,
+        "v": 1000000,
+        "beta": 90,
+        "d": 6
+      }
+    },
+    {
+      "label": "垂直射入，恰好相切",
+      "note": "v = 6.0×10⁵ m/s，r = d，轨迹与 PQ 相切，从 MN 射出，θ = 180°，t = T/2。",
+      "load": {
+        "bnd": "strip",
+        "opts": {
+          "show": "single",
+          "Bdir": "in",
+          "sign": "pos"
+        },
+        "qm": 100000000,
+        "B": 0.1,
+        "v": 600000,
+        "beta": 90,
+        "d": 6
+      }
+    },
+    {
+      "label": "斜射入，恰好相切",
+      "note": "β = 60°，v = 4.0×10⁵ m/s：γ = 120°，r(1 − cos γ) = d，r = 4 cm；从 MN 射出，θ = 240°。",
+      "load": {
+        "bnd": "strip",
+        "opts": {
+          "show": "single",
+          "Bdir": "in",
+          "sign": "pos"
+        },
+        "qm": 100000000,
+        "B": 0.1,
+        "v": 400000,
+        "beta": 60,
+        "d": 6
+      }
+    },
+    {
+      "label": "放缩圆：β = 90°",
+      "note": "速率小于 6.0×10⁵ m/s 的走半圈从 MN 射出，大于的从 PQ 射出，速率越大偏转角越小；0.6v 那条恰好与 PQ 相切。",
+      "load": {
+        "bnd": "strip",
+        "opts": {
+          "show": "zoom",
+          "Bdir": "in",
+          "sign": "pos"
+        },
+        "qm": 100000000,
+        "B": 0.1,
+        "v": 1000000,
+        "beta": 90,
+        "d": 6
+      }
+    },
+    {
+      "label": "磁偏转（V2）：α 粒子",
+      "note": "d = 10 cm，B = 0.125 T（向外），v = 1.2×10⁶ m/s：θ = 30°，t₂ ≈ 8.73×10⁻⁸ s，比直线穿过的 8.33×10⁻⁸ s 长。",
+      "load": {
+        "bnd": "strip",
+        "opts": {
+          "show": "single",
+          "Bdir": "out",
+          "sign": "pos"
+        },
+        "qm": 48000000,
+        "B": 0.125,
+        "v": 1200000,
+        "beta": 90,
+        "d": 10
+      }
+    },
+    {
+      "label": "母题：径向射入，r = R",
+      "note": "θ = 90°，t = T/4，从与 O 等高的最左点径向射出。",
+      "load": {
+        "bnd": "circle",
+        "opts": {
+          "show": "single",
+          "Bdir": "in",
+          "sign": "pos",
+          "outer": "none"
+        },
+        "qm": 100000000,
+        "B": 0.1,
+        "v": 1000000,
+        "beta": 90,
+        "R": 10
+      }
+    },
+    {
+      "label": "速率增为 √3 倍",
+      "note": "r = √3R，tan(θ/2) = 1/√3，θ = 60°，t = T/6。",
+      "load": {
+        "bnd": "circle",
+        "opts": {
+          "show": "single",
+          "Bdir": "in",
+          "sign": "pos",
+          "outer": "none"
+        },
+        "qm": 100000000,
+        "B": 0.1,
+        "v": 1732100,
+        "beta": 90,
+        "R": 10
+      }
+    },
+    {
+      "label": "速率减为 1/√3",
+      "note": "r = R/√3，tan(θ/2) = √3，θ = 120°，t = T/3。",
+      "load": {
+        "bnd": "circle",
+        "opts": {
+          "show": "single",
+          "Bdir": "in",
+          "sign": "pos",
+          "outer": "none"
+        },
+        "qm": 100000000,
+        "B": 0.1,
+        "v": 577350,
+        "beta": 90,
+        "R": 10
+      }
+    },
+    {
+      "label": "磁发散（旋转圆，r = R）",
+      "note": "从 A 沿各方向射入，出射速度全部水平向左，彼此平行。",
+      "load": {
+        "bnd": "circle",
+        "opts": {
+          "show": "rot",
+          "Bdir": "in",
+          "sign": "pos",
+          "outer": "none"
+        },
+        "qm": 100000000,
+        "B": 0.1,
+        "v": 1000000,
+        "beta": 90,
+        "R": 10
+      }
+    },
+    {
+      "label": "磁聚焦（平行束，r = R）",
+      "note": "竖直向上的平行粒子束，全部会聚到圆的最左点。",
+      "load": {
+        "bnd": "circle",
+        "opts": {
+          "show": "beam",
+          "Bdir": "in",
+          "sign": "pos",
+          "outer": "none"
+        },
+        "qm": 100000000,
+        "B": 0.1,
+        "v": 1000000,
+        "beta": 90,
+        "R": 10
+      }
+    },
+    {
+      "label": "圆外反向磁场（V4）",
+      "note": "圆内 90°、圆外 270° 交替，经 2T ≈ 1.26×10⁻⁶ s 回到 A；改 v = 5.77×10⁵ m/s 时 6 段、3T 回到 A。",
+      "load": {
+        "bnd": "circle",
+        "opts": {
+          "show": "single",
+          "Bdir": "in",
+          "sign": "pos",
+          "outer": "rev"
+        },
+        "qm": 100000000,
+        "B": 0.1,
+        "v": 1000000,
+        "beta": 90,
+        "R": 10
+      }
+    },
+    {
+      "label": "r = R₁：四瓣轨迹",
+      "note": "v = 1.0×10⁶ m/s，离 O 最远 24.1 cm，每运动 (8 + 6π)R₁ ≈ 2.69 m 重复一次。",
+      "load": {
+        "bnd": "ring",
+        "opts": {
+          "show": "single",
+          "Bdir": "out",
+          "sign": "pos"
+        },
+        "qm": 100000000,
+        "B": 0.1,
+        "v": 1000000,
+        "phi": 0,
+        "R1": 10,
+        "R2": 25
+      }
+    },
+    {
+      "label": "恰好被约束",
+      "note": "v = 1.05×10⁶ m/s，r = 10.5 cm，轨迹与外圆内切。",
+      "load": {
+        "bnd": "ring",
+        "opts": {
+          "show": "single",
+          "Bdir": "out",
+          "sign": "pos"
+        },
+        "qm": 100000000,
+        "B": 0.1,
+        "v": 1050000,
+        "phi": 0,
+        "R1": 10,
+        "R2": 25
+      }
+    },
+    {
+      "label": "穿出外圆",
+      "note": "v = 1.2×10⁶ m/s，r = 12 cm > 10.5 cm，第一次进入磁场就穿出外圆。",
+      "load": {
+        "bnd": "ring",
+        "opts": {
+          "show": "single",
+          "Bdir": "out",
+          "sign": "pos"
+        },
+        "qm": 100000000,
+        "B": 0.1,
+        "v": 1200000,
+        "phi": 0,
+        "R1": 10,
+        "R2": 25
+      }
+    }
+  ],
+  "conclusions": [
+    {
+      "id": "C1",
+      "title": "洛伦兹力不做功：速率、动能不变，做匀速圆周运动；冲量不为零",
+      "formula": "F = qvB ⊥ v，W = 0；I = Δp",
+      "derivation": "洛伦兹力 F = qvB 的方向由左手定则判断，始终垂直于速度，所以功率 P = Fv cos 90° = 0，洛伦兹力不做功，粒子的速率和动能都不变。力的大小 qvB 不变、方向始终垂直于速度，正好是匀速圆周运动所需的向心力，所以粒子做匀速圆周运动。\n洛伦兹力的冲量不为零：由动量定理 I = Δp，速度方向变了，动量就变了。例如垂直直线边界射入、半圈后射出，速度反向，|I| = 2mv（2024 上海卷 5.2(1)：W = 0，I ≠ 0）。"
+    },
+    {
+      "id": "C2",
+      "title": "轨道半径",
+      "formula": "r = mv/(qB) = p/(qB) = √(2mEk)/(qB)",
+      "derivation": "洛伦兹力提供向心力，qvB = mv²/r，得 r = mv/(qB)。\np = mv，所以 r = p/(qB)；Ek = p²/(2m)，所以 r = √(2mEk)/(qB)。\n比较不同粒子时先看哪个量相同：同速率 r ∝ m/q；同动量 r ∝ 1/q（R3）；同动能 r ∝ √m/q（V1）；经同一电压 U 由静止加速，qU = ½mv²，r = (1/B)√(2mU/q) ∝ √(m/q)。"
+    },
+    {
+      "id": "C3",
+      "title": "周期与速率无关",
+      "formula": "T = 2πm/(qB)，ω = qB/m；同一磁场中 T ∝ m/q",
+      "derivation": "T = 2πr/v = 2π·(mv/(qB))/v = 2πm/(qB)，ω = 2π/T = qB/m。\nv 被约掉：速率大的粒子半径大、路程长，转一圈的时间却一样。同一磁场中 T ∝ m/q（电子与 n 价离子的周期比 nm/M；云室径迹中周期小的比荷大）。"
+    },
+    {
+      "id": "C4",
+      "title": "定圆心、求半径：圆心在速度的垂线上，或在弦的中垂线上",
+      "formula": "弦长 L = 2r sin(θ/2)；r = (x² + y²)/(2y)",
+      "derivation": "圆心 O′ 到轨迹上每一点的距离都是 r，且半径垂直于该点的速度。所以：已知两点的速度方向，两条速度垂线的交点就是圆心；已知入射速度和出射点位置，入射速度的垂线与弦的中垂线的交点就是圆心。\n求半径用几何关系。以入射点为原点、入射速度方向为 x 轴，圆心在 (0, r)，轨迹上一点 (x, y) 满足 x² + (r − y)² = r²，得 r = (x² + y²)/(2y)（x = d，y = d/2 时 r = 5d/4）。已知偏转角 θ 时：x = r sin θ，y = r(1 − cos θ)，弦长 L = 2r sin(θ/2)（y = a，θ = 60° 时 r = 2a，见 V3）。"
+    },
+    {
+      "id": "C5",
+      "title": "偏转角 = 圆心角 = 弦切角的 2 倍；运动时间由圆心角决定",
+      "formula": "t = θT/(2π) = θm/(qB) = rθ/v",
+      "derivation": "速度始终垂直于半径，速度方向转过多少角度，半径就转过多少角度，所以偏转角 θ = 圆心角。弦与入射速度的夹角（弦切角）是 θ/2。\n匀速圆周运动，角速度 ω = qB/m 不变，t = θ/ω = θm/(qB) = θT/(2π)（θ 用弧度）；也可以用 t = 弧长/速率 = rθ/v。"
+    },
+    {
+      "id": "C6",
+      "title": "直线边界：从同一边界射出，进出对称；同方向射入时（放缩圆）θ、t 与速率无关",
+      "formula": "θ = 2γ，AC = 2r sin γ",
+      "derivation": "入射点 A 和出射点 C 都在边界上，圆心 O′ 到 A、C 的距离都是 r，所以轨迹关于弦 AC 的中垂线对称：出射速度与边界的夹角等于入射时的夹角（进出对称）。\n设偏转一侧的入射速度与边界的夹角为 γ，它就是弦切角，由 C5，θ = 2γ，AC = 2r sin γ，t = 2γm/(qB)。\n· 垂直射入（γ = 90°）：半圈，AC = 2r = 2mv/(qB)，t = T/2 = πm/(qB)（R1 磁分析器）\n· 正、负粒子从同一点同向射入：一个 γ、一个 180° − γ，偏转角分别为 2γ 和 360° − 2γ，出射点在 A 两侧且 AC 相等\n· 放缩圆：方向不变、速率不同，γ 不变，所以 θ、t 都相同，出射速度都平行，AC ∝ r ∝ v\n· 旋转圆：速率不变、方向不同，AC = 2r sin γ ≤ 2r，垂直射入时出射点最远"
+    },
+    {
+      "id": "C7",
+      "title": "圆形边界：径向射入必径向射出；r = R 时磁发散与磁聚焦",
+      "formula": "tan(θ/2) = R/r",
+      "derivation": "径向射入时，入射速度沿 AO，而 O′A 垂直于入射速度，所以 O′A ⊥ OA。△O′AO 与 △O′CO 三边对应相等（O′A = O′C = r，OA = OC = R，O′O 公共），所以 ∠O′CO = ∠O′AO = 90°，出射速度（垂直于 O′C）沿 OC 方向，即径向射出，出射速度的反向延长线过圆心 O。\n在直角三角形 O′AO 中，∠AO′O = θ/2，tan(θ/2) = OA/O′A = R/r。v 越大，r 越大，θ 越小，由 C5，t 也越小。\nr = R 时，O′、A、O、C 四点构成边长都是 R 的菱形，O′C ∥ AO。从 A 沿任意方向射入的粒子，出射速度都垂直于 O′C，也就是都垂直于 AO，彼此平行（磁发散）。反过来，一束平行粒子从圆周上不同点射入，每个粒子的出射点 C 满足 OC 平行且等于 O′A，都是同一点，粒子会聚于 C（磁聚焦）。"
+    },
+    {
+      "id": "C8",
+      "title": "临界相切：恰好射出（或恰好不射出）时轨迹与边界相切",
+      "formula": "r(1 − cos γ) = d；√(R₁² + r²) + r = R₂",
+      "derivation": "速率连续变化（放缩圆）或方向连续变化（旋转圆）时，粒子从一条边界射出变为从另一条边界射出，分界是轨迹与边界相切：与直线边界相切时，圆心到该直线的距离等于 r；与圆形边界内切时，两圆心距等于大圆半径减 r。\n· 平行边界：圆心 O′ 在入射速度的垂线上，到 A 的距离为 r，它比 MN 高 −r cos γ（γ > 90° 时在 MN 上方）。轨迹最高点比 O′ 高 r，恰好与 PQ 相切：r − r cos γ = d，即 r(1 − cos γ) = d。垂直射入时 r = d，v₀ = qBd/m\n· 环形边界（粒子从 O 出发，在内圆上 D 点径向进入磁场）：O′D ⊥ OD，|OO′| = √(R₁² + r²)，轨迹上离 O 最远的点在 OO′ 的延长线上，距 O 为 |OO′| + r。与外圆内切：√(R₁² + r²) + r = R₂，得 r = (R₂² − R₁²)/(2R₂)（R₁ = R，R₂ = 3R 时 r = 4R/3）\n· 沿内圆切线射入并向背离 O 的一侧偏转：O′ 在 OA 延长线上，最远点距 O 为 R₁ + 2r，令它等于 R₂，得 r = (R₂ − R₁)/2"
+    }
+  ],
+  "variants": [
+    {
+      "id": "V1",
+      "title": "直线边界：同动能的氕核与氚核",
+      "cs": [
+        "C1",
+        "C2",
+        "C3",
+        "C6"
+      ],
+      "source": "改编自 2024 上海等级考 5.2（原题为回旋加速器：洛伦兹力的功 W = 0、冲量 I ≠ 0；¹H、³H 同时释放，周期 ∝ m/q 决定两核的加速次数，动能比 3∶1）。保留第 (1) 问，第 (2) 问改为直线边界中的半圈时间与转角",
+      "stem": "直线 MN 上方有垂直纸面向里的匀强磁场，B = 0.10 T。氕核 ¹H 和氚核 ³H 以相同的动能 Ek = 5.0×10³ eV，同时从 MN 上的 A 点垂直 MN 射入磁场。氕核比荷取 1.0×10⁸ C/kg，氚核电荷量与氕核相同、质量是氕核的 3 倍，e = 1.6×10⁻¹⁹ C。求：(1) 氕核在磁场中运动的过程中，洛伦兹力对它做的功 W 和冲量 I；(2) 两核射出磁场的位置到 A 点的距离之比，在磁场中运动的时间之比；(3) 氕核射出磁场时，氚核的速度方向偏转了多少度。",
+      "answer": "(1) W = 0，I = 3.2×10⁻²¹ N·s，方向垂直 MN 向下（指向磁场外）；(2) 距离之比 1∶√3（20 cm 与 34.6 cm），时间之比 1∶3（3.14×10⁻⁷ s 与 9.42×10⁻⁷ s）；(3) 60°",
+      "analysis": "(1) 由 C1，W = 0。氕核质量 m₁ = e ÷ (1.0×10⁸ C/kg) = 1.6×10⁻²⁷ kg，Ek = 5.0×10³ × 1.6×10⁻¹⁹ J = 8.0×10⁻¹⁶ J，v₁ = √(2Ek/m₁) = 1.0×10⁶ m/s。半圈后速度反向，I = Δp = 2m₁v₁ = 2 × 1.6×10⁻²⁷ kg × 1.0×10⁶ m/s = 3.2×10⁻²¹ N·s，方向与入射速度相反。(2) 由 C2，同动能时 r = √(2mEk)/(qB) ∝ √m，r₁ = 1.0×10⁶ m/s ÷ (1.0×10⁸ C/kg × 0.10 T) = 10 cm，r₃ = √3 r₁ ≈ 17.3 cm；由 C6，垂直射入走半圈，出射点到 A 的距离 2r₁ = 20 cm，2r₃ ≈ 34.6 cm，之比 1∶√3。由 C3，T ∝ m/q，T₃ = 3T₁；都走半圈，t₁ = T₁/2 = π ÷ (1.0×10⁷ s⁻¹) ≈ 3.14×10⁻⁷ s，t₃ = 3t₁ ≈ 9.42×10⁻⁷ s。(3) 氕核射出时 t = T₁/2 = T₃/6，氚核转过 360° × 1/6 = 60°。",
+      "load": {
+        "bnd": "line",
+        "show": "duo",
+        "Bdir": "in",
+        "sign": "pos",
+        "sign2": "pos",
+        "qm": 100000000,
+        "B": 0.1,
+        "v": 1000000,
+        "beta": 90,
+        "qm2": 33333000,
+        "v2": 577350
+      }
+    },
+    {
+      "id": "V2",
+      "title": "平行边界：磁偏转与电偏转的比较",
+      "cs": [
+        "C2",
+        "C4",
+        "C5",
+        "C8"
+      ],
+      "source": "改编自 2026 届徐汇区一模 5.4（原题：α 粒子以 v 射入宽 L 的区域，分别只加电场、只加磁场、两者都加时轨迹为①②③，③为匀速直线；求磁场方向、电势差 U、半径 r = mv²/(2eE)，比较 t₁ < t₂）。删去电势差一问，增加第 (4) 问临界相切",
+      "stem": "两条竖直平行虚线之间是宽 L = 10 cm 的区域，α 粒子（比荷取 4.8×10⁷ C/kg）以 v = 1.2×10⁶ m/s 垂直左边界水平向右射入。区域内同时有竖直向上的匀强电场 E = 1.5×10⁵ V/m 和垂直纸面的匀强磁场时，α 粒子恰好做匀速直线运动。不计重力。(1) 求磁感应强度 B 的大小和方向；(2) 撤去电场，求 α 粒子做圆周运动的半径 r、射出右边界时速度的偏转角 θ 和竖直方向的侧移 y；(3) 只有电场时穿过区域用时 t₁，只有磁场时用时 t₂，求出并比较；(4) 只有磁场时，入射速率不超过多少，α 粒子就不能从右边界射出？此时它在磁场中运动多长时间？",
+      "answer": "(1) B = 0.125 T，垂直纸面向外；(2) r = 20 cm，θ = 30°，y ≈ 2.7 cm（向下）；(3) t₁ ≈ 8.33×10⁻⁸ s，t₂ ≈ 8.73×10⁻⁸ s，t₁ < t₂；(4) 6.0×10⁵ m/s，t ≈ 5.24×10⁻⁷ s",
+      "analysis": "(1) 匀速直线，qE = qvB，B = E/v = 1.5×10⁵ V/m ÷ 1.2×10⁶ m/s = 0.125 T。电场力向上，洛伦兹力须向下，由左手定则，磁场垂直纸面向外。(2) 由 C2，r = v/((q/m)B) = 1.2×10⁶ m/s ÷ (4.8×10⁷ C/kg × 0.125 T) = 0.20 m。r > L，从右边界射出；由 C4，L = r sin θ，sin θ = 0.5，θ = 30°；y = r(1 − cos 30°) = 0.20 m × 0.134 ≈ 2.7 cm。(3) 只有电场时水平方向匀速，t₁ = L/v = 0.10 m ÷ 1.2×10⁶ m/s ≈ 8.33×10⁻⁸ s；只有磁场时，由 C5，t₂ = θm/(qB) = (π/6) ÷ (6.0×10⁶ s⁻¹) ≈ 8.73×10⁻⁸ s。速率都是 v，但磁场中速度方向不断偏离水平，水平分量小于 v（或说弧长 rθ ≈ 10.5 cm 大于 L），所以 t₁ < t₂。(4) 由 C8，垂直射入（γ = 90°）恰好不射出时 r = L，v = (q/m)BL = 4.8×10⁷ C/kg × 0.125 T × 0.10 m = 6.0×10⁵ m/s；此后粒子从左边界射出，走半圈，t = πm/(qB) = π ÷ (6.0×10⁶ s⁻¹) ≈ 5.24×10⁻⁷ s，与速率无关（C3）。动画中区域水平放置、粒子竖直向上射入，相当于把原图转过 90°；第 (4) 问把 v 改为 6.0×10⁵ m/s。",
+      "load": {
+        "bnd": "strip",
+        "show": "single",
+        "Bdir": "out",
+        "sign": "pos",
+        "qm": 48000000,
+        "B": 0.125,
+        "v": 1200000,
+        "beta": 90,
+        "d": 10
+      }
+    },
+    {
+      "id": "V3",
+      "title": "定圆心：由出射点和出射方向求比荷",
+      "cs": [
+        "C4",
+        "C5",
+        "C2"
+      ],
+      "source": "改编自 2026 届长宁区一模 五-2（原题：正粒子从 P(0, a) 沿 +x 射入，从 x 轴上 S 点射出，速度与 +x 成 60°，求比荷 v/(2Ba)；叠加电场使其匀速直线，U_PS = −Bav）",
+      "stem": "xOy 平面内，第一象限有垂直纸面的匀强磁场，B = 0.10 T。带正电的粒子以 v = 1.0×10⁶ m/s 从 y 轴上的 P 点（OP = 5.0 cm）沿 +x 方向射入磁场，从 x 轴上的 S 点射出，射出时速度方向与 +x 方向成 60° 角斜向下。不计重力。(1) 判断磁场方向；(2) 求轨迹半径 r、粒子的比荷 q/m 和 OS 的长度；(3) 求粒子从 P 运动到 S 的时间；(4) 若在第一象限再加一个匀强电场，使粒子从 P 射入后做匀速直线运动，求电场强度的大小、方向，以及 P、S 两点间的电势差 U_PS。",
+      "answer": "(1) 垂直纸面向外；(2) r = 10 cm，q/m = 1.0×10⁸ C/kg，OS = 5√3 cm ≈ 8.66 cm；(3) t ≈ 1.05×10⁻⁷ s；(4) E = 1.0×10⁵ V/m，沿 +y 方向，U_PS = −5.0×10³ V",
+      "analysis": "(1) 正粒子沿 +x 运动，向 −y 偏，由左手定则，磁场垂直纸面向外。(2) 由 C4，圆心在 P 点速度的垂线（y 轴）上，也在 S 点速度的垂线上，设为 O′。速度偏转 60°，由 C5，圆心角 ∠PO′S = 60°。P 比 S 高 OP = r − r cos 60° = r/2，r = 2 × 5.0 cm = 10 cm；OS = r sin 60° ≈ 8.66 cm。由 C2，q/m = v/(Br) = 1.0×10⁶ m/s ÷ (0.10 T × 0.10 m) = 1.0×10⁸ C/kg。(3) t = (60°/360°)T = (π/3) ÷ ((q/m)B) = 1.047 ÷ 1.0×10⁷ s⁻¹ ≈ 1.05×10⁻⁷ s。(4) 洛伦兹力沿 −y，电场力须沿 +y，粒子带正电，所以 E 沿 +y；qE = qvB，E = vB = 1.0×10⁵ V/m。沿电场方向电势降低，P 比 S 高 5.0 cm，U_PS = −E × OP = −1.0×10⁵ V/m × 0.050 m = −5.0×10³ V。动画中 MN 对应 y 轴、A 点即 P 点（x 轴边界不画）：偏转角读数为 60° 时粒子位于 S 点，离 MN 8.66 cm，沿 MN 偏离 A 点 5.0 cm。",
+      "load": {
+        "bnd": "line",
+        "show": "single",
+        "Bdir": "out",
+        "sign": "pos",
+        "qm": 100000000,
+        "B": 0.1,
+        "v": 1000000,
+        "beta": 90
+      }
+    },
+    {
+      "id": "V4",
+      "title": "圆形边界：径向射入，圆内外反向磁场",
+      "cs": [
+        "C3",
+        "C5",
+        "C7"
+      ],
+      "source": "改编自 2026 届杨浦区二模 五-6（原题：粒子沿直径 AB 从 A 射入，从 C 射出且 AO ⊥ OC，求连续两次由 A 射入的时间间隔 4πm/(qB)；初速度变为 √3 倍时，求连续两次经过 A 的时间间隔 7πm/(3qB)）。给出具体数值，第 (3) 问改为速率变为原来的 1/√3",
+      "stem": "以 O 为圆心、半径 R = 10 cm 的圆形区域内有垂直纸面向里的匀强磁场，圆外有等大反向、范围足够大的匀强磁场，B = 0.10 T。比荷 1.0×10⁸ C/kg 的带正电粒子从圆周上的 A 点沿直径 AB 方向射入，从 C 点射出圆形区域，且 OC ⊥ OA。不计重力。(1) 求入射速率 v；(2) 求粒子在圆内、圆外每段轨迹的圆心角，以及它连续两次由 A 点射入圆形区域的时间间隔 Δt；(3) 若入射速率变为 v/√3（约 5.77×10⁵ m/s），求粒子从 A 射入后第一次回到 A 点所用的时间 Δt′。",
+      "answer": "(1) v = 1.0×10⁶ m/s；(2) 圆内每段 90°，圆外每段 270°，Δt = 4πm/(qB) ≈ 1.26×10⁻⁶ s；(3) Δt′ = 6πm/(qB) ≈ 1.88×10⁻⁶ s",
+      "analysis": "(1) 由 C7，径向射入必径向射出；OC ⊥ OA，偏转角 θ = 90°，tan 45° = R/r，r = R = 10 cm，v = (q/m)BR = 1.0×10⁸ C/kg × 0.10 T × 0.10 m = 1.0×10⁶ m/s。(2) 粒子从 C 沿半径向外射出，圆外磁场反向，粒子向另一侧偏，半径仍为 R。圆外这段轨迹仍满足「径向出、径向入」，两交点对 O 张开 90°，圆心角为 360° − 90° = 270°，粒子从 B 点沿 BA 径向射入；再经圆内 90°、圆外 270°，回到 A 点沿 AB 射入。T = 2πm/(qB) ≈ 6.28×10⁻⁷ s，由 C5，Δt = 2 × T/4 + 2 × 3T/4 = 2T = 4πm/(qB) ≈ 1.26×10⁻⁶ s。(3) r′ = R/√3，tan(θ/2) = R/r′ = √3，圆内每段 θ = 120°，圆外每段 360° − 120° = 240°；每段轨迹的两端对 O 张开 180° − 120° = 60°，转满 360° 需要 6 段（圆内、圆外各 3 段），中途经过的另外 5 个边界点都不是 A。由 C3，T 不变，Δt′ = 3 × T/3 + 3 × 2T/3 = 3T = 6πm/(qB) ≈ 1.88×10⁻⁶ s。（原题速率为 √3v 时，圆内 60°、圆外 300°，经 3 段即从 A 点穿出，Δt = 2 × T/6 + 5T/6 = 7T/6 = 7πm/(3qB)，与原卷答案一致。）第 (3) 问在动画里把 v 改为 5.77×10⁵ m/s。",
+      "load": {
+        "bnd": "circle",
+        "show": "single",
+        "Bdir": "in",
+        "sign": "pos",
+        "outer": "rev",
+        "qm": 100000000,
+        "B": 0.1,
+        "v": 1000000,
+        "beta": 90,
+        "R": 10
+      }
+    },
+    {
+      "id": "V5",
+      "title": "环形边界：磁约束的临界相切",
+      "cs": [
+        "C8",
+        "C7",
+        "C2"
+      ],
+      "source": "改编自 2026 届普陀区二模 五-4（原题：半径 R、3R 的同心圆，圆环区域有磁场，粒子从 O 沿各方向射入，求被约束的最大速率 4qBR/(3m)；速率为 qBR/m 时每运动 (6π + 8)R 轨迹重复一次）；第 (3) 问改编自 2026 届松江区二模 五-2(2)（原题：氘核从内圆 A 点沿切线射入环形磁场，不穿越外圆的最大速率 eB(R₂ − R₁)/(2m)）",
+      "stem": "圆心均为 O、半径 R₁ = 10 cm 和 R₂ = 25 cm 的两个圆，把空间分成区域 Ⅰ（内圆，无磁场）和区域 Ⅱ（圆环，有垂直纸面向外的匀强磁场，B = 0.10 T）。比荷 1.0×10⁸ C/kg 的带正电粒子从 O 点在纸面内沿各个方向射出，速率各不相同。不计重力和粒子间的相互作用。(1) 要使粒子都被约束在外圆以内，速率最大为多少？(2) 速率 v = 1.0×10⁶ m/s 的粒子，每运动多长路程轨迹重复一次？对应的时间多长？(3) 若粒子改为从内圆上的 A 点沿内圆切线方向射入区域 Ⅱ，并向背离 O 的一侧偏转，速率最大为多少才不会穿出外圆？",
+      "answer": "(1) v_m = 1.05×10⁶ m/s；(2) s = (8 + 6π)R₁ ≈ 2.69 m，时间 ≈ 2.69×10⁻⁶ s；(3) 7.5×10⁵ m/s",
+      "analysis": "(1) 粒子在区域 Ⅰ 中沿半径做匀速直线运动，从内圆径向进入磁场。由 C8，与外圆内切时 √(R₁² + r²) + r = R₂，r_m = (R₂² − R₁²)/(2R₂) = (625 − 100) cm² ÷ 50 cm = 10.5 cm（此时 |OO′| = 14.5 cm，14.5 cm + 10.5 cm = 25 cm）。v_m = (q/m)B r_m = 1.0×10⁸ C/kg × 0.10 T × 0.105 m = 1.05×10⁶ m/s。各方向射出的粒子情形相同（旋转对称），所以这就是所有粒子的共同上限。(2) r = v/((q/m)B) = 10 cm = R₁ < 10.5 cm，被约束（离 O 最远 √2 R₁ + R₁ ≈ 24.1 cm）。由 C7，粒子径向进入、径向回到区域 Ⅰ，tan(θ/2) = R₁/r = 1，内圆里对应的圆心角 90°，区域 Ⅱ 中的轨迹是另外的 270°，两交点对 O 张开 90°。回到区域 Ⅰ 后粒子沿直径穿过 O（路程 2R₁），从对面再进入磁场。每次「直径 + 270° 圆弧」使出射位置绕 O 转过 90° + 180° = 270°，4 次后回到原位置、原方向。s = 4 × (2R₁ + ¾ × 2πR₁) = (8 + 6π)R₁ ≈ 26.85 × 0.10 m ≈ 2.69 m。速率不变（C1），时间 = s/v ≈ 2.69 m ÷ 1.0×10⁶ m/s ≈ 2.69×10⁻⁶ s（校核：直线段 8R₁/v = 8.0×10⁻⁷ s，圆弧 4 × ¾T = 3T ≈ 1.885×10⁻⁶ s，合计 2.685×10⁻⁶ s）。(3) 由 C8，O′ 在 OA 延长线上，最远点距 O 为 R₁ + 2r ≤ R₂，r ≤ (25 cm − 10 cm)/2 = 7.5 cm，v ≤ (q/m)Br = 7.5×10⁵ m/s。动画加载第 (1) 问的临界速率；第 (2) 问把 v 改为 1.0×10⁶ m/s；第 (3) 问的切向射入动画不演示。",
+      "load": {
+        "bnd": "ring",
+        "show": "single",
+        "Bdir": "out",
+        "sign": "pos",
+        "qm": 100000000,
+        "B": 0.1,
+        "v": 1050000,
+        "phi": 0,
+        "R1": 10,
+        "R2": 25
+      }
+    }
+  ],
+  "reskins": [
+    {
+      "id": "R1",
+      "title": "磁分析器（质谱仪）：分离氢的同位素",
+      "map": "探测板 = 直线边界 MN，狭缝 O = 入射点 A，垂直射入走半圈，落点到 O 的距离 = 2r = 2mv/(qB)",
+      "anim": true,
+      "source": "改编自 2026 届虹口区一模 六-3（原题：B⁺ 与 B²⁺ 质量相同、电荷量 1∶2，经速度选择器后以相同速度进入磁分析器，B₂ 在 (B₂ − ΔB) ~ (B₂ + ΔB) 内波动，完全分离要求 ΔB ≤ B₂/3）。改为电荷量相同、质量 2∶3 的两种离子",
+      "stem": "氘核 ²H⁺ 和氚核 ³H⁺ 先通过速度选择器（电场强度 E = 1.0×10⁵ V/m，磁感应强度 B₁ = 0.10 T），再由狭缝 O 垂直探测板射入 B₂ = 0.50 T 的匀强磁场，偏转半圈后打在探测板上。质子质量取 1.67×10⁻²⁷ kg，氘核、氚核质量分别取质子质量的 2 倍和 3 倍，e = 1.6×10⁻¹⁹ C。(1) 求离子进入 B₂ 时的速率；(2) 求两种离子的落点到 O 的距离；(3) 若 B₂ 在 (B₂ − ΔB) ~ (B₂ + ΔB) 范围内波动，要使两种离子的落点区域完全分开，ΔB 应满足什么条件？",
+      "answer": "(1) 1.0×10⁶ m/s；(2) 氘核约 8.35 cm，氚核约 12.5 cm；(3) ΔB < B₂/5 = 0.10 T",
+      "analysis": "(1) 速度选择器中 qE = qvB₁，v = E/B₁ = 1.0×10⁵ V/m ÷ 0.10 T = 1.0×10⁶ m/s。(2) 由 C2、C6，落点距离 2r = 2mv/(qB₂)。氘核：2 × 3.34×10⁻²⁷ kg × 1.0×10⁶ m/s ÷ (1.6×10⁻¹⁹ C × 0.50 T) ≈ 8.35×10⁻² m；氚核为它的 1.5 倍，≈ 12.5×10⁻² m。(3) B 越小落点越远。氘核最远 2m_d v/(e(B₂ − ΔB))，氚核最近 2m_t v/(e(B₂ + ΔB))，完全分开要求前者小于后者：m_d(B₂ + ΔB) < m_t(B₂ − ΔB)，ΔB/B₂ < (m_t − m_d)/(m_t + m_d) = 1/5，ΔB < 0.10 T。ΔB = 0.10 T 时两者都是 10.44 cm，落点区域恰好相接。动画见直线边界预设「磁分析器（R1）」（q/m = 4.79×10⁷ C/kg，q₂/m₂ = 3.19×10⁷ C/kg，v = v₂ = 1.0×10⁶ m/s，B = 0.50 T），拖动 B 看两个落点一起移动。"
+    },
+    {
+      "id": "R2",
+      "title": "流式细胞仪：带电液滴的磁偏转回正",
+      "map": "磁场上边界 = 直线边界，液滴斜射入；「速度转回竖直」= 偏转角等于入射速度与边界法线的夹角 θ；下降深度 h = r sin θ",
+      "anim": true,
+      "source": "改编自 2026 届金山区二模 五-2(3)（原题：已知液滴在磁场中下降 h 时速度恰好竖直向下，求 B = EL/(v₀h) 及方向）。改为已知 B 求收集管深度 h，并追问与比荷的关系",
+      "stem": "长为 L 的两块竖直平行极板间有水平向右的匀强电场 E。质量 m、电荷量 q 的带正电液滴以 v₀ 从极板上方竖直向下进入电场，从下端 P 点离开电场。极板下方有垂直纸面的匀强磁场 B，磁场上边界水平、与极板下端齐平。不计重力、空气阻力和边缘效应。(1) 液滴离开电场时速度与竖直方向的夹角为 θ，求 tan θ；(2) 磁场方向如何？收集管应放在极板下方多深处，液滴到达时速度恰好竖直向下？(3) 这个深度与液滴的比荷有什么关系？",
+      "answer": "(1) tan θ = qEL/(mv₀²)；(2) 磁场垂直纸面向外，h = EL/(v₀B)；(3) 与比荷无关",
+      "analysis": "(1) 电场中水平方向匀加速，v_x = (qE/m)(L/v₀)，tan θ = v_x/v₀ = qEL/(mv₀²)。(2) 液滴速度斜向右下，要回到竖直向下须顺时针转，正电荷顺时针转对应磁场垂直纸面向外。由 C5，速度转过 θ 时圆心角也是 θ；由 C4，竖直下降 h = r sin θ。r = mv/(qB)，sin θ = v_x/v，所以 h = (mv/(qB)) × (v_x/v) = mv_x/(qB) = EL/(v₀B)。(3) m、q 都约掉了，h 只与 E、L、v₀、B 有关，比荷不同的液滴都在同一深度转回竖直（但水平位置不同）。动画见直线边界预设「流式细胞仪（R2）」：按几何等效加载 β = 53°（速度与法线成 37°），r = 10 cm，速度转到与 MN 垂直时粒子离 MN 的距离 h = r sin 37° ≈ 6.0 cm。"
+    },
+    {
+      "id": "R3",
+      "title": "衰变径迹",
+      "map": "静止核衰变，动量守恒 ⇒ 两粒子动量等大反向，r = p/(qB) ∝ 1/q；T ∝ m/q",
+      "anim": false,
+      "source": "改编自 2026 届奉贤区一模 一-3（原题：动量相同的氚核和氦核垂直射入同一磁场，半径比 2∶1、周期比 3∶2），情境参照 2026 届黄浦区二模 二-1(2)（α、β 粒子以相同速率射入磁场，半径比 3600）",
+      "stem": "静止在匀强磁场中的镭核 ²²⁶₈₈Ra 发生 α 衰变，生成氡核 ²²²₈₆Rn，α 粒子的速度方向与磁场垂直。不计衰变放出的光子的动量，质量比用质量数之比代替。(1) 求 α 粒子与氡核的轨迹半径之比；(2) 两条径迹是外切圆还是内切圆？(3) 求两者做圆周运动的周期之比。",
+      "answer": "(1) 43∶1；(2) 外切；(3) T_α∶T_Rn = 86∶111 ≈ 0.77",
+      "analysis": "(1) 衰变前静止，动量守恒，α 粒子与氡核动量等大反向。由 C2，r = p/(qB)，p 相同，r ∝ 1/q，r_α∶r_Rn = 86∶2 = 43∶1。(2) 两者都带正电、速度反向，由左手定则所受洛伦兹力反向，向两侧偏，两圆在衰变点外切（若放出的是带负电的 β 粒子，则为内切）。(3) 由 C3，T ∝ m/q，T_α/T_Rn = (4/2) ÷ (222/86) = 172/222 = 86/111 ≈ 0.77。半径相差 43 倍，同屏看不清，不做动画。"
+    }
+  ],
+  "sources": [
+    {
+      "src": "2024 上海等级考 第 5 大题 5.2",
+      "desc": "回旋加速器：洛伦兹力的功与冲量（W = 0，I ≠ 0）；¹H、³H 同时释放，T ∝ m/q，动能比 3∶1（选 E）→ V1。原卷转述（页面解析末句误作 1∶3，按周期关系以 E 为准）"
+    },
+    {
+      "src": "2026 上海等级考 第 1 大题 1.5",
+      "desc": "赤道上方带正电的卫星由西向东运动，地磁场对它的洛伦兹力向上：C1 方向判断的例子。原卷转述"
+    },
+    {
+      "src": "2026 届杨浦区二模 第五大题 五-6",
+      "desc": "圆内外等大反向磁场，沿直径径向射入；连续两次由 A 射入间隔 4πm/(qB)，初速度 √3 倍时连续两次经过 A 间隔 7πm/(3qB) → V4。原卷转述"
+    },
+    {
+      "src": "2026 届普陀区二模 第五大题 五-4",
+      "desc": "磁约束：R、3R 同心圆，只有圆环有磁场，被约束的最大速率 4qBR/(3m)；速率 qBR/m 时每运动 (6π + 8)R 重复一次 → V5。原卷转述"
+    },
+    {
+      "src": "2026 届松江区二模 第五大题 五-2(2)",
+      "desc": "托卡马克：氘核从内圆切向射入环形磁场，不穿越外圆的最大速率 eB(R₂ − R₁)/(2m₁) → V5(3)。原卷转述（页面答案印作 R₂ − R₂，按图应为 R₂ − R₁）"
+    },
+    {
+      "src": "2026 届长宁区一模 第五大题 五-2",
+      "desc": "由出射点与出射方向定圆心：r = 2a，比荷 v/(2Ba)；叠加电场匀速直线，U_PS = −Bav → V3。原卷转述"
+    },
+    {
+      "src": "2026 届徐汇区一模 第 5 大题 5.4",
+      "desc": "α 粒子垂直射入宽 L 的区域，只有电场、只有磁场、两者都有三种轨迹；r = mv²/(2eE)，t₁ < t₂ → V2。原卷转述"
+    },
+    {
+      "src": "2026 届虹口区一模 第六大题 六-3",
+      "desc": "磁分析器：B⁺、B²⁺ 同速射入，B₂ 波动时完全分开要求 ΔB ≤ B₂/3 → R1。原卷转述"
+    },
+    {
+      "src": "2026 届金山区二模 第五大题 五-2(3)",
+      "desc": "流式细胞仪：液滴进入磁场下降 h 时速度竖直向下，B = EL/(v₀h)，方向垂直纸面向外 → R2。原卷转述"
+    },
+    {
+      "src": "2026 届奉贤区一模 第一大题 一-3",
+      "desc": "动量相同的氚核和氦核垂直射入同一磁场，半径比 2∶1，周期比 3∶2 → R3。原卷转述"
+    },
+    {
+      "src": "2026 届黄浦区二模 第二大题 二-1(2)",
+      "desc": "α、β 粒子以相同速率经小孔射入磁场，判断 α 的轨迹，半径比 3600（R3 情境参照）。原卷转述"
+    },
+    {
+      "src": "2026 届奉贤区二模 第二大题 二-1(3)",
+      "desc": "α、β 射线分别向左、右偏：磁场垂直纸面向外，半径比约 365∶1（换皮：放射线径迹）。原卷转述"
+    },
+    {
+      "src": "2026 届徐汇区二模 第 4 大题 4.1",
+      "desc": "电子与 n 价正离子在同一磁场中做圆周运动的周期之比 nm/M（C3）。原卷转述"
+    },
+    {
+      "src": "2026 届杨浦区一模 第六大题 六-2",
+      "desc": "地磁场竖直分量使电子偏东；沿初速方向位移 d、侧移 d/2，v₀ = 5dBe/(4m)（C4 定圆心）。原卷转述"
+    },
+    {
+      "src": "2026 届浦东新区二模 第六大题 六-2(1)",
+      "desc": "离子阱：轨迹与 y 轴相切于 O 并经过 x = 2a 处，速率 aqB/m（C4 定圆心）。原卷转述"
+    },
+    {
+      "src": "2026 届崇明区二模 第五大题 五-3",
+      "desc": "洛伦兹力演示仪：电子经 U 加速后做圆周运动，B = (1/L)√(2mU/e)，励磁电流顺时针（换皮）。原卷转述"
+    },
+    {
+      "src": "2025 届杨浦区二模 第二大题 二-5",
+      "desc": "云室：a 逆时针、b 顺时针转，Ra > Rb、Ta < Tb，比荷 a > b（C3）。OCR 文本，公式缺失，结论据解析文字推定"
+    },
+    {
+      "src": "2026 届闵行区二模 第六大题 六-2",
+      "desc": "电子速度与 B 成 θ 角射入：螺旋运动，垂直 B 的平面内被约束在面积 π(v₀ sin θ/(kB))² 内——超出本母题适用边界。原卷转述"
+    }
+  ]
+}
+</script>
+
+<style>
+/* Layout: 实验报告 / 图纸标题栏。题头左标题右标题栏表格；母题独占一行；考点与边界并排；动画区左画布右控制台；结论、变式、换皮题依次向下 */
+:root{
+  --paper:#f2f4f3; --grid:#e4e9e6; --card:#ffffff; --sunk:#f6f8f7;
+  --ink:#142030; --muted:#5b6979; --faint:#8a96a3; --line:#d6dedA; --hair:#e7ece9;
+  --accent:#2443a6; --accent-soft:#e9eefb; --mark:#f7e9b0;
+  --g:#c0502a; --n:#17806a; --v:#2f62b3; --a:#a0661a; --track:#34404f; --fig-ink:#1d232b; --fig-aux:#75808c; --warn:#a85a14; --ok:#18845a;
+  --shadow:0 1px 0 rgba(20,32,48,.04),0 10px 28px -18px rgba(20,32,48,.28);
+  --f-display:"Noto Serif SC","Songti SC","STSong",serif;
+  --f-body:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#10161d; --grid:#18202a; --card:#171f28; --sunk:#131a22;
+  --ink:#e4e9ef; --muted:#9aa7b6; --faint:#6f7d8c; --line:#2a3542; --hair:#212b36;
+  --accent:#93acff; --accent-soft:#1f2a44; --mark:#4a4020;
+  --g:#ef8f6e; --n:#5cc7a0; --v:#8db0ef; --a:#e3ac5c; --track:#c3ccd8; --fig-ink:#dde3ea; --fig-aux:#8794a2; --warn:#f0a35a; --ok:#52d39c;
+  --shadow:0 1px 0 rgba(0,0,0,.25),0 12px 30px -20px rgba(0,0,0,.7); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#10161d; --grid:#18202a; --card:#171f28; --sunk:#131a22;
+  --ink:#e4e9ef; --muted:#9aa7b6; --faint:#6f7d8c; --line:#2a3542; --hair:#212b36;
+  --accent:#93acff; --accent-soft:#1f2a44; --mark:#4a4020;
+  --g:#ef8f6e; --n:#5cc7a0; --v:#8db0ef; --a:#e3ac5c; --track:#c3ccd8; --fig-ink:#dde3ea; --fig-aux:#8794a2; --warn:#f0a35a; --ok:#52d39c;
+  --shadow:0 1px 0 rgba(0,0,0,.25),0 12px 30px -20px rgba(0,0,0,.7); color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.7;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:28px 28px;background-position:-1px -1px}
+.wrap{max-width:1160px;margin:0 auto;padding-inline:16px;padding-block:16px 56px;display:flex;flex-direction:column;gap:16px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;font-weight:800}
+p{margin:0}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 22px;min-width:0;display:flex;flex-direction:column;gap:10px;box-shadow:var(--shadow)}
+@media (max-width:520px){.panel{padding:16px;border-radius:12px}}
+.sh{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.sh h2{font-size:20px;letter-spacing:.02em}
+.sh small{font-size:13px;color:var(--muted)}
+.sh::after{content:"";flex:1 1 40px;height:1px;background:var(--hair);align-self:center}
+.label{font-size:12px;letter-spacing:.12em;color:var(--faint);font-weight:700}
+.note{font-size:13px;color:var(--muted)}
+
+/* 题头：标题 + 图纸标题栏 */
+.top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px 28px;align-items:end;padding-bottom:6px}
+@media (max-width:760px){.top{grid-template-columns:1fr}}
+.brand{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);margin-bottom:6px}
+.seal{font-family:var(--f-display);font-weight:800;font-size:13px;color:var(--card);background:var(--ink);padding:2px 8px;border-radius:3px;letter-spacing:.18em}
+.top h1{font-size:clamp(22px,3vw,30px);line-height:1.2;letter-spacing:.01em}
+.top .sub{margin-top:4px;color:var(--muted);font-size:14px}
+.tb{border-collapse:collapse;font-size:13px;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:var(--shadow);min-width:0}
+.tb th,.tb td{border:1px solid var(--hair);padding:6px 12px;text-align:left;white-space:nowrap}
+.tb th{color:var(--faint);font-weight:500;font-size:12px;letter-spacing:.06em;background:var(--sunk)}
+.tb td{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.tb td.code{color:var(--accent);font-weight:600}
+.tbwrap{overflow-x:auto;max-width:100%}
+
+/* 母题 */
+.problem{display:flex;flex-direction:column;gap:10px;min-width:0}
+.lead{font-family:var(--f-display);font-size:clamp(16px,1.7vw,17px);line-height:1.8;font-weight:600}
+.num{font-family:var(--f-mono);font-weight:600;font-size:.92em;color:var(--ink);white-space:nowrap;
+  background:linear-gradient(transparent 55%,var(--mark) 55%);padding:0 2px;transition:background-color .2s}
+.asks{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 26px}
+.asks li{display:flex;gap:8px;align-items:baseline;min-width:0}
+.asks li b{flex:none}
+.asks li b{display:inline-grid;place-items:center;width:1.6em;height:1.6em;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-family:var(--f-mono);font-size:13px}
+.given{background:var(--sunk);border:1px solid var(--hair);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.given dl{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;font-size:14px}
+.given dt{font-family:var(--f-mono);color:var(--muted)}
+.given dd{margin:0;font-family:var(--f-mono);font-variant-numeric:tabular-nums;text-align:right}
+
+/* 考点 + 边界 */
+.row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:28px;align-items:start}
+@media (max-width:860px){.row2{grid-template-columns:1fr}}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{font-size:14px;border:1px solid var(--line);background:var(--sunk);padding:4px 12px;border-radius:999px}
+.bnd{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+@media (max-width:620px){.bnd{grid-template-columns:1fr}}
+.bnd ul{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.bnd li{display:grid;grid-template-columns:1.2em minmax(0,1fr);gap:6px}
+.bnd .ok li::before{content:"✓";color:var(--ok);font-weight:700}
+.bnd .back li::before{content:"→";color:var(--accent);font-weight:700}
+
+/* 选项卡 */
+.board{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);min-width:0;overflow:hidden}
+.tabs{display:flex;gap:2px;padding:0 10px;border-bottom:1px solid var(--line);background:var(--sunk);overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{border:none;border-radius:0;background:none;padding:13px 14px 11px;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap;font-size:15px}
+.tab:hover{color:var(--ink);border-color:transparent;border-bottom-color:var(--line)}
+.tab[aria-selected="true"]{color:var(--ink);font-weight:700;border-bottom-color:var(--accent)}
+.tab .n{font-family:var(--f-mono);font-size:11px;color:var(--faint);margin-left:5px;font-weight:500}
+.pane{padding:16px 22px 22px;display:flex;flex-direction:column;gap:16px;min-width:0}
+@media (max-width:520px){.pane{padding:16px}}
+.hint{font-size:13px;color:var(--muted)}
+
+/* 动画区 */
+.lab{display:flex;flex-wrap:wrap;gap:22px 28px;align-items:flex-start}
+.stage{flex:0 1 auto;width:min(100%,max(300px,calc(100vh - 430px)),640px);display:flex;flex-direction:column;gap:10px;min-width:0}
+.canvas-box{position:relative;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card)}
+canvas{width:100%;max-width:100%;aspect-ratio:1/1;display:block}
+.status{position:absolute;left:12px;top:12px;max-width:calc(100% - 24px);display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;
+  padding:5px 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow)}
+.status::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--faint);flex:none}
+.status.warn{color:var(--warn)} .status.warn::before{background:var(--warn)}
+.status.ok{color:var(--ok)} .status.ok::before{background:var(--ok)}
+@media (max-width:640px){.status{position:static;margin:8px 10px 10px;max-width:none}}
+.legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--muted)}
+.legend i{display:inline-block;width:16px;height:3px;vertical-align:middle;margin-right:6px;border-radius:2px}
+.readout{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card)}
+.ro{padding:7px 12px;min-width:0;box-shadow:1px 0 0 var(--hair),0 1px 0 var(--hair)}
+.ro span{display:block;font-size:12px;color:var(--faint)}
+.ro b{font-family:var(--f-mono);font-weight:600;font-variant-numeric:tabular-nums;font-size:15px;overflow-wrap:anywhere}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+button{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:7px 16px;border-radius:999px;cursor:pointer;transition:border-color .15s,background-color .15s,color .15s}
+button:hover{border-color:var(--accent)}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.primary{background:var(--accent);color:var(--card);border-color:var(--accent);font-weight:700;padding-inline:22px}
+.ctrl{flex:1 1 300px;display:flex;flex-direction:column;gap:18px;min-width:0}
+.side{display:flex;flex-direction:column;gap:12px;min-width:0}
+.group{display:flex;flex-direction:column;gap:10px}
+.field{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"l o" "r r";gap:2px 10px;align-items:baseline}
+.field label{grid-area:l;font-size:14px}
+.field label .s{font-family:var(--f-mono);font-weight:600;margin-right:6px}
+.field label .note{font-size:12px}
+.numin{grid-area:o;display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:8px;padding:1px 8px 1px 2px;background:var(--sunk)}
+.numin:focus-within{border-color:var(--accent)}
+.numin input{width:6.2em;border:none;background:transparent;color:var(--accent);font:600 14px var(--f-mono);font-variant-numeric:tabular-nums;text-align:right;padding:3px 2px;outline:none;-moz-appearance:textfield}
+.numin input::-webkit-outer-spin-button,.numin input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.numin .u{font:500 12px var(--f-mono);color:var(--muted);min-width:1.5em}
+.presets button[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:700}
+.pnote{font-size:13px;color:var(--muted);border-left:2px solid var(--accent-soft);padding:2px 0 2px 10px}
+.pnote b{color:var(--ink);font-weight:600}
+.field input{grid-area:r}
+input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
+.seg{display:flex;padding:3px;gap:3px;border-radius:999px;background:var(--sunk);border:1px solid var(--line)}
+.seg button{flex:1;border:none;padding:6px 10px;background:transparent;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--card);color:var(--ink);font-weight:700;box-shadow:var(--shadow)}
+.seg button small{display:block;font-size:12px;font-weight:400;color:var(--faint);line-height:1.4}
+.presets{display:flex;flex-wrap:wrap;gap:6px}
+.presets button{font-size:13px;padding:4px 12px;background:var(--sunk)}
+.verdict{background:var(--sunk);border:1px solid var(--hair);border-radius:10px;padding:12px 14px;font-size:14px;line-height:1.8}
+.verdict b{color:var(--accent);font-family:var(--f-mono)}
+
+/* 结论 */
+.cl{display:flex;flex-direction:column}
+.cl details{border-top:1px solid var(--hair)}
+.cl details:last-child{border-bottom:1px solid var(--hair)}
+.cl summary{display:grid;grid-template-columns:2.6em minmax(0,1fr) minmax(0,auto) 1em;gap:6px 14px;align-items:center;padding:12px 4px;cursor:pointer;list-style:none}
+.cl summary::-webkit-details-marker{display:none}
+.cl summary:hover .t{color:var(--accent)}
+.badge{display:inline-grid;place-items:center;min-width:2.3em;height:1.7em;padding:0 6px;border-radius:6px;background:var(--accent-soft);color:var(--accent);font-family:var(--f-mono);font-weight:600;font-size:13px}
+.cl .f{font-family:var(--f-mono);font-size:14px;background:var(--sunk);border:1px solid var(--hair);border-radius:6px;padding:2px 10px;justify-self:end;text-align:right}
+.chev{width:8px;height:8px;border-right:2px solid var(--faint);border-bottom:2px solid var(--faint);transform:rotate(45deg);transition:transform .2s;justify-self:center}
+details[open]>summary .chev{transform:rotate(225deg)}
+@media (max-width:640px){.cl summary{grid-template-columns:2.6em minmax(0,1fr) 1em}.cl .f{grid-column:2;grid-row:2;justify-self:start;text-align:left}.chev{grid-column:3;grid-row:1}}
+.deriv{margin:0 4px 14px calc(2.6em + 18px);padding:4px 0 4px 14px;border-left:2px solid var(--accent-soft);white-space:pre-line;font-size:14px;color:var(--ink)}
+@media (max-width:640px){.deriv{margin-left:4px}}
+
+/* 变式 / 换皮题 */
+.qs{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:14px}
+.q{border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px;background:var(--card);min-width:0}
+.q .head{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+.q h3{font-size:16px;margin-right:auto}
+.chip{font-size:12px;font-family:var(--f-mono);border:1px solid var(--line);border-radius:999px;padding:0 8px;color:var(--muted)}
+.src{font-size:12px;color:var(--faint)}
+.map{font-size:13px;color:var(--muted)}
+.map b{font-weight:500;color:var(--ink)}
+.q details{border-top:1px dashed var(--line);padding-top:8px}
+.q details summary{cursor:pointer;color:var(--accent);font-size:14px;font-weight:500;list-style:none;display:flex;align-items:center;gap:8px;width:fit-content}
+.q details summary::-webkit-details-marker{display:none}
+.ans{margin-top:8px;display:flex;flex-direction:column;gap:6px;font-size:14px;background:var(--sunk);border-radius:8px;padding:10px 12px}
+.ans .a{font-weight:700}
+.q .foot{margin-top:auto;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:space-between}
+.q .foot button{font-size:13px;padding:4px 14px;color:var(--accent);border-color:var(--accent-soft);background:var(--accent-soft)}
+.srcs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.srcs li{display:grid;grid-template-columns:minmax(0,15em) minmax(0,1fr);gap:4px 16px;padding:8px 0;border-top:1px solid var(--hair);font-size:14px}
+.srcs li b{font-family:var(--f-mono);font-weight:500;font-size:13px}
+.srcs li span{color:var(--muted)}
+@media (max-width:620px){.srcs li{grid-template-columns:1fr}}
+footer{font-size:12px;color:var(--faint);text-align:center}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+
+<div class="wrap" id="app">
+  <header class="top">
+    <div>
+      <div class="brand"><span class="seal">格物</span><span>Gewu · 高中物理母题</span></div>
+      <h1 id="hName"></h1>
+      <p class="sub" id="hSub"></p>
+    </div>
+    <div class="tbwrap"><table class="tb" id="hTable"></table></div>
+  </header>
+
+  <section class="panel">
+    <div class="sh"><h2>母题</h2><small>题干数字随动画参数实时变化</small></div>
+    <div class="problem">
+      <p class="lead" id="stem"></p>
+      <ol class="asks" id="asks"></ol>
+      <p class="note" id="stemNote"></p>
+    </div>
+  </section>
+
+  <div class="board">
+    <nav class="tabs" role="tablist" aria-label="母题内容">
+      <button class="tab" role="tab" id="tab-lab" aria-controls="pane-lab" data-pane="pane-lab">动画实验</button>
+      <button class="tab" role="tab" id="tab-scope" aria-controls="pane-scope" data-pane="pane-scope">考点与边界</button>
+      <button class="tab" role="tab" id="tab-concl" aria-controls="pane-concl" data-pane="pane-concl">结论<span class="n" id="nConcl"></span></button>
+      <button class="tab" role="tab" id="tab-var" aria-controls="pane-var" data-pane="pane-var">变式<span class="n" id="nVar"></span></button>
+      <button class="tab" role="tab" id="tab-skin" aria-controls="pane-skin" data-pane="pane-skin">换皮题<span class="n" id="nSkin"></span></button>
+      <button class="tab" role="tab" id="tab-src" aria-controls="pane-src" data-pane="pane-src">题源<span class="n" id="nSrc"></span></button>
+    </nav>
+
+    <section class="pane" role="tabpanel" id="pane-lab" aria-labelledby="tab-lab">
+      <div class="lab">
+        <div class="stage">
+          <div class="legend" id="legend"></div>
+          <div class="canvas-box">
+            <canvas id="cv" aria-label="母题动画画布"></canvas>
+            <div class="status" id="status" role="status">准备就绪</div>
+          </div>
+          <div class="btns">
+            <button class="primary" id="play">▶ 发射</button>
+            <button id="reset">重置</button>
+            <button id="slow">慢放 ×0.25</button>
+          </div>
+        </div>
+        <div class="ctrl">
+          <div class="group"><div class="label">参数</div><div id="params" class="group"></div></div>
+          <div class="group"><div class="label">预设情形 <span id="presetMode"></span></div><div class="presets" id="presets"></div><p class="pnote" id="pnote" hidden></p></div>
+          <div class="group"><div class="label">理论预判</div><div class="verdict" id="verdict"></div></div>
+        </div>
+      </div>
+      <div class="group"><div class="label">实时读数</div><div class="readout" id="readout"></div></div>
+    </section>
+
+    <section class="pane" role="tabpanel" id="pane-scope" aria-labelledby="tab-scope" hidden>
+      <div class="row2">
+        <div class="group"><div class="label">核心考点</div><div class="tags" id="tags"></div></div>
+        <div class="group"><div class="label">适用边界</div>
+          <div class="bnd">
+            <div><div class="hint">结论成立条件</div><ul class="ok" id="bCond"></ul></div>
+            <div><div class="hint">超出边界时回到</div><ul class="back" id="bBack"></ul></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pane" role="tabpanel" id="pane-concl" aria-labelledby="tab-concl" hidden>
+      <p class="hint">点开每条结论看推导。</p>
+      <div class="cl" id="concl"></div>
+    </section>
+
+    <section class="pane" role="tabpanel" id="pane-var" aria-labelledby="tab-var" hidden>
+      <p class="hint">同一骨架，换条件或问法。点「加载到动画」可直接在动画里验证。</p>
+      <div class="qs" id="variants"></div>
+    </section>
+
+    <section class="pane" role="tabpanel" id="pane-skin" aria-labelledby="tab-skin" hidden>
+      <p class="hint">同一骨架，换情境外形。</p>
+      <div class="qs" id="reskins"></div>
+    </section>
+
+    <section class="pane" role="tabpanel" id="pane-src" aria-labelledby="tab-src" hidden>
+      <ul class="srcs" id="sources"></ul>
+    </section>
+  </div>
+
+  <footer id="foot"></footer>
+</div>
+
+<script>
+/* ================= 线稿绘图工具 FIG（所有母题共用，不改） =================
+   画法照试卷插图：装置用墨线，固定面画斜线阴影，辅助线用虚线，物理量和点的字母用斜体衬线；
+   只有矢量带颜色（--g 重力/外力，--n 弹力/约束力，--v 速度，--a 其他矢量）。
+   用法：SIM.draw 里 const F=FIG(ctx,W,tok)；坐标是画布像素，F.u = W/720 是线宽与几何的基准单位，
+   F.ut 是字号单位（窄屏时不再随画布缩小，保证字母不小于约 11 CSS 像素；自写文字函数也要用 F.ut 算字号）。
+   颜色：F.ink 墨线、F.auxColor 辅助线、F.paper 纸色（F.aux 是画辅助线的方法，不是颜色）。 */
+const FIG=(ctx,W,tok)=>{
+  const u=W/720,ink=tok('--fig-ink'),aux=tok('--fig-aux'),paper=tok('--card');
+  const dp=W/(ctx.canvas.clientWidth||W),ut=Math.max(u,dp*11/19);   // dp：每 CSS 像素的画布像素数
+  const SERIF='"Times New Roman","STIX Two Text",Times,serif',SANS=tok('--f-body');
+  const path=(fn,{w=1.6,color=ink,dash=null,fill=null}={})=>{ctx.save();ctx.beginPath();fn();
+    if(fill){ctx.fillStyle=fill;ctx.fill()}
+    if(w>0){ctx.lineWidth=w*u;ctx.strokeStyle=color;ctx.setLineDash(dash?dash.map(d=>d*u):[]);ctx.lineCap='round';ctx.lineJoin='round';ctx.stroke()}
+    ctx.restore()};
+  // 文字先描一圈底色再填色，压在线条上也清楚
+  const text=(t,x,y,font,color,align,base)=>{ctx.save();ctx.font=font;ctx.textAlign=align;ctx.textBaseline=base;
+    ctx.lineJoin="round";ctx.lineWidth=5*ut;ctx.strokeStyle=paper;ctx.strokeText(t,x,y);ctx.fillStyle=color;ctx.fillText(t,x,y);ctx.restore()};
+  const F={u,ut,ink,auxColor:aux,paper,
+    clear(){ctx.save();ctx.setLineDash([]);ctx.fillStyle=paper;ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);ctx.restore()},
+    line(x1,y1,x2,y2,o){path(()=>{ctx.moveTo(x1,y1);ctx.lineTo(x2,y2)},o)},
+    poly(pts,o){path(()=>pts.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y)),o)},
+    circle(x,y,r,o){path(()=>ctx.arc(x,y,r,0,2*Math.PI),o)},
+    arc(x,y,r,a0,a1,o){path(()=>ctx.arc(x,y,r,a0,a1),o)},
+    rect(x,y,w,h,o){path(()=>ctx.rect(x,y,w,h),o)},
+    // 辅助线（中心线、投影线等）
+    aux(x1,y1,x2,y2,o={}){F.line(x1,y1,x2,y2,{w:1,color:aux,dash:[6,5],...o})},
+    // 运动轨迹：细虚线
+    trail(pts,o={}){if(pts.length>1)F.poly(pts,{w:1.3,color:aux,dash:[5,5],...o})},
+    // 固定面斜线：沿 (x1,y1)→(x2,y2) 的直线，画在 side 一侧（屏幕坐标下，1 = 前进方向右手侧）
+    hatch(x1,y1,x2,y2,side=1,{gap=12,len=10}={}){const L=Math.hypot(x2-x1,y2-y1),n=Math.max(1,Math.round(L/(gap*u)));
+      const tx=(x2-x1)/L,ty=(y2-y1)/L,nx=-ty*side,ny=tx*side,ox=(nx-tx)*len*u/Math.SQRT2,oy=(ny-ty)*len*u/Math.SQRT2;
+      path(()=>{for(let i=0;i<=n;i++){const x=x1+(x2-x1)*i/n,y=y1+(y2-y1)*i/n;ctx.moveTo(x,y);ctx.lineTo(x+ox,y+oy)}},{w:1,color:aux})},
+    // 圆弧形固定面的斜线：out = true 画在圆外侧
+    hatchArc(cx,cy,r,a0,a1,out=true,{gap=12,len=10}={}){const n=Math.max(1,Math.round(r*Math.abs(a1-a0)/(gap*u))),s=out?1:-1;
+      path(()=>{for(let i=0;i<=n;i++){const a=a0+(a1-a0)*i/n,c=Math.cos(a),si=Math.sin(a),x=cx+r*c,y=cy+r*si;
+        const nx=c*s,ny=si*s,tx=-si,ty=c;ctx.moveTo(x,y);ctx.lineTo(x+(nx-tx)*len*u/Math.SQRT2,y+(ny-ty)*len*u/Math.SQRT2)}},{w:1,color:aux})},
+    // 矢量：从 (x,y) 画到 (x+dx,y+dy)，细杆 + 窄实心箭头；label 用斜体写在箭头外侧，
+    // 与别的矢量共线时用 off=[dx,dy]（单位 u，相对箭头尖）把标注挪到旁边
+    arrow(x,y,dx,dy,color,label,{w=2,head=12,size=19,off=null}={}){const L=Math.hypot(dx,dy);if(L<2*u)return;
+      const ux=dx/L,uy=dy/L,h=Math.min(head*u,L*.6),hw=h*.34,tx=x+dx,ty=y+dy;
+      F.line(x,y,tx-ux*h*.7,ty-uy*h*.7,{w,color});
+      path(()=>{ctx.moveTo(tx,ty);ctx.lineTo(tx-ux*h-uy*hw,ty-uy*h+ux*hw);ctx.lineTo(tx-ux*h+uy*hw,ty-uy*h-ux*hw);ctx.closePath()},{w:0,fill:color});
+      if(label)F.label(label,off?tx+off[0]*u:tx+ux*14*u,off?ty+off[1]*u:ty+uy*14*u,{color,size})},
+    // 斜体衬线字母（物理量、点名）
+    label(t,x,y,{color=ink,size=19,align='center',base='middle',italic=true}={}){text(t,x,y,`${italic?'italic ':''}${size*ut}px ${SERIF}`,color,align,base)},
+    // 中文小注
+    zh(t,x,y,{color=aux,size=14,align='center',base='middle'}={}){text(t,x,y,`${size*ut}px ${SANS}`,color,align,base)},
+    dot(x,y,r=2.6,color=ink){F.circle(x,y,r*u,{w:0,fill:color})},
+    // 带名字的点：实心小点 + 斜体字母（dx、dy 为字母相对点的偏移，单位 u）
+    point(x,y,name,dx=-13,dy=13){F.dot(x,y);if(name)F.label(name,x+dx*u,y+dy*u)},
+    // 小球：空心圆，球心另用 F.dot 标出（矢量画完后再点，表示力作用在重心）
+    ball(x,y,r){F.circle(x,y,r,{w:1.6,fill:paper})},
+    // 尺寸标注：两端带箭头的细线，文字写在中点外侧 off（单位 u）
+    dim(x1,y1,x2,y2,t,{off=14,color=ink}={}){const L=Math.hypot(x2-x1,y2-y1);if(L<4*u)return;const ux=(x2-x1)/L,uy=(y2-y1)/L,h=Math.min(8*u,L/3),hw=h*.38;
+      F.line(x1,y1,x2,y2,{w:1,color});
+      for(const[px,py,sx]of[[x1,y1,1],[x2,y2,-1]])path(()=>{ctx.moveTo(px,py);ctx.lineTo(px+sx*ux*h-uy*hw,py+sx*uy*h+ux*hw);ctx.lineTo(px+sx*ux*h+uy*hw,py+sx*uy*h-ux*hw);ctx.closePath()},{w:0,fill:color});
+      if(t)F.label(t,(x1+x2)/2-uy*off*u,(y1+y2)/2+ux*off*u,{color})},
+  };
+  return F;
+};
+
+/* ================= SIM 模块：每个母题替换这一段 =================
+   约定接口：
+   SIM.legend            [{label, color(CSS 变量名)}]
+   SIM.init(P)           → 状态 S（含 S.done、S.status={text,cls}）
+   SIM.step(S,P,dt)      推进 dt 秒（引擎保证 dt ≤ 0.5 ms）
+   SIM.readouts(S,P)     → [[标签, 带单位的值]]
+   SIM.draw(ctx,S,P,W,H,tok)  tok(name) 取主题色
+   SIM.verdict(P)        → 理论预判 HTML
+*/
+const SIM=(()=>{
+  /* 带电粒子在有界匀强磁场中的圆周运动。
+     物理：对每个粒子的 (x, y, vx, vy) 做 RK4，a = (q/m) v × B，B 只有 z 分量，按区域取 +B、−B 或 0（不用预设轨迹）。
+     越过边界的那一步在步内二分定位交点，交点处换用新区域的磁场继续积分。
+     时间：真实周期是 10⁻⁷ s 量级，动画把引擎给的时间步乘以放大倍数 S.TS 再推进，积分子步长 h ≤ T_min/20000；读数显示真实时间。
+     坐标：直线、平行、圆形边界以入射点 A 为原点（圆形边界圆心 O 在 (0, R)），环形边界以 O 为原点；x 向右、y 向上、z 垂直纸面向外，单位 m。
+     页面引擎的预设按第一个选项参数（边界）分组：预设的 load 用 opts 打包其余选项（显示、磁场方向、电性等），
+     SIM 在 P 上装一个 opts 访问器，引擎 Object.assign(P, load) 时就地展开，题干、按钮、参数显隐都照常由引擎同步。 */
+  const TAU=2*Math.PI,RAD=Math.PI/180,DEG=180/Math.PI;
+  const SUP={'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  const ok=x=>typeof x==='number'&&isFinite(x);
+  const fmt=(x,d=2)=>{if(!ok(x))return'—';return(Math.abs(x)<.5*Math.pow(10,-d)?0:x).toFixed(d).replace('-','−')};
+  const exp10=x=>{let e=Math.floor(Math.log10(Math.abs(x))),m=x/Math.pow(10,e);return[m,e]};
+  const sci=(x,d=2)=>{if(!ok(x))return'—';if(x===0)return'0';let[m,e]=exp10(x);if(Math.abs(+m.toFixed(d))>=10){m/=10;e++}
+    return m.toFixed(d).replace('-','−')+'×10'+String(e).replace(/./g,c=>SUP[c])};
+  // 题干用的写法：1.0×10⁸、4.8×10⁷、5.77×10⁵（三位有效数字，整数补一位小数）
+  const sciS=x=>{if(!ok(x)||x<=0)return String(x);let[m,e]=exp10(x);m=+m.toPrecision(3);if(m>=10){m/=10;e++}
+    return(Number.isInteger(m)?m.toFixed(1):String(m))+'×10'+String(e).replace(/./g,c=>SUP[c])};
+  // 输入框里的写法：1e8、4.8e7（引擎用 parseFloat 读回）
+  const sciIn=x=>{if(!ok(x)||x<=0)return String(x);let[m,e]=exp10(x);m=+m.toPrecision(5);if(m>=10){m=+(m/10).toPrecision(5);e++}return m+'e'+e};
+  const cm=(x,d=2)=>fmt(x*100,d)+' cm',ns=t=>fmt(t*1e9,1)+' ns',dg=a=>fmt(a,1)+'°',vs=v=>sci(v,3)+' m/s';
+  const sub=['₀','₁','₂','₃','₄','₅','₆','₇','₈','₉'];
+
+  /* ---------- 参数整理：选项宏 opts、不兼容组合 ---------- */
+  function norm(P){
+    if(P.opts&&typeof P.opts==='object'){const o=P.opts;delete P.opts;Object.assign(P,o)}
+    const d=Object.getOwnPropertyDescriptor(P,'opts');
+    if(!d||!d.set)try{Object.defineProperty(P,'opts',{configurable:true,enumerable:false,get(){return undefined},set(o){if(o&&typeof o==='object')Object.assign(P,o)}})}catch(e){}
+    if(P.show==='beam'&&P.bnd!=='circle')P.show='single';      // 平行束只用于圆形边界
+  }
+  // 引擎每次同步参数后都会调用 verdict，这里顺带处理引擎不支持的界面细节
+  function ui(P){
+    if(typeof document==='undefined')return;
+    const seg=k=>{const b=document.querySelector(`.seg [data-k="${k}"]`);return b&&b.parentElement};
+    const vis=(el,on)=>{if(el)el.hidden=!on};
+    vis(seg('outer'),P.bnd==='circle');vis(seg('sign2'),P.show==='duo');
+    vis(document.getElementById('opt-show-beam'),P.bnd==='circle');
+    document.querySelectorAll('.seg [data-k="show"]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===P.show));
+    // q/m、v 的数值很大：输入框改用科学计数，题干改用 ×10ⁿ
+    for(const k of['qm','v','qm2','v2']){const n=document.getElementById('num-'+k);if(n&&document.activeElement!==n)n.value=sciIn(P[k])}
+    document.querySelectorAll('#stem .num,#asks .num').forEach(s=>{const m=s.textContent.match(/^(\d{5,}(?:\.\d+)?) (C\/kg|m\/s)$/);if(m)s.textContent=sciS(+m[1])+' '+m[2];else s.textContent=s.textContent.replace(/ °$/,'°')});
+  }
+
+  /* ---------- 区域 ---------- */
+  // 区域代号：F 有磁场；直线边界 N（MN 下方）；平行边界 L（MN 下方）、U（PQ 上方）；圆形边界 X（圆外）；环形边界 I（内圆）、X（外圆外）
+  function cls(G,x,y){
+    switch(G.bnd){
+      case'line':return y>0?'F':'N';
+      case'strip':return y<0?'L':y>G.d?'U':'F';
+      case'circle':return Math.hypot(x,y-G.R)<G.R?'F':'X';
+      default:{const r=Math.hypot(x,y);return r<G.R1?'I':r<G.R2?'F':'X'}
+    }
+  }
+  // 是否仍在区域 reg 内（向外放宽 e，用于判定越界和防止在边界上来回抖动）
+  function inR(G,reg,x,y,e){
+    switch(G.bnd){
+      case'line':return reg==='F'?y>-e:y<e;
+      case'strip':return reg==='F'?y>-e&&y<G.d+e:reg==='L'?y<e:y>G.d-e;
+      case'circle':{const r=Math.hypot(x,y-G.R);return reg==='F'?r<G.R+e:r>G.R-e}
+      default:{const r=Math.hypot(x,y);return reg==='I'?r<G.R1+e:reg==='F'?r>G.R1-e&&r<G.R2+e:r>G.R2-e}
+    }
+  }
+  const fac=(G,reg)=>reg==='F'?1:(G.outer&&reg==='X'?-1:0);
+  const where=(G,from,to)=>G.bnd==='line'?'MN':G.bnd==='strip'?(to==='U'?'PQ':'MN'):G.bnd==='circle'?'圆周':(to==='X'?'外圆':'内圆');
+
+  /* ---------- 粒子与理论值 ---------- */
+  function setup(P){
+    const ring=P.bnd==='ring',G={bnd:P.bnd,show:P.show,B:P.B,outer:P.bnd==='circle'&&P.outer==='rev',
+      d:P.d/100,R:P.R/100,R1:P.R1/100,R2:Math.max(P.R2,P.R1+2)/100,adj:ring&&P.R2<P.R1+2};
+    G.O=P.bnd==='circle'?[0,G.R]:[0,0];
+    const bd=P.Bdir==='out'?-1:1,s1=P.sign==='neg'?-1:1,s2=P.sign2==='neg'?-1:1,a0=ring?P.phi:P.beta;
+    // sig：转向，+1 逆时针（向左偏），−1 顺时针；w = (q/m)·Bz（带符号），a = w·(vy, −vx)
+    const mk=(sg,qm,v,ang,x0=0,y0=0)=>{qm=Math.abs(qm);const om=qm*P.B,p={sg,qm,v,ang,x0,y0,sig:sg*bd,om,r:v/om,T:TAU/om};p.w=-p.sig*om;return p};
+    const ps=[];
+    if(G.show==='duo')ps.push(mk(s1,P.qm,P.v,a0),mk(s2,P.qm2,P.v2,a0));
+    else if(G.show==='rot'){if(ring)for(let a=0;a<360;a+=30)ps.push(mk(s1,P.qm,P.v,a));else for(let a=10;a<=170;a+=10)ps.push(mk(s1,P.qm,P.v,a))}
+    else if(G.show==='zoom')for(let i=1;i<=10;i++)ps.push(mk(s1,P.qm,P.v*i/5,a0));
+    else if(G.show==='beam')for(let i=0;i<9;i++)ps.push(mk(s1,P.qm,P.v,90,G.R*(i-4)/4.5,-.3*G.R));
+    else ps.push(mk(s1,P.qm,P.v,a0));
+    ps.forEach(p=>p.th=theo(G,p));
+    return{G,ps};
+  }
+  // 圆周上速度方向为 f 的点：c + sig·r·(sin f, −cos f)
+  const onC=(c,r,s,f)=>[c[0]+s*r*Math.sin(f),c[1]-s*r*Math.cos(f)];
+  const refl=(O,c,q)=>{const dx=c[0]-O[0],dy=c[1]-O[1],L=Math.hypot(dx,dy),ux=dx/L,uy=dy/L,qx=q[0]-O[0],qy=q[1]-O[1],k=qx*ux+qy*uy;return[O[0]+2*k*ux-qx,O[1]+2*k*uy-qy]};
+  const sweep=(c,s,p,q)=>{let a=s*(Math.atan2(q[1]-c[1],q[0]-c[0])-Math.atan2(p[1]-c[1],p[0]-c[0]));a=((a%TAU)+TAU)%TAU;return a<1e-9?TAU:a};
+  // 第一段磁场中圆弧的理论值（只用于理论预判、取景与动画节奏，运动本身由 RK4 积分）
+  function theo(G,p){
+    const{r,sig:s,om}=p,a=p.ang*RAD,o={a};
+    let ex=p.x0,ey=p.y0,t0=0;
+    if(G.bnd==='ring'){ex=G.R1*Math.cos(a);ey=G.R1*Math.sin(a);t0=G.R1/p.v}
+    else if(p.y0<0){ey=G.R-Math.sqrt(Math.max(0,G.R*G.R-p.x0*p.x0));t0=(ey-p.y0)/p.v}
+    const c=[ex-s*r*Math.sin(a),ey+s*r*Math.cos(a)];Object.assign(o,{ex,ey,t0,c});
+    const out=(th,x,y,wh,more)=>Object.assign(o,{th,x,y,wh,t:t0+th*RAD/om,ve:a+s*th*RAD},more);
+    const lineExit=more=>out(s>0?360-2*p.ang:2*p.ang,-s*2*r*Math.sin(a),0,'MN',more);
+    if(G.bnd==='line')lineExit({gam:s>0?180-p.ang:p.ang});
+    else if(G.bnd==='strip'){
+      const top=c[1]+r,d=G.d,gam=s>0?180-p.ang:p.ang;o.v0=p.qm*G.B*d/(1-Math.cos(gam*RAD));
+      if(top-d>1e-6*r){let ph,x;
+        if(s>0){ph=Math.acos(Math.max(-1,Math.cos(a)-d/r));x=c[0]+r*Math.sin(ph)}else{ph=Math.acos(Math.min(1,Math.cos(a)+d/r));x=c[0]-r*Math.sin(ph)}
+        out(Math.abs(ph-a)*DEG,x,d,'PQ',{gam,near:top-d<.005*r})}
+      else lineExit({gam,tan:d-top<.005*r});
+    }else if(G.bnd==='circle'){
+      const O=G.O;
+      if(Math.hypot(c[0]-O[0],c[1]-O[1])<1e-12*r)o.none=true;
+      else{const C=refl(O,c,[ex,ey]);out(sweep(c,s,[ex,ey],C)*DEG,C[0],C[1],'圆周',{radial:Math.abs(p.ang-90)<1e-9&&p.y0===0})}
+      if(G.outer&&!o.none){
+        // 圆外反向：转向相反、半径相同；每段都全等，只是绕 O 转过一个角度
+        const c2=[o.x+s*r*Math.sin(o.ve),o.y-s*r*Math.cos(o.ve)],P2=refl(O,c2,[o.x,o.y]);
+        o.rOut=Math.hypot(c2[0]-O[0],c2[1]-O[1])+r;o.thOut=sweep(c2,-s,[o.x,o.y],P2)*DEG;
+        const ang=q=>Math.atan2(q[1]-O[1],q[0]-O[0]);let a1=ang([o.x,o.y])-ang([ex,ey]),a2=ang(P2)-ang([o.x,o.y]);
+        const wrap=x=>Math.atan2(Math.sin(x),Math.cos(x));a1=wrap(a1);a2=wrap(a2);o.al1=a1*DEG;o.al2=a2*DEG;
+        // 找第一次回到 A：累计转角为 360° 的整数倍
+        let cum=0,tt=0;for(let n=1;n<=36;n++){const inn=n%2===1;cum+=inn?a1:a2;tt+=(inn?o.th:o.thOut)*RAD/om;
+          if(Math.abs(wrap(cum))<1e-6){o.back={n,t:tt,enter:!inn};break}}
+      }
+    }else{
+      const L=Math.hypot(c[0],c[1]);o.rho=L+r;o.esc=o.rho-G.R2>1e-6*r;o.tan=!o.esc&&G.R2-o.rho<.005*r;
+      o.doe=2*Math.atan(r/G.R1)*DEG;o.lobe=180+o.doe;o.tl=o.lobe*RAD/om;o.vm=p.qm*G.B*(G.R2*G.R2-G.R1*G.R1)/(2*G.R2);
+    }
+    return o;
+  }
+  // 取景框（世界坐标）：边界区域 + 轨迹圆；轨迹半径远大于区域时只取区域内的那段弧（接近直线）
+  function frame(G,ps){
+    const b={x0:Infinity,x1:-Infinity,y0:Infinity,y1:-Infinity},add=(x,y)=>{if(!ok(x)||!ok(y))return;b.x0=Math.min(b.x0,x);b.x1=Math.max(b.x1,x);b.y0=Math.min(b.y0,y);b.y1=Math.max(b.y1,y)};
+    const disk=(x,y,r)=>{add(x-r,y-r);add(x+r,y+r)};
+    let size=Infinity;add(0,0);
+    if(G.bnd==='strip'){size=G.d;add(0,G.d)}
+    if(G.bnd==='circle'){size=2*G.R;disk(0,G.R,G.R)}
+    if(G.bnd==='ring'){size=2*G.R2;disk(0,0,G.R2)}
+    for(const p of ps){const t=p.th;add(p.x0,p.y0);if(G.bnd==='ring')continue;
+      if(2*p.r<=3*size)disk(t.c[0],t.c[1],p.r);
+      else if(t.th!==undefined){const n=48;for(let i=0;i<=n;i++){const q=onC(t.c,p.r,p.sig,t.a+p.sig*t.th*RAD*i/n);add(q[0],q[1])}
+        add(t.x+Math.cos(t.ve)*size*.4,t.y+Math.sin(t.ve)*size*.4)}
+      if(t.rOut)disk(G.O[0],G.O[1],t.rOut);
+    }
+    let w=b.x1-b.x0,h=b.y1-b.y0,L=Math.max(w,h,1e-6);
+    if(G.bnd==='line'||G.bnd==='strip')b.y0=Math.min(b.y0,-.12*L);
+    w=b.x1-b.x0;h=b.y1-b.y0;L=Math.max(w,h);
+    if(w<.55*L){const e=(.55*L-w)/2;b.x0-=e;b.x1+=e}
+    if(h<.55*L){const e=(.55*L-h)/2;b.y0-=e;b.y1+=e}
+    const m=.04*L;b.x0-=m;b.x1+=m;b.y0-=m;b.y1+=m;b.L=L+2*m;
+    return b;
+  }
+
+  // 圆形 / 环形边界的半径标注方向：按理论轨迹（环形边界的后续各段与直径、圆外反向的后续各段）数一数每个候选方向的射线
+  // 与轨迹相交几次，取相交最少的（射线与直线段重合时记大数）
+  function radDir(G,ps){
+    if(G.bnd!=='circle'&&G.bnd!=='ring')return[];
+    const lines=[],O=G.O,rot=(q,a)=>{const x=q[0]-O[0],y=q[1]-O[1],c=Math.cos(a),s=Math.sin(a);return[O[0]+x*c-y*s,O[1]+x*s+y*c]};
+    for(const p of ps){const t=p.th;if(t.c===undefined||!ok(p.r))continue;
+      const arc=(c,s,a0,sw)=>{const out=[];for(let i=0;i<=48;i++)out.push(onC(c,p.r,s,a0+s*sw*i/48));return out};
+      if(G.bnd==='ring'){const lobe=arc(t.c,p.sig,t.a,(t.esc?90:t.lobe)*RAD),D=[t.ex,t.ey],E=refl([0,0],t.c,D),step=Math.atan2(E[1],E[0])-Math.atan2(D[1],D[0])+Math.PI;
+        for(let k=0;k<(t.esc?1:6);k++){lines.push(lobe.map(q=>rot(q,k*step)));lines.push([[0,0],rot(D,k*step)],[[0,0],rot(E,k*step)])}}
+      else if(t.th!==undefined){const a1=arc(t.c,p.sig,t.a,t.th*RAD);lines.push(a1);
+        if(G.outer&&t.rOut){const c2=[t.x+p.sig*p.r*Math.sin(t.ve),t.y-p.sig*p.r*Math.cos(t.ve)],a2=arc(c2,-p.sig,t.ve,t.thOut*RAD),st=(t.al1+t.al2)*RAD;
+          for(let k=1;k<6;k++)lines.push(a1.map(q=>rot(q,k*st)));for(let k=0;k<6;k++)lines.push(a2.map(q=>rot(q,k*st)))}}}
+    const Rm=G.bnd==='circle'?G.R:G.R2,cand=[-35,-145,35,145,-60,-120,60,120,0,180,-90,90,-15,-165,15,165];
+    const wrap=a=>((a+180)%360+360)%360-180,inside=q=>Math.hypot(q[0]-O[0],q[1]-O[1])<=Rm*1.02;
+    const score=c=>{let n=0;for(const L of lines)for(let i=1;i<L.length;i++){const p=L[i-1],q=L[i];if(!inside(p)&&!inside(q))continue;
+      const d1=wrap(Math.atan2(p[1]-O[1],p[0]-O[0])*DEG-c),d2=wrap(Math.atan2(q[1]-O[1],q[0]-O[0])*DEG-c);
+      if(L.length===2){if(Math.abs(d2)<4)n+=20}else if(Math.abs(d1)<90&&Math.abs(d2)<90&&(d1<0)!==(d2<0))n++}return n};
+    const best=cand.map((c,i)=>[score(c)+i*.01,c]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);
+    return[best[0],best.find(c=>{let d=Math.abs(c-best[0])%360;if(d>180)d=360-d;return d>=25})];
+  }
+
+  /* ---------- 积分 ---------- */
+  // RK4：a = w·(vy, −vx)
+  function rk(x,y,vx,vy,h,w){
+    const a1x=w*vy,a1y=-w*vx,u2=vx+a1x*h/2,v2=vy+a1y*h/2,a2x=w*v2,a2y=-w*u2;
+    const u3=vx+a2x*h/2,v3=vy+a2y*h/2,a3x=w*v3,a3y=-w*u3,u4=vx+a3x*h,v4=vy+a3y*h,a4x=w*v4,a4y=-w*u4;
+    return[x+h/6*(vx+2*u2+2*u3+u4),y+h/6*(vy+2*v2+2*v3+v4),vx+h/6*(a1x+2*a2x+2*a3x+a4x),vy+h/6*(a1y+2*a2y+2*a3y+a4y)];
+  }
+  const center=(o,f)=>{const W=o.w*f;return[o.x+o.vy/W,o.y-o.vx/W]};   // 速度垂线上距粒子 r 的点（Ω = −W）
+  function adv(S,o,span){
+    const G=S.G;let rem=span,guard=0;
+    while(rem>0&&!o.fin&&guard++<100000){
+      if(!inR(G,o.reg,o.x,o.y,S.eps))o.reg=cls(G,o.x,o.y);
+      const f=fac(G,o.reg),w=o.w*f,h=Math.min(rem,S.h);
+      let n=rk(o.x,o.y,o.vx,o.vy,h,w),dt=h,cross=false,to=o.reg;
+      if(!inR(G,o.reg,n[0],n[1],S.eps)&&(to=cls(G,n[0],n[1]))!==o.reg){                     // 本步越过边界（超出 eps 才算，擦边相切不算）：二分定位到真实边界上的交点
+        let lo=0,hi=h;for(let i=0;i<60;i++){const m=(lo+hi)/2,q=rk(o.x,o.y,o.vx,o.vy,m,w);if(inR(G,o.reg,q[0],q[1],0))lo=m;else hi=m}
+        n=rk(o.x,o.y,o.vx,o.vy,hi,w);dt=hi;cross=true}
+      const dph=Math.atan2(o.vx*n[3]-o.vy*n[2],o.vx*n[2]+o.vy*n[3]),px=o.x,py=o.y,pvx=o.vx,pvy=o.vy;
+      o.cum+=dph;o.turn+=Math.abs(dph);if(f)o.tf+=dt;o.s+=Math.hypot(n[0]-px,n[1]-py);
+      o.x=n[0];o.y=n[1];o.vx=n[2];o.vy=n[3];o.t+=dt;rem-=dt;
+      watch(S,o,px,py,pvx,pvy,dt);
+      if(cross){event(S,o,o.reg,to);o.reg=to}   // 新区域按本步终点判定（交点正好在边界上，判不出在哪一侧）
+      const L=o.trail[o.trail.length-1];if(cross||Math.hypot(o.x-L[0],o.y-L[1])>S.res){o.trail.push([o.x,o.y]);if(o.trail.length>9000)o.trail.splice(1,1)}
+      const b=S.ob;if(!fac(G,o.reg)&&(o.x<b.x0||o.x>b.x1||o.y<b.y0||o.y>b.y1)){o.gone=o.fin=true;o.trail.push([o.x,o.y])}
+    }
+  }
+  function watch(S,o,px,py,pvx,pvy,dt){
+    const G=S.G;
+    if(o.reg==='F'){
+      if(G.bnd==='strip'){const dd=G.d-o.y;if(dd<o.minD){o.minD=dd;o.tanPt=[o.x,o.y]}}
+      if(G.bnd==='ring'){const r=Math.hypot(o.x,o.y);if(G.R2-r<o.minD){o.minD=G.R2-r;o.tanPt=[o.x,o.y]}}
+    }
+    if(G.bnd==='ring'){o.rmax=Math.max(o.rmax,Math.hypot(o.x,o.y));
+      if(o.reg==='I'){const d0=px*pvx+py*pvy,d1=o.x*o.vx+o.y*o.vy;
+        if(d0<0&&d1>=0){const lam=-d0/(d1-d0),dist=Math.abs(o.x*o.vy-o.y*o.vx)/Math.hypot(o.vx,o.vy);   // 最近点：线性插值
+          if(dist<1e-3*G.R1){const ds=Math.hypot(o.x-px,o.y-py),e={t:o.t-dt*(1-lam),s:o.s-ds*(1-lam)};o.passO.push(e);
+            const c=(o.vx*o.v0[0]+o.vy*o.v0[1])/(o.v*o.v);
+            if(!o.rep&&o.lobes>0&&c>1-1e-6)o.rep=e;
+            if(o.lobes>=4)o.fin=true}}}}
+  }
+  function event(S,o,from,to){
+    const G=S.G,ff=fac(G,from),ft=fac(G,to),e={t:o.t,x:o.x,y:o.y,vx:o.vx,vy:o.vy,turn:o.turn,tf:o.tf,from,to,wh:where(G,from,to)};
+    o.ev.push(e);
+    if(ff){const c=center(o,ff);o.last={c,r:Math.hypot(o.x-c[0],o.y-c[1]),st:o.arc,end:[o.x,o.y],turn:o.turn-(o.arc?o.arc.turn:0),sig:-Math.sign(o.w*ff)};
+      if(!o.ex){o.ex=e;S.firstEx=S.firstEx||{who:o,others:S.ps.map(q=>q.turn+(fac(G,q.reg)&&!q.fin?q.om*(e.t-q.t):0))}}}
+    if(ft){o.arc={x:o.x,y:o.y,vx:o.vx,vy:o.vy,turn:o.turn};if(!o.first)o.first=o.arc}else o.arc=null;
+    if(G.outer){o.nseg++;if(Math.hypot(o.x,o.y)<1e-3*Math.min(G.R,o.r)){o.passA.push({t:o.t,enter:to==='F'});if(o.passA.length>=2)o.fin=true}}
+    if(G.bnd==='ring'){if(from==='F'&&to==='I')o.lobes++;if(to==='X')o.esc=e}
+  }
+
+  /* ---------- 状态文字 ---------- */
+  function status(S){
+    const G=S.G,ps=S.ps,o=ps[0],n=ps.length,out=ps.filter(q=>q.ex).length;
+    if(S.t===0)return{text:'准备就绪',cls:''};
+    if(G.show==='rot'||G.show==='zoom'||G.show==='beam'){
+      const nm={rot:'旋转圆',zoom:'放缩圆',beam:'平行束'}[G.show];
+      if(G.bnd==='ring'){const e=ps.filter(q=>q.esc).length;return{text:`${nm}：${e} / ${n} 穿出外圆`,cls:S.done?(e?'warn':'ok'):''}}
+      if(G.outer)return{text:`${nm}：圆内外交替偏转`,cls:''};
+      return{text:`${nm}：已射出 ${out} / ${n}`,cls:out===n?'ok':''};
+    }
+    if(G.show==='duo'){const a=ps[0].ex,b=ps[1].ex;
+      if(G.bnd==='ring')return{text:`粒子 1 ${ps[0].esc?'穿出外圆':'未穿出'}，粒子 2 ${ps[1].esc?'穿出外圆':'未穿出'}`,cls:''};
+      return{text:a&&b?'两种粒子都已射出':a?'粒子 1 已射出，粒子 2 偏转中':b?'粒子 2 已射出，粒子 1 偏转中':'两种粒子在磁场中偏转',cls:a&&b?'ok':''}}
+    if(G.bnd==='ring'){
+      if(o.esc)return{text:`穿出外圆：离 O 最远 ${cm(o.rmax,1)}，未被约束`,cls:'warn'};
+      if(o.fin)return{text:o.minD<.005*o.r?'恰好被约束：轨迹与外圆内切':`被约束：已 ${o.lobes} 次进出磁场`,cls:'ok'};
+      if(o.reg==='I')return{text:o.lobes?`第 ${o.lobes} 次回到内圆，穿过 O`:'从 O 沿直线飞向内圆',cls:''};
+      return{text:`在磁场中偏转（第 ${o.lobes+1} 段）`,cls:''};
+    }
+    if(G.outer){
+      if(o.passA.length){const a=o.passA[o.passA.length-1];return{text:`${a.enter?'回到 A 射入':'经过 A 射出'}：t = ${fmt(a.t/o.T,3)} T`,cls:'ok'}}
+      return{text:`${o.reg==='F'?'圆内':'圆外'}偏转：第 ${o.nseg+1} 段`,cls:''};
+    }
+    if(!o.ex)return{text:o.reg==='F'?`在磁场中偏转：θ = ${dg(o.turn*DEG)}`:'飞向磁场',cls:''};
+    const tan=G.bnd==='strip'&&o.ex.to==='L'&&o.minD<.005*o.r;
+    return{text:`${tan?'与 PQ 相切，':''}从 ${o.ex.wh} 射出：θ = ${dg(o.ex.turn*DEG)}`,cls:'ok'};
+  }
+
+  /* ---------- 画图工具 ---------- */
+  const nice=x=>{const p=Math.pow(10,Math.floor(Math.log10(x))),n=x/p;return(n<1.5?1:n<3.5?2:n<7.5?5:10)*p};
+  const lenTxt=x=>x<1?`${+(x*100).toPrecision(3)} cm`:`${+x.toPrecision(3)} m`;
+
+  return{
+    legend:[{label:'速度 v',color:'--v'},{label:'洛伦兹力 F',color:'--n'}],
+    init(P){
+      norm(P);
+      const{G,ps}=setup(P);
+      if(ps.some(p=>!ok(p.r)||p.r<=0))return{G,ps:[],t:0,done:true,box:{x0:-1,x1:1,y0:-1,y1:1,L:2},status:{text:'参数无效',cls:'warn'}};
+      const b=frame(G,ps),S={G,t:0,done:false,box:b};
+      const vmax=Math.max(...ps.map(p=>p.v)),vmin=Math.min(...ps.map(p=>p.v)),Tmin=Math.min(...ps.map(p=>p.T)),Tmax=Math.max(...ps.map(p=>p.T));
+      // 动画节奏：粒子在画面上约以半个取景框每秒的速度运动，且周期最短的粒子转一圈不少于 2.5 s；
+      // 所有粒子都在无磁场区域（直线段）时只按前一条，免得半径很小时直线段走得太慢
+      S.rad=radDir(G,ps);
+      S.TSf=.55*b.L/vmax;S.TS=Math.min(S.TSf,Tmin/2.5);S.h=Tmin/20000;S.tMax=6*Tmax+(G.outer?0:4*b.L/vmin);   // 圆外反向时处处有磁场，没有直线段
+      S.eps=1e-8*Math.min(...ps.map(p=>p.r));S.res=b.L*.0025;
+      const m=.1*b.L;S.ob={x0:b.x0-m,x1:b.x1+m,y0:b.y0-m,y1:b.y1+m};
+      S.ps=ps.map(p=>{const a=p.ang*RAD,vx=p.v*Math.cos(a),vy=p.v*Math.sin(a);
+        const o={...p,x:p.x0,y:p.y0,vx,vy,v0:[vx,vy],t:0,cum:0,turn:0,tf:0,s:0,trail:[[p.x0,p.y0]],ev:[],arc:null,first:null,last:null,ex:null,
+          gone:false,fin:false,minD:Infinity,tanPt:null,rmax:Math.hypot(p.x0,p.y0),passO:[],passA:[],lobes:0,nseg:0,esc:null,rep:null};
+        o.reg=(G.bnd!=='ring'&&p.y0===0&&p.x0===0)?'F':cls(G,p.x0,p.y0);
+        if(fac(G,o.reg)){o.arc={x:o.x,y:o.y,vx,vy,turn:0};o.first=o.arc}
+        return o});
+      S.status=status(S);return S;
+    },
+    step(S,P,dt){
+      if(S.done)return;
+      const G=S.G,span=dt*(S.ps.some(o=>!o.fin&&fac(G,o.reg))?S.TS:S.TSf);
+      for(const o of S.ps)if(!o.fin)adv(S,o,span);
+      S.t+=span;
+      // 全部粒子离开磁场（不会再回来）后，再走约 1.2 s 画面时间就结束，不必等慢粒子飞出画面
+      const away=o=>o.fin||(o.ex&&!fac(G,o.reg)&&(G.bnd!=='ring'||o.reg==='X'));
+      if(S.tAway===undefined&&S.ps.every(away))S.tAway=S.t;
+      if(S.ps.every(o=>o.fin)||S.t>=S.tMax||(S.tAway!==undefined&&S.t-S.tAway>=1.2*S.TSf))S.done=true;
+      S.status=status(S);
+    },
+    readouts(S,P){
+      const G=S.G,ps=S.ps,o=ps[0],R=[];
+      const pos=q=>`(${fmt(q.x*100,2)}, ${fmt(q.y*100,2)}) cm`;
+      const AC=e=>Math.hypot(e.x-(G.bnd==='ring'?0:o.x0),e.y-(G.bnd==='ring'?0:o.y0));
+      if(G.show==='single'){
+        R.push(['半径 r（公式）',cm(o.r)],['周期 T',ns(o.T)],['已运动时间 t',ns(o.t)],['磁场中时间 t磁',ns(o.tf)],
+          ['t磁 / T',fmt(o.tf/o.T,4)],['偏转角 θ（实测累计）',dg(o.turn*DEG)],['θ / 360°',fmt(o.turn/TAU,4)],
+          ['速率 v（实测）',vs(Math.hypot(o.vx,o.vy))],[G.bnd==='ring'?'位置 (x, y)，O 为原点':'位置 (x, y)，A 为原点',pos(o)]);
+        if(G.bnd==='ring'){R.push(['离 O 最远',cm(o.rmax)],['路程 s',fmt(o.s,4)+' m'],['进出磁场',`${o.lobes} 次`+(o.esc?'，已穿出':'')]);
+          if(o.rep)R.push(['轨迹重复一次：路程',fmt(o.rep.s,4)+' m'],['轨迹重复一次：时间',ns(o.rep.t)]);
+          return R}
+        if(G.outer){o.passA.forEach((a,i)=>R.push([`第 ${i+1} 次${a.enter?'回到 A 射入':'经过 A'}`,`${ns(a.t)}（${fmt(a.t/o.T,3)} T）`]));
+          if(o.passA.length>1)R.push(['两次间隔 Δt',ns(o.passA[1].t-o.passA[0].t)]);
+          if(o.ex)R.push(['第一次射出圆 C',pos(o.ex)],['圆内一段 θ',dg(o.ex.turn*DEG)]);
+          return R}
+        if(o.ex){const e=o.ex;R.push(['出射边界',e.wh+(G.bnd==='strip'&&e.to==='L'&&o.minD<.005*o.r?'（与 PQ 相切）':'')],['出射点 C',pos(e)],['AC',cm(AC(e))],['出射时 θ',dg(e.turn*DEG)],['出射时 t',ns(e.t)])}
+        if(G.bnd==='strip')R.push(['离 PQ 最近',cm(Math.max(0,o.minD))]);
+        return R;
+      }
+      if(G.show==='duo'){const[a,b]=ps;
+        R.push(['半径 r₁',cm(a.r)],['半径 r₂',cm(b.r)],['周期 T₁',ns(a.T)],['周期 T₂',ns(b.T)],['已运动时间 t',ns(S.t)],
+          ['偏转角 θ₁',dg(a.turn*DEG)],['偏转角 θ₂',dg(b.turn*DEG)]);
+        if(G.bnd==='ring'){R.push(['离 O 最远（1）',cm(a.rmax)],['离 O 最远（2）',cm(b.rmax)]);return R}
+        [a,b].forEach((q,i)=>{if(q.ex)R.push([`粒子 ${i+1} 出射时 t`,ns(q.ex.t)],[`粒子 ${i+1} 出射时 θ`,dg(q.ex.turn*DEG)],[`AC${sub[i+1]}（${q.ex.wh}）`,cm(AC(q.ex))])});
+        const fe=S.firstEx;if(fe){const i=ps.indexOf(fe.who),j=1-i;R.push([`粒子 ${i+1} 射出时 θ${sub[j+1]}`,dg(fe.others[j]*DEG)])}
+        return R;
+      }
+      // 多粒子
+      const rs=ps.map(q=>q.r),ex=ps.filter(q=>q.ex);
+      R.push([G.show==='zoom'?'半径 r（0.2v ~ 2.0v）':'半径 r',G.show==='zoom'?`${fmt(rs[0]*100,2)} ~ ${cm(rs[rs.length-1])}`:cm(rs[0])],['周期 T',ns(o.T)],['已运动时间 t',ns(S.t)]);
+      if(G.bnd==='ring'){R.push(['穿出外圆',`${ps.filter(q=>q.esc).length} / ${ps.length}`],['离 O 最远',cm(Math.max(...ps.map(q=>q.rmax)))]);return R}
+      R.push(['已射出',`${ex.length} / ${ps.length}`]);
+      if(ex.length){
+        const th=ex.map(q=>q.ex.turn*DEG),tt=ex.map(q=>q.ex.tf),ac=ex.map(q=>AC(q.ex));
+        const rng=(a,f)=>{const lo=Math.min(...a),hi=Math.max(...a);return hi-lo<=1e-6*Math.max(Math.abs(lo),Math.abs(hi))?`均为 ${f(lo)}`:`${f(lo)} ~ ${f(hi)}`};
+        R.push(['出射偏转角 θ',rng(th,dg)],['磁场中时间',rng(tt,ns)]);
+        if(G.show==='beam'){const xs=ex.map(q=>q.ex.x),ys=ex.map(q=>q.ex.y),sp=Math.max(Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys));
+          R.push(['出射点分布范围',cm(sp,3)],['出射点（平均）',`(${fmt(xs.reduce((a,b)=>a+b)/xs.length*100,2)}, ${fmt(ys.reduce((a,b)=>a+b)/ys.length*100,2)}) cm`])}
+        else R.push(['AC（到 A 的距离）',rng(ac,x=>cm(x))]);
+        if(G.show==='rot'&&G.bnd==='circle'){const d=ex.map(q=>{const a=Math.atan2(q.ex.vy,q.ex.vx)*DEG;return Math.abs(Math.abs(a)-180)<1e-6?180:(a+360)%360});R.push(['出射速度方向（与 +x 夹角）',rng(d,dg)])}
+      }
+      return R;
+    },
+    draw(ctx,S,P,W,H,tok){
+      // 试卷线稿：边界墨线，× / · 辅助色小号点阵，轨迹细虚线，完整轨迹圆更淡；只有 v（--v）与洛伦兹力 F（--n）带颜色
+      const F=FIG(ctx,W,tok),u=F.u,ut=F.ut,G=S.G,ps=S.ps,cV=tok('--v'),cN=tok('--n'),AUX=F.auxColor,INK=F.ink;
+      const css=ctx.canvas.clientWidth||W,px=W/css,wide=!matchMedia('(max-width:640px)').matches;
+      const SERIF='"Times New Roman","STIX Two Text",Times,serif',SANS=tok('--f-body');
+      F.clear();
+      // —— 版面：桌面宽度时状态条（约 46 CSS px）浮在左上角，图从它下面开始；窄屏时状态条在画布下方 ——
+      const top=wide?46*px:0,pad=22*ut,yT=top+pad,yB=H-30*ut-8*u,xL=pad,xR=W-pad,b=S.box;
+      const sc=Math.min((xR-xL)/(b.x1-b.x0),(yB-yT)/(b.y1-b.y0)),ox=(xL+xR)/2-(b.x0+b.x1)/2*sc,oy=(yT+yB)/2+(b.y0+b.y1)/2*sc;
+      const X=x=>ox+x*sc,Y=y=>oy-y*sc,SX=([x,y])=>[X(x),Y(y)];
+      const single=G.show==='single',duo=G.show==='duo',multi=!single&&!duo;
+      // —— 带下标的文字：sg = [[文字, 类型]]，i 斜体、r 正体、s 斜体下标、n 正体下标、z 中文 ——
+      const fsz=kd=>kd==='s'||kd==='n'?.66:1;
+      const font=(kd,sz)=>kd==='z'?`${sz*ut}px ${SANS}`:`${kd==='r'||kd==='n'?'':'italic '}${fsz(kd)*sz*ut}px ${SERIF}`;
+      const adv_=(t,kd,sz)=>{ctx.save();ctx.font=font(kd,sz);const w=ctx.measureText(t).width;ctx.restore();return w};
+      const wid=(sg,sz)=>sg.reduce((w,[t,kd])=>w+adv_(t,kd,sz),0);
+      const rich=(sg,x,y,{color=INK,size=19}={})=>{let xx=x-wid(sg,size)/2;
+        for(const[t,kd]of sg){const yy=y+(kd==='s'||kd==='n'?.3*size*ut:0);
+          if(kd==='z')F.zh(t,xx,yy,{color,size,align:'left'});else F.label(t,xx,yy,{color,size:fsz(kd)*size,align:'left',italic:!(kd==='r'||kd==='n')});xx+=adv_(t,kd,size)}};
+      // —— 防叠字：每个字给几个候选位置，取第一个不出界、不压已占位置的 ——
+      const obs=[],todo=[],segs=[],rings=[],meet=(a,c)=>a.x<c.x+c.w&&c.x<a.x+a.w&&a.y<c.y+c.h&&c.y<a.y+a.h;
+      const segBox=(b,[x1,y1,x2,y2])=>{let t0=0,t1=1;const dx=x2-x1,dy=y2-y1;
+        for(const[p,q]of[[-dx,x1-b.x],[dx,b.x+b.w-x1],[-dy,y1-b.y],[dy,b.y+b.h-y1]]){if(p===0){if(q<0)return false}else{const r=q/p;if(p<0){if(r>t1)return false;if(r>t0)t0=r}else{if(r<t0)return false;if(r<t1)t1=r}}}return true};
+      const ringBox=(b,[cx,cy,R])=>{const nx=Math.max(b.x,Math.min(cx,b.x+b.w)),ny=Math.max(b.y,Math.min(cy,b.y+b.h)),fx=Math.max(Math.abs(b.x-cx),Math.abs(b.x+b.w-cx)),fy=Math.max(Math.abs(b.y-cy),Math.abs(b.y+b.h-cy));return Math.hypot(nx-cx,ny-cy)<=R&&Math.hypot(fx,fy)>=R};
+      const hit=q=>q.x<2*u||q.x+q.w>W-2*u||q.y<top+2*u||q.y+q.h>H-2*u||obs.some(c=>meet(q,c));
+      const dots=[],soft=q=>segs.some(l=>segBox(q,l))||rings.some(r=>ringBox(q,r))||dots.some(([x,y])=>x>q.x&&x<q.x+q.w&&y>q.y&&y<q.y+q.h);
+      const put=(sg,cands,o={})=>{const sz=o.size||19,w=wid(sg,sz),h=sz*ut*.95,bx=([x,y])=>({x:x-w/2-2*ut,y:y-h/2-2*ut,w:w+4*ut,h:h+4*ut});
+        const p=cands.find(c=>!hit(bx(c))&&!soft(bx(c)))||cands.find(c=>!hit(bx(c)))||cands[0];obs.push(bx(p));todo.push([sg,p[0],p[1],o]);return p};
+      const around=(sg,x,y,dirs,gap=4*ut,sz=19)=>{const w=wid(sg,sz)+4*ut,h=sz*ut*.95+4*ut;
+        return dirs.map(([dx,dy])=>{const n=Math.hypot(dx,dy)||1;dx/=n;dy/=n;const e=Math.abs(dx)*w/2+Math.abs(dy)*h/2+gap;return[x+dx*e,y+dy*e]})};
+      const block=(x,y,r)=>obs.push({x:x-r,y:y-r,w:2*r,h:2*r});
+      const blockSeg=(x1,y1,x2,y2,r)=>{const n=Math.max(1,Math.ceil(Math.hypot(x2-x1,y2-y1)/(1.5*r)));for(let i=0;i<=n;i++)block(x1+(x2-x1)*i/n,y1+(y2-y1)*i/n,r)};
+      const D8=[[1,1],[-1,1],[1,-1],[-1,-1],[0,1],[0,-1],[1,0],[-1,0]];
+      const L1=s=>[[s,'i']];
+
+      ctx.save();ctx.beginPath();ctx.rect(0,top,W,H-top);ctx.clip();
+      /* ===== 1. 几何：先算出要画的线并登记为排字障碍，再排字 ===== */
+      const A=[X(0),Y(0)],O=SX(G.O),rb=7.5*u,Lv=56*u,Lf=42*u;
+      const ext=(a,q,k0,k1)=>[a[0]-(q[0]-a[0])*k0,a[1]-(q[1]-a[1])*k0,q[0]+(q[0]-a[0])*k1,q[1]+(q[1]-a[1])*k1];
+      const arcAng=(c,q)=>Math.atan2(q[1]-c[1],q[0]-c[0]);   // 屏幕角（y 向下）
+      // 粒子当前所在的圆：在磁场中按当前状态算，离开磁场后用最后一段
+      const arcOf=o=>{const f=fac(G,o.reg);if(f&&o.arc){const c=center(o,f);return{c,r:Math.hypot(o.x-c[0],o.y-c[1]),st:o.arc,end:[o.x,o.y],turn:o.turn-o.arc.turn,sig:-Math.sign(o.w*f)}}return o.last};
+      const parts=ps.map(o=>({o,p:SX([o.x,o.y]),arc:(single||duo)?arcOf(o):null,inF:!!fac(G,o.reg)}));
+      // 边界线
+      const lineY=G.bnd==='strip'?[0,G.d]:G.bnd==='line'?[0]:[];
+      lineY.forEach(y=>segs.push([0,Y(y),W,Y(y)]));
+      if(G.bnd==='circle')rings.push([O[0],O[1],G.R*sc]);
+      if(G.bnd==='ring')rings.push([O[0],O[1],G.R1*sc],[O[0],O[1],G.R2*sc]);
+      // 圆形边界半径 R、环形边界 R₁、R₂（画在轨迹较少的一侧）
+      // 方向在 init 里按预计轨迹选定（取轨迹最稀的方向），播放过程中不跳动
+      const radii=[];
+      if(G.bnd==='circle')radii.push([G.R,S.rad[0]*RAD,L1('R')]);
+      if(G.bnd==='ring')radii.push([G.R1,S.rad[0]*RAD,[['R','i'],['1','n']]],[G.R2,S.rad[1]*RAD,[['R','i'],['2','n']]]);
+      radii.forEach(q=>{q.e=[O[0]+q[0]*sc*Math.cos(q[1]),O[1]-q[0]*sc*Math.sin(q[1])];segs.push([O[0],O[1],...q.e])});
+      // 平行边界宽度 d：标在偏转方向的另一侧
+      let dimX=null;
+      if(G.bnd==='strip'&&Math.abs(Y(0)-Y(G.d))>14*u){dimX=ps[0].sig<0?xL*.55+26*ut:W-xL*.55-26*ut;segs.push([dimX,Y(0),dimX,Y(G.d)])}
+      // 粒子与矢量（v 沿速度，F 指向圆心）
+      const vecs=[];
+      parts.forEach(({o,p,inF},i)=>{
+        if(multi){block(p[0],p[1],4*u);return}
+        block(p[0],p[1],rb+2*u);
+        const v=Math.hypot(o.vx,o.vy),ux=o.vx/v,uy=-o.vy/v;vecs.push([p,ux*Lv,uy*Lv,cV,duo?[['v','i'],[String(i+1),'n']]:L1('v'),ux,uy]);
+        if(inF){const c=center(o,fac(G,o.reg)),cx=X(c[0])-p[0],cy=Y(c[1])-p[1],cl=Math.hypot(cx,cy)||1;vecs.push([p,cx/cl*Lf,cy/cl*Lf,cN,duo?[['F','i'],[String(i+1),'n']]:L1('F'),cx/cl,cy/cl])}
+      });
+      vecs.forEach(([p,dx,dy])=>blockSeg(p[0],p[1],p[0]+dx,p[1]+dy,3*u));
+      // 圆心 O′ 与两条半径（圆心离得太远时轨迹近似直线，不画）
+      const arcs=[];
+      parts.forEach(({o,arc},i)=>{if(!arc||arc.r*sc>3*W)return;const c=SX(arc.c),st=SX([arc.st.x,arc.st.y]),en=SX(arc.end);
+        const a0=arcAng(c,st),rr=Math.min(24*u,.42*arc.r*sc);arcs.push({o,arc,c,st,en,i,a0,rr});block(c[0],c[1],4*u);segs.push([c[0],c[1],...st],[c[0],c[1],...en]);
+        if(single)for(let k=0;k<=16;k++){const a=a0-arc.sig*Math.min(arc.turn,TAU)*k/16;dots.push([c[0]+rr*Math.cos(a),c[1]+rr*Math.sin(a)])}});
+      // 速度垂线：入射点 → 圆心（单个粒子第一段；放缩圆画出所有圆心所在的那条线）
+      let perp=null;
+      if(single&&G.bnd!=='ring'){const o=ps[0],f=o.first;if(f){const a=SX([f.x,f.y]),q=SX([f.x+f.vy/o.w,f.y-f.vx/o.w]);if(Math.hypot(q[0]-a[0],q[1]-a[1])<3*W)perp=ext(a,q,.15,.25)}}
+      if(G.show==='zoom'&&G.bnd!=='ring'){const far=ps[ps.length-1],c=SX(far.th.c),a=SX([far.th.ex,far.th.ey]);perp=[a[0],a[1],a[0]+(c[0]-a[0])*1.12,a[1]+(c[1]-a[1])*1.12]}
+      if(perp)segs.push(perp);
+      // 偏转角：入射速度延长线与出射速度反向延长线的交点（单个粒子第一次射出后）
+      let defl=null;
+      if(single&&!G.outer&&G.bnd!=='ring'){const o=ps[0],e=o.ex,f=o.first;
+        if(e&&f){const th=e.turn*DEG,a1=[f.vx,f.vy],a2=[e.vx,e.vy],den=a1[0]*a2[1]-a1[1]*a2[0];
+          if(th>3&&th<177&&Math.abs(den)>1e-12){const dx=e.x-f.x,dy=e.y-f.y,s1=(dx*a2[1]-dy*a2[0])/den,q=SX([f.x+a1[0]*s1,f.y+a1[1]*s1]);
+            if(s1>0&&q[0]>0&&q[0]<W&&q[1]>top&&q[1]<H){const L=34*u,b1=Math.atan2(-a1[1],a1[0]),b2=Math.atan2(-a2[1],a2[0]),fp=SX([f.x,f.y]),ep=SX([e.x,e.y]);
+              defl={Q:q,th,s:o.last?o.last.sig:o.sig,a1:b1,l1:[fp[0],fp[1],q[0]+Math.cos(b1)*L,q[1]+Math.sin(b1)*L],l2:[ep[0],ep[1],q[0]-Math.cos(b2)*L*.4,q[1]-Math.sin(b2)*L*.4]};
+              block(q[0],q[1],4*u);segs.push(defl.l1,defl.l2)}}}}
+      // 入射点 A、出射点 C、圆心 O
+      const pts=[];
+      if(G.bnd!=='ring'&&G.show!=='beam'){block(A[0],A[1],4*u);pts.push(A)}
+      const exits=(single||duo)&&G.bnd!=='ring'?ps.map((o,i)=>o.ex&&{e:SX([o.ex.x,o.ex.y]),i}).filter(Boolean):[];
+      if(G.show==='beam'&&ps.every(o=>o.ex)){const xs=ps.map(o=>o.ex.x),ys=ps.map(o=>o.ex.y);
+        if(Math.max(Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys))<.005*G.R)exits.push({e:SX([xs.reduce((a,b)=>a+b)/9,ys.reduce((a,b)=>a+b)/9]),i:0})}
+      exits.forEach(({e})=>{pts.push(e);block(e[0],e[1],4*u)});
+      if(G.bnd==='circle'||G.bnd==='ring')block(O[0],O[1],4*u);
+      // 相切点
+      let tanAt=null;
+      if(single){const o=ps[0];
+        if(G.bnd==='strip'&&o.tanPt&&o.minD<.005*o.r&&(o.ex?o.ex.to==='L':o.y<G.d))tanAt=SX(o.tanPt);
+        if(G.bnd==='ring'&&o.tanPt&&o.minD<.005*o.r&&!o.esc)tanAt=SX(o.tanPt);
+        if(tanAt)block(tanAt[0],tanAt[1],3*u)}
+
+      /* ----- 排字：先排贴着对象的字（矢量、点），再排可以挪动的字 ----- */
+      if(lineY.length){put(L1('M'),[[xL*.55+8*ut,Y(0)+13*ut]]);put(L1('N'),[[W-xL*.55-8*ut,Y(0)+13*ut]]);
+        if(G.bnd==='strip'){put(L1('P'),[[xL*.55+8*ut,Y(G.d)-13*ut]]);put(L1('Q'),[[W-xL*.55-8*ut,Y(G.d)-13*ut]])}}
+      vecs.forEach(([p,dx,dy,col,sg,ux,uy])=>{const tx=p[0]+dx,ty=p[1]+dy,nx=-uy,ny=ux;
+        put(sg,around(sg,tx,ty,[[ux,uy],[ux+nx*.8,uy+ny*.8],[ux-nx*.8,uy-ny*.8],[nx,ny],[-nx,-ny]],3*ut),{color:col})});
+      if(pts.includes(A))put(L1('A'),around(L1('A'),A[0],A[1],[[1,1],[-1,1],[0,1],[1,.3],[-1,.3]],5*ut));
+      exits.forEach(({e,i})=>{const nm=duo?[['C','i'],[String(i+1),'n']]:L1('C');
+        put(nm,around(nm,e[0],e[1],G.bnd==='circle'?[[e[0]-O[0],e[1]-O[1]],...D8]:[[0,1],[1,1],[-1,1],[1,0],[-1,0],...D8],5*ut))});
+      if(G.bnd==='circle'||G.bnd==='ring')put(L1('O'),around(L1('O'),O[0],O[1],[[1,-1],[-1,-1],[1,1],[-1,1],[0,-1],[1,0]],4*ut));
+      // 圆心 O′ 放在圆心角圆弧的对面；r 标在 O′A 中点旁；θ 标在圆弧外侧
+      arcs.forEach(({c,st,arc,i,a0,rr})=>{
+        const nm=duo?[['O','i'],[String(i+1),'n'],['′','r']]:[['O′','i']],am=a0-arc.sig*Math.min(arc.turn,TAU)/2,bx=-Math.cos(am),by=-Math.sin(am);
+        put(nm,[...[4,10,18,26,34].map(g=>around(nm,c[0],c[1],[[bx,by]],g*ut)[0]),...around(nm,c[0],c[1],[[bx+by,by-bx],[bx-by,by+bx],...D8],4*ut)]);
+        if(!single)return;
+        const dx=st[0]-c[0],dy=st[1]-c[1],dl=Math.hypot(dx,dy)||1,nx=-dy/dl,ny=dx/dl,mx=(c[0]+st[0])/2,my=(c[1]+st[1])/2;
+        if(dl>40*u)put(L1('r'),[[mx+nx*11*ut,my+ny*11*ut],[mx-nx*11*ut,my-ny*11*ut]]);
+        if(arc.turn>.05&&rr>8*u){const lx=c[0]+(rr+11*ut)*Math.cos(am),ly=c[1]+(rr+11*ut)*Math.sin(am);put(L1('θ'),[[lx,ly],...around(L1('θ'),lx,ly,D8,2*ut)])}});
+      if(defl){const{Q,th,s,a1}=defl,mid=a1-s*th*RAD/2,lx=Q[0]+31*u*Math.cos(mid),ly=Q[1]+31*u*Math.sin(mid);put(L1('θ'),[[lx,ly],...around(L1('θ'),lx,ly,D8,2*ut)])}
+      if(tanAt)put([['相切','z']],around([['相切','z']],tanAt[0],tanAt[1],[[0,-1],[1,-1],[-1,-1],[1,0],[-1,0]],5*ut,14),{size:14,color:AUX});
+      if(dimX!==null)put(L1('d'),[[dimX+(ps[0].sig<0?12:-12)*ut,(Y(0)+Y(G.d))/2]]);
+      radii.forEach(([R,ang,sg],k)=>{const e=radii[k].e,nx=-Math.sin(ang),ny=-Math.cos(ang),cs=[];
+        for(const fr of[.5,.35,.65,.8,.22])for(const sd of[12,-12])cs.push([O[0]+(e[0]-O[0])*fr+nx*sd*ut,O[1]+(e[1]-O[1])*fr+ny*sd*ut]);put(sg,cs)});
+      if(G.bnd==='ring'){const r1=G.R1*sc,r2=G.R2*sc,c1=[],c2=[];
+        for(const a of[-90,90,0,180,-45,-135,45,135]){const cs=Math.cos(a*RAD),sn=-Math.sin(a*RAD);c1.push([O[0]+r1*.6*cs,O[1]+r1*.6*sn]);c2.push([O[0]+(r1+r2)/2*cs,O[1]+(r1+r2)/2*sn])}
+        put([['区域 Ⅰ','z']],c1,{size:14,color:AUX});put([['区域 Ⅱ','z']],c2,{size:14,color:AUX})}
+      if(G.show==='beam'){const y0=Y(ps[0].y0);put([['平行束','z']],[[X(-G.R)-30*ut,y0],[X(G.R)+30*ut,y0]],{size:14,color:AUX})}
+      // B 的标注：放在磁场区域内的空处
+      {const c=[];
+        if(G.bnd==='line')c.push([xR-6*ut,yT+4*ut],[xL+6*ut,yT+4*ut],[W/2,yT+4*ut],[xR-6*ut,(yT+A[1])/2]);
+        if(G.bnd==='strip'){const ym=(Y(0)+Y(G.d))/2;for(const f of[.92,.08,.75,.25,.6,.4])c.push([W*f,ym])}
+        if(G.bnd==='circle'){const r=G.R*sc;for(const a of[45,135,90,0,180,20,160])c.push([O[0]+.68*r*Math.cos(a*RAD),O[1]-.68*r*Math.sin(a*RAD)])}
+        if(G.bnd==='ring'){const r=(G.R1+G.R2)/2*sc;for(const a of[45,135,225,315,90,0,180,270])c.push([O[0]+r*Math.cos(a*RAD),O[1]-r*Math.sin(a*RAD)])}
+        put(L1('B'),c);
+        if(G.outer){const r=G.R*sc;put([['B','i'],['（圆外反向）','z']],[[O[0]+r*.95,O[1]-r*1.05],[O[0]-r*.95,O[1]-r*1.05],[O[0]+r*1.1,O[1]+r*.6],[O[0]-r*1.1,O[1]+r*.6]],{size:15})}}
+
+      /* ===== 2. 磁场点阵 ===== */
+      {const p=44*u,e=3.4*u,inS=P.Bdir!=='out';
+        const tr=multi?[]:ps.flatMap(o=>o.trail.map(SX));
+        const near=(x,y)=>obs.some(c=>x>c.x-5*u&&x<c.x+c.w+5*u&&y>c.y-5*u&&y<c.y+c.h+5*u)||parts.some(({p:q})=>Math.hypot(x-q[0],y-q[1])<14*u)||tr.some(q=>Math.abs(x-q[0])<6*u&&Math.abs(y-q[1])<6*u);
+        const bdist=(wx,wy)=>{switch(G.bnd){case'line':return Math.abs(wy);case'strip':return Math.min(Math.abs(wy),Math.abs(wy-G.d));
+          case'circle':return Math.abs(Math.hypot(wx,wy-G.R)-G.R);default:{const r=Math.hypot(wx,wy);return Math.min(Math.abs(r-G.R1),Math.abs(r-G.R2))}}};
+        let rows=null;
+        if(G.bnd==='strip'){const hgt=G.d*sc,n=Math.max(1,Math.floor(hgt/p+.15));rows=[];for(let i=0;i<n;i++)rows.push(Y(G.d*(i+.5)/n))}
+        const sym=(x,y,into)=>{if(into){F.line(x-e,y-e,x+e,y+e,{w:1,color:AUX});F.line(x+e,y-e,x-e,y+e,{w:1,color:AUX})}else F.dot(x,y,1.7,AUX)};
+        const x0=A[0]-Math.ceil((A[0]-6*u)/p)*p,ys=rows||(()=>{const r=[];for(let y=A[1]-p/2-Math.floor((A[1]-p/2-top-8*u)/p)*p;y<H-6*u;y+=p)r.push(y);return r})();
+        for(const y of ys)for(let x=x0;x<W-4*u;x+=p){if(y<top+8*u)continue;const wx=(x-ox)/sc,wy=(oy-y)/sc,f=fac(G,cls(G,wx,wy));
+          if(!f||bdist(wx,wy)*sc<8*u||near(x,y))continue;sym(x,y,(f>0)===inS)}}
+
+      /* ===== 3. 边界 ===== */
+      lineY.forEach(y=>F.line(0,Y(y),W,Y(y),{w:1.7}));
+      if(dimX!==null)F.dim(dimX,Y(0),dimX,Y(G.d),null);
+      if(G.bnd==='circle')F.circle(O[0],O[1],G.R*sc,{w:1.7});
+      if(G.bnd==='ring'){F.circle(O[0],O[1],G.R1*sc,{w:1.7});F.circle(O[0],O[1],G.R2*sc,{w:1.7})}
+      radii.forEach(q=>F.line(O[0],O[1],q.e[0],q.e[1],{w:1}));
+
+      /* ===== 4. 辅助线：完整轨迹圆、速度垂线、半径、圆心角、偏转角 ===== */
+      const angArc=(c,a0,turn,sig,rr)=>{if(turn<1e-3)return;const tt=Math.min(turn,TAU-1e-3);
+        // 世界逆时针 = 屏幕上角度减小；F.arc 按屏幕角增大方向画
+        if(sig>0)F.arc(c[0],c[1],rr,a0-tt,a0,{w:1,color:INK});else F.arc(c[0],c[1],rr,a0,a0+tt,{w:1,color:INK})};
+      arcs.forEach(({arc,c,st,en,a0,rr})=>{
+        F.circle(c[0],c[1],arc.r*sc,{w:.9,color:AUX,dash:[2,5]});
+        F.aux(c[0],c[1],st[0],st[1],{dash:[4,4]});F.aux(c[0],c[1],en[0],en[1],{dash:[4,4]});
+        if(single)angArc(c,a0,arc.turn,arc.sig,rr)});
+      // 速度垂线：入射点 → 圆心（单个粒子第一段；放缩圆画出所有圆心所在的那条线）
+      if(perp)F.aux(...perp);
+      if(G.show==='zoom'&&G.bnd!=='ring')ps.forEach(q=>{const cc=SX(q.th.c);F.dot(cc[0],cc[1],1.8,AUX)});
+      if(defl){F.aux(...defl.l1);F.aux(...defl.l2);angArc(defl.Q,defl.a1,defl.th*RAD,defl.s,20*u)}
+
+      /* ===== 5. 轨迹 ===== */
+      parts.forEach(({o},i)=>{const pts2=o.trail.map(SX);pts2.push(SX([o.x,o.y]));
+        if(multi){F.poly(pts2,{w:.9,color:INK});return}
+        F.poly(pts2,{w:3.2,color:F.paper});F.trail(pts2,i?{dash:[9,3,1.5,3]}:{})});
+
+      /* ===== 6. 矢量、粒子、点 ===== */
+      vecs.forEach(([p,dx,dy,col])=>F.arrow(p[0],p[1],dx,dy,col,null));
+      parts.forEach(({o,p})=>{
+        if(multi){F.dot(p[0],p[1],2.4);return}
+        F.ball(p[0],p[1],rb);const e=3.6*u;F.line(p[0]-e,p[1],p[0]+e,p[1],{w:1.3});if(o.sg>0)F.line(p[0],p[1]-e,p[0],p[1]+e,{w:1.3});
+        F.dot(p[0],p[1],1.6)});
+      pts.forEach(q=>F.dot(q[0],q[1],2.4));arcs.forEach(({c})=>F.dot(c[0],c[1],2.4));
+      if(G.bnd==='circle'||G.bnd==='ring')F.dot(O[0],O[1],2.4);
+      if(tanAt)F.dot(tanAt[0],tanAt[1],2.2);
+
+      /* ===== 7. 文字 ===== */
+      todo.forEach(([sg,x,y,o])=>rich(sg,x,y,o));
+      ctx.restore();
+
+      /* ===== 8. 比例尺（右下角） ===== */
+      {const len=nice((xR-xL)*.2/sc),Lp=len*sc,x2=W-14*u,x1=x2-Lp,y=H-10*u-4*ut;
+        F.rect(x1-6*u,y-22*ut,Lp+12*u,22*ut+8*u,{w:0,fill:F.paper});F.line(x1,y,x2,y,{w:1.2});F.line(x1,y-4*u,x1,y+4*u,{w:1.2});F.line(x2,y-4*u,x2,y+4*u,{w:1.2});
+        F.label(lenTxt(len),(x1+x2)/2,y-11*ut,{italic:false,size:14})}
+    },
+    verdict(P){
+      norm(P);ui(P);
+      const{G,ps}=setup(P),B=x=>`<b>${x}</b>`;
+      const dir=p=>`${p.sg>0?'正':'负'}电荷、B ${P.Bdir==='out'?'向外':'向里'}：粒子${p.sig>0?'逆时针转（向左偏）':'顺时针转（向右偏）'}`;
+      const head=(p,k='')=>`r${k} = v${k}/((q/m)${k}B) = ${B(cm(p.r))}，T${k} = 2π/((q/m)${k}B) = ${B(sci(p.T)+' s')}（${fmt(p.T*1e9,1)} ns）`;
+      const side=x=>x<0?'左':'右';
+      const one=(p,k='')=>{const t=p.th;let h=head(p,k)+'。'+dir(p);
+        if(G.bnd==='line')return h+`，γ = ${fmt(t.gam,1)}°（C6）：从 MN 射出，C 在 A ${side(t.x)}侧 AC = 2r sin γ = ${B(cm(Math.abs(t.x)))}，θ = 2γ = ${B(dg(t.th))}，t = θT/360° = ${B(sci(t.t-t.t0)+' s')}。`;
+        if(G.bnd==='strip'){h+=`，γ = ${fmt(t.gam,1)}°。`;const cr=p.r*(1-Math.cos(t.gam*RAD));
+          h+=t.wh==='PQ'?`r(1 − cos γ) = ${cm(cr)} > d：从 ${B('PQ')} 射出，出射点在 A ${side(t.x)}侧 ${B(cm(Math.abs(t.x)))} 处，θ = ${B(dg(t.th))}，t = ${B(sci(t.t)+' s')}（C4、C5）。`
+            :`r(1 − cos γ) = ${cm(cr)} ${t.tan?'≈':'<'} d：${t.tan?B('恰好与 PQ 相切')+'，':''}从 ${B('MN')} 射出，AC = ${B(cm(Math.abs(t.x)))}，θ = ${B(dg(t.th))}，t = ${B(sci(t.t)+' s')}（C6）。`;
+          return h+`恰好不从 PQ 射出的速率 v₀ = (q/m)Bd/(1 − cos γ) = ${B(vs(t.v0))}（C8）。`}
+        if(G.bnd==='circle'){if(t.none)return h+'。';
+          h+=`：从圆周上 C 点射出，C 在 (${fmt(t.x*100,2)}, ${fmt(t.y*100,2)}) cm，θ = ${B(dg(t.th))}，t = ${B(sci(t.t-t.t0)+' s')}`;
+          if(t.radial)h+=`；径向射入必径向射出，tan(θ/2) = R/r = ${fmt(G.R/p.r,3)}（C7）`;
+          h+='。';
+          if(G.outer){h+=`<br>圆外反向：圆外每段转 ${B(dg(t.thOut))}，每段弦对 O 张开 ${fmt(Math.abs(t.al1),1)}°。`;
+            h+=t.back?`经 ${t.back.n} 段${t.back.enter?'回到 A 射入':'从 A 穿出'}，用时 ${B(sci(t.back.t)+' s')}（${fmt(t.back.t/p.T,3)} T）。`:'转角不是 360° 的整数分之一，不会恰好回到 A。'}
+          return h}
+        // 环形
+        h+=`。粒子沿半径从内圆 D 点进入磁场，离 O 最远 √(R₁² + r²) + r = ${B(cm(t.rho))} ${t.esc?'&gt;':t.tan?'≈':'&lt;'} R₂ = ${cm(G.R2)}：${t.esc?B('穿出外圆，未被约束'):B(t.tan?'恰好被约束（与外圆内切）':'被约束')}。`;
+        h+=`被约束的最大速率 v_m = (q/m)B(R₂² − R₁²)/(2R₂) = ${B(vs(t.vm))}（C8）。`;
+        if(!t.esc){h+=`每段圆弧 180° + 2arctan(r/R₁) = ${B(dg(t.lobe))}，用时 ${sci(t.tl)} s；下一次进入磁场的位置绕 O 转过 ${dg(180+t.doe)}。`;
+          if(Math.abs(p.r-G.R1)<.005*G.R1)h+=`r = R₁：4 段后回到原位置、原方向，路程 (8 + 6π)R₁ = ${B(fmt((8+6*Math.PI)*G.R1,3)+' m')}，时间 ${B(sci((8+6*Math.PI)*G.R1/p.v)+' s')}。`}
+        return h};
+      let h='';
+      if(G.adj)h+=`R₂ 至少比 R₁ 大 2 cm，动画按 R₂ = ${cm(G.R2,1)} 计算。<br>`;
+      if(G.show==='single')return h+one(ps[0]);
+      if(G.show==='duo'){const[a,b]=ps;h+=`粒子 1：${one(a,'₁')}<br>粒子 2：${one(b,'₂')}`;
+        if(G.bnd!=='ring'&&a.th.th!==undefined&&b.th.th!==undefined){const ta=a.th.t-a.th.t0,tb=b.th.t-b.th.t0;
+          h+=`<br>r₁ : r₂ = ${fmt(a.r/b.r,3)}，T₁ : T₂ = ${fmt(a.T/b.T,3)}，磁场中时间 t₁ : t₂ = ${fmt(ta/tb,3)}。`;
+          const[f,g]=ta<=tb?[a,b]:[b,a],k=f===a?1:2;h+=`粒子 ${k} 先射出，此时粒子 ${3-k} 已转过 ${B(dg((Math.min(ta,tb))/g.T*360))}。`}
+        return h}
+      const p=ps[0],t=p.th;
+      if(G.show==='rot'){h+=`旋转圆：${ps.length} 个粒子速率相同，r = ${B(cm(p.r))}，T = ${sci(p.T)} s。`;
+        if(G.bnd==='line')h+=`出射点都在 A 的${p.sig>0?'左':'右'}侧，AC = 2r sin γ，β = 90° 时最远，为 2r = ${B(cm(2*p.r))}（C6）。`;
+        if(G.bnd==='strip')h+=`d ${p.r*2>G.d?'&lt;':'≥'} 2r：β 不同，有的从 PQ 射出、有的从 MN 射出，分界是与 PQ 相切（C8）。`;
+        if(G.bnd==='circle')h+=Math.abs(p.r-G.R)<.005*G.R?`r = R：${B('磁发散')}，出射速度全部${p.sig>0?'水平向左':'水平向右'}，彼此平行（C7）。`:`r ≠ R：出射方向不平行；r = R 时才是磁发散（C7）。`;
+        if(G.bnd==='ring')h+=`各方向的轨迹旋转对称：${t.esc?'都穿出外圆':'都被约束'}（离 O 最远 ${cm(t.rho)}，v_m = ${vs(t.vm)}）。`;
+        return h}
+      if(G.show==='zoom'){h+=`放缩圆：方向不变，10 个速率 0.2v ~ 2.0v，r = ${cm(ps[0].r)} ~ ${cm(ps[9].r)}，T = ${sci(p.T)} s 都相同，圆心都在入射速度的垂线上。`;
+        if(G.bnd==='line')h+=`γ 不变：θ = ${B(dg(t.th))}、t = ${B(sci(t.t)+' s')} 都相同，出射速度平行，AC ∝ v（C6）。`;
+        if(G.bnd==='strip')h+=`v₀ = ${B(vs(t.v0))}：速率 ≤ v₀ 的从 MN 射出，θ = ${dg(t.wh==='MN'?t.th:(p.sig>0?360-2*p.ang:2*p.ang))}；大于 v₀ 的从 PQ 射出，v 越大 θ、t 越小（C8）。`;
+        if(G.bnd==='circle')h+=t.radial?'径向射入：tan(θ/2) = R/r，v 越大 θ、t 越小（C7）。':'v 越大 r 越大，θ、t 越小。';
+        if(G.bnd==='ring')h+=`v_m = ${B(vs(t.vm))}：速率大于它的穿出外圆（C8）。`;
+        return h}
+      // 平行束
+      return h+`平行束：9 个粒子竖直向上射入，r = ${B(cm(p.r))}，R = ${cm(G.R)}。`+(Math.abs(p.r-G.R)<.005*G.R?`r = R：${B('磁聚焦')}，全部会聚到圆的${p.sig>0?'最左点':'最右点'}（C7）。`:'r ≠ R：不会聚于一点；调 v 使 r = R 再看（C7）。');
+    },
+    _setup:setup
+  };
+})();
+
+/* ================= 通用渲染引擎（所有母题共用，不改） ================= */
+(()=>{
+const D=JSON.parse(document.getElementById('data').textContent);
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const root=document.documentElement;
+const tok=n=>getComputedStyle(root).getPropertyValue(n).trim();
+const PS=D.problem.params;
+const P={};PS.forEach(p=>P[p.key]=p.def);
+const unitSep=u=>/^[°′″]/.test(u)?'':' ';   // 角度单位紧贴数字：90°
+const fmtP=p=>p.type==='choice'?p.options.find(o=>o.value===P[p.key]).label:(+P[p.key]).toFixed(p.dec??2)+(p.unit?unitSep(p.unit)+p.unit:'');
+
+/* 静态内容 */
+document.title=`格物 ${D.id} ${D.name.replace(/（.*）/,'')}`;
+$('hName').textContent=D.name;
+$('hSub').textContent=`${D.module} · ${D.chapter}　关联：${D.related.join('、')}`;
+$('hTable').innerHTML=`<tr><th>编号</th><th>考查频率</th><th>难度</th><th>版本</th></tr>
+<tr><td class="code">${esc(D.id)}</td><td>${esc(D.freq)}</td><td title="${D.difficulty} / 5">${'●'.repeat(D.difficulty)}${'○'.repeat(5-D.difficulty)}</td><td>${esc(D.version)}</td></tr>`;
+$('foot').textContent=`格物 Gewu · ${D.id} · ${D.version} · ${D.footer??'g 取 10 m/s²'}`;   // 数据里可用 footer 改写页脚常量
+$('tags').innerHTML=D.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('');
+$('stemNote').textContent=D.problem.note||'';
+$('bCond').innerHTML=D.boundary.conditions.map(c=>`<li><span>${esc(c)}</span></li>`).join('');
+$('bBack').innerHTML=D.boundary.fallback.map(c=>`<li><span>${esc(c)}</span></li>`).join('');
+$('legend').innerHTML=SIM.legend.map(l=>`<span><i style="background:var(${l.color})"></i>${esc(l.label)}</span>`).join('');
+$('concl').innerHTML=D.conclusions.map(c=>`<details><summary><span class="badge">${c.id}</span><span class="t">${esc(c.title)}</span><span class="f">${esc(c.formula)}</span><span class="chev" aria-hidden="true"></span></summary><div class="deriv">${esc(c.derivation)}</div></details>`).join('');
+const qCard=(q,isVar)=>`<article class="q">
+  <div class="head"><span class="badge">${q.id}</span><h3>${esc(q.title)}</h3>${isVar?q.cs.map(c=>`<span class="chip">${c}</span>`).join(''):`<span class="chip">${q.anim?'计划做动画':'不做动画'}</span>`}</div>
+  <p>${esc(q.stem)}</p>
+  ${isVar?'':`<p class="map">映射：<b>${esc(q.map)}</b></p>`}
+  <details><summary><span class="chev" aria-hidden="true"></span>答案与解析</summary><div class="ans"><p class="a">答案：${esc(q.answer)}</p><p>${esc(q.analysis)}</p></div></details>
+  <div class="foot"><span class="src">${esc(q.source)}</span>${isVar?`<button data-load="${q.id}">加载到动画 ↑</button>`:''}</div>
+</article>`;
+$('variants').innerHTML=D.variants.map(v=>qCard(v,true)).join('');
+$('reskins').innerHTML=D.reskins.map(r=>qCard(r,false)).join('');
+$('sources').innerHTML=D.sources.map(s=>`<li><b>${esc(s.src)}</b><span>${esc(s.desc)}</span></li>`).join('');
+
+/* 参数控件 */
+const box=$('params');
+PS.forEach(p=>{
+  if(p.type==='choice'){
+    const d=document.createElement('div');d.className='seg';d.setAttribute('role','group');d.setAttribute('aria-label',p.label);
+    d.innerHTML=p.options.map(o=>`<button id="opt-${p.key}-${o.value}" data-k="${p.key}" data-v="${o.value}">${esc(o.label)}${o.hint?`<small>${esc(o.hint)}</small>`:""}</button>`).join('');
+    box.appendChild(d);
+  }else{
+    const d=document.createElement('div');d.className='field';d.id=`f-${p.key}`;
+    d.innerHTML=`<label for="num-${p.key}"><span class="s">${esc(p.sym)}</span><span class="note">${esc(p.label)}</span></label><span class="numin"><input type="number" id="num-${p.key}" min="${p.min}" max="${p.max}" step="any" inputmode="decimal" aria-label="${esc(p.label)}"><span class="u">${esc(p.unit||'')}</span></span><input type="range" id="in-${p.key}" min="${p.min}" max="${p.max}" step="${p.step}" value="${p.def}" aria-label="${esc(p.label)} 滑块">`;
+    box.appendChild(d);
+    d.querySelector('input[type=range]').addEventListener('input',e=>{P[p.key]=+e.target.value;active=-1;sync();reset()});
+    const num=d.querySelector('input[type=number]');
+    num.addEventListener('change',()=>{let v=parseFloat(num.value);
+      if(Number.isFinite(v)){v=Math.min(p.max,Math.max(p.min,v));P[p.key]=v;active=-1;reset()}sync()});
+    num.addEventListener('keydown',e=>{if(e.key==='Enter')num.blur()});
+  }
+});
+box.addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(!b)return;P[b.dataset.k]=b.dataset.v;active=-1;sync();reset()});
+let active=-1;
+const shown=w=>!w||Object.entries(w).every(([k,v])=>[].concat(v).includes(P[k]));
+const chosen=o=>PS.every(p=>p.type!=='choice'||o[p.key]===undefined||o[p.key]===P[p.key]);
+const numTxt=(p,v)=>String(+(+v).toFixed(Math.max(p.dec??2,4)));
+function sync(){
+  PS.forEach(p=>{
+    if(p.type==='choice')p.options.forEach(o=>$(`opt-${p.key}-${o.value}`).setAttribute('aria-pressed',P[p.key]===o.value));
+    else{$(`in-${p.key}`).value=P[p.key];const n=$(`num-${p.key}`);if(document.activeElement!==n)n.value=numTxt(p,P[p.key]);$(`f-${p.key}`).hidden=!shown(p.when)}
+  });
+  const fill=s=>esc(s).replace(/\{(\w+)\}/g,(m,k)=>{
+    if(k==='constraint'){const p=PS.find(x=>x.type==='choice');return esc(p.options.find(o=>o.value===P[p.key]).text)}
+    const p=PS.find(x=>x.key===k);return p?`<span class="num">${esc(fmtP(p))}</span>`:m});
+  const [lead,ask='']=D.problem.stem.split(/问[:：]/);
+  $('stem').innerHTML=fill(lead.trim());
+  const qs=ask.split(/[①②③④⑤⑥]/).map(s=>s.trim()).filter(Boolean);
+  $('asks').innerHTML=qs.map((q,i)=>`<li><b>${i+1}</b><span>${fill(q)}</span></li>`).join('');
+  $('asks').hidden=!qs.length;
+  $('verdict').innerHTML=SIM.verdict(P);
+  const ch=PS.find(p=>p.type==='choice');
+  $('presetMode').textContent=ch?`· ${ch.options.find(o=>o.value===P[ch.key]).label}`:'';
+  $('presets').innerHTML=D.presets.map((p,i)=>chosen(p.load)?`<button data-preset="${i}" aria-pressed="${i===active}" title="${esc(p.note||'')}">${esc(p.label)}</button>`:'').join('');
+  const pn=$('pnote'),ap=D.presets[active];pn.hidden=!(ap&&ap.note);if(ap&&ap.note)pn.innerHTML=`<b>${esc(ap.label)}</b>：${esc(ap.note)}`;
+}
+function load(o,i=-1){Object.assign(P,o);active=i;sync();reset()}
+$('presets').addEventListener('click',e=>{const b=e.target.closest('[data-preset]');if(b)load(D.presets[+b.dataset.preset].load,+b.dataset.preset)});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-load]');if(!b)return;
+  load(D.variants.find(v=>v.id===b.dataset.load).load);
+  show('pane-lab');document.querySelector('.board').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})});
+
+/* 画布与循环 */
+const cv=$('cv'),ctx=cv.getContext('2d');let S,running=false,speed=1,lastT=0;
+function size(){const r=cv.getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);const w=Math.max(200,Math.round(r.width*dpr));if(cv.width!==w){cv.width=w;cv.height=w}}
+function render(){size();SIM.draw(ctx,S,P,cv.width,cv.height,tok);
+  $('readout').innerHTML=SIM.readouts(S,P).map(([k,v])=>`<div class="ro"><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('');
+  const st=$('status');st.textContent=S.status.text;st.className='status '+S.status.cls}
+function reset(){running=false;S=SIM.init(P);$('play').textContent='▶ 发射';render()}
+function loop(t){if(!running)return;const real=Math.min(.05,(t-lastT)/1000);lastT=t;
+  const sim=real*speed,n=Math.max(1,Math.ceil(sim/5e-4));for(let i=0;i<n;i++)SIM.step(S,P,sim/n);
+  render();if(S.done){running=false;$('play').textContent='▶ 再发射';return}requestAnimationFrame(loop)}
+$('play').onclick=()=>{if(running){running=false;$('play').textContent='▶ 继续';return}
+  if(S.done)S=SIM.init(P);running=true;$('play').textContent='❚❚ 暂停';lastT=performance.now();requestAnimationFrame(loop)};
+$('reset').onclick=reset;
+$('slow').onclick=()=>{speed=speed===1?.25:1;$('slow').textContent=speed===1?'慢放 ×0.25':'正常速度'};
+new ResizeObserver(render).observe(cv);
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',render);
+new MutationObserver(render).observe(root,{attributes:true,attributeFilter:['data-theme']});
+/* 选项卡 */
+const tabs=[...document.querySelectorAll('[role=tab]')];
+function show(id){tabs.forEach(t=>{const on=t.dataset.pane===id;t.setAttribute('aria-selected',on);t.tabIndex=on?0:-1;$(t.dataset.pane).hidden=!on});
+  if(id==='pane-lab')requestAnimationFrame(render)}
+tabs.forEach((t,i)=>{t.addEventListener('click',()=>show(t.dataset.pane));
+  t.addEventListener('keydown',e=>{const d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(!d)return;e.preventDefault();
+    const n=tabs[(i+d+tabs.length)%tabs.length];n.focus();show(n.dataset.pane)})});
+$('nConcl').textContent=D.conclusions.length;$('nVar').textContent=D.variants.length;$('nSkin').textContent=D.reskins.length;$('nSrc').textContent=D.sources.length;
+show('pane-lab');
+sync();reset();
+})();
+</script>

@@ -1,0 +1,1411 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>格物 EM-ACG-01 交变电流的产生</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;800&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" media="print" onload="this.media='all'">
+
+<!-- ================= 母题数据（由 {编号}.md 转换，页面只改这里和 SIM 模块） ================= -->
+<script type="application/json" id="data">
+{
+  "footer": "电表为理想交流电表",
+  "id": "EM-ACG-01",
+  "name": "交变电流的产生（线圈在匀强磁场中转动）",
+  "module": "电磁学",
+  "chapter": "选择性必修二 · 交变电流",
+  "freq": "高",
+  "difficulty": 3,
+  "version": "v0.1",
+  "related": [
+    "EM-IND-01 单杆模型（Em = 2NBL₁v，q = NΔΦ/(R + r)）",
+    "EM-EMW-01 LC 振荡（同为正弦式交变）",
+    "MEC-ENG-01 机车启动（功率 ∝ v²）"
+  ],
+  "tags": [
+    "峰值 Em = NBSω",
+    "中性面与瞬时值表达式",
+    "有效值（电表读数、电功率、焦耳热）",
+    "平均值求电量 q = NΔΦ/(R + r)",
+    "理想变压器"
+  ],
+  "problem": {
+    "stem": "交流发电机的矩形线圈 abcd 共 N = {N}，ab = cd = L₁ = {L1}（与转轴平行），bc = da = L₂ = {L2}，处在磁感应强度 B = {B} 的水平匀强磁场中，绕垂直于磁场的中心轴 OO′ 以角速度 ω = {w} 匀速转动。线圈电阻 r = {r}，外电阻 R = {R}，{constraint}。t = 0 时线圈平面与中性面的夹角 θ₀ = {th0}。问：① 感应电动势的最大值多大？写出 e 随时间 t 变化的表达式。② 电压表、电流表的示数各多大？R 的电功率多大？ab 边所受安培力的最大值多大？③ 从中性面开始转过 90° 的过程中，通过 R 的电量和 R 上产生的焦耳热各多大？④（变压器模式，拓展）把 R 改接在匝数比 n₁∶n₂ = {n1}∶{n2} 的理想变压器副线圈两端，原线圈接发电机输出端，R 两端电压和 R 的功率各多大？",
+    "note": "电表均为理想交流电表，读有效值（动画中取最近一个整周期的方均根）。n₁∶n₂ 只在「经变压器接 R」时使用，等效电阻 R′ = (n₁/n₂)²R 为拓展。Δθ 是暂停角：从起始位置转过 Δθ 后暂停，便于读 q 与 Q。ω > 4π rad/s 时画面按比例慢放，读数仍为真实时间。",
+    "params": [
+      {
+        "key": "mode",
+        "sym": "外电路",
+        "label": "外电路",
+        "type": "choice",
+        "def": "direct",
+        "options": [
+          {
+            "value": "direct",
+            "label": "直接接 R",
+            "hint": "滑环、电刷接负载",
+            "text": "线圈通过滑环和电刷直接与 R 相连，R 两端接交流电压表，干路串联交流电流表（均为理想电表）"
+          },
+          {
+            "value": "xfmr",
+            "label": "经变压器接 R",
+            "hint": "理想变压器（拓展）",
+            "text": "线圈通过滑环和电刷接理想变压器的原线圈，R 接在副线圈两端；原线圈电路串联交流电流表，R 两端接交流电压表（均为理想电表）"
+          }
+        ]
+      },
+      {
+        "key": "N",
+        "sym": "N",
+        "label": "线圈匝数",
+        "unit": "匝",
+        "def": 100,
+        "min": 1,
+        "max": 500,
+        "step": 1,
+        "dec": 0
+      },
+      {
+        "key": "B",
+        "sym": "B",
+        "label": "磁感应强度",
+        "unit": "T",
+        "def": 0.5,
+        "min": 0.05,
+        "max": 1,
+        "step": 0.01,
+        "dec": 2
+      },
+      {
+        "key": "L1",
+        "sym": "L₁",
+        "label": "ab 边长（与转轴平行，切割磁感线）",
+        "unit": "m",
+        "def": 0.2,
+        "min": 0.05,
+        "max": 0.5,
+        "step": 0.01,
+        "dec": 2
+      },
+      {
+        "key": "L2",
+        "sym": "L₂",
+        "label": "bc 边长（与转轴垂直）",
+        "unit": "m",
+        "def": 0.1,
+        "min": 0.05,
+        "max": 0.5,
+        "step": 0.01,
+        "dec": 2
+      },
+      {
+        "key": "w",
+        "sym": "ω",
+        "label": "角速度（n = ω/2π，T = 2π/ω）",
+        "unit": "rad/s",
+        "def": 10,
+        "min": 1,
+        "max": 100,
+        "step": 0.01,
+        "dec": 2
+      },
+      {
+        "key": "th0",
+        "sym": "θ₀",
+        "label": "起始位置：与中性面的夹角（90° 为与磁场平行）",
+        "unit": "°",
+        "def": 0,
+        "min": 0,
+        "max": 360,
+        "step": 5,
+        "dec": 0
+      },
+      {
+        "key": "r",
+        "sym": "r",
+        "label": "线圈电阻",
+        "unit": "Ω",
+        "def": 1,
+        "min": 0,
+        "max": 10,
+        "step": 0.1,
+        "dec": 1
+      },
+      {
+        "key": "R",
+        "sym": "R",
+        "label": "外电阻",
+        "unit": "Ω",
+        "def": 4,
+        "min": 1,
+        "max": 200,
+        "step": 0.5,
+        "dec": 1
+      },
+      {
+        "key": "n1",
+        "sym": "n₁",
+        "label": "原线圈匝数（只看比值 n₁∶n₂）",
+        "unit": "",
+        "def": 1,
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "dec": 0,
+        "when": {
+          "mode": "xfmr"
+        }
+      },
+      {
+        "key": "n2",
+        "sym": "n₂",
+        "label": "副线圈匝数（只看比值 n₁∶n₂）",
+        "unit": "",
+        "def": 2,
+        "min": 1,
+        "max": 10,
+        "step": 1,
+        "dec": 0,
+        "when": {
+          "mode": "xfmr"
+        }
+      },
+      {
+        "key": "stop",
+        "sym": "Δθ",
+        "label": "转过 Δθ 后暂停（0 为一直转）",
+        "unit": "°",
+        "def": 0,
+        "min": 0,
+        "max": 360,
+        "step": 90,
+        "dec": 0
+      }
+    ]
+  },
+  "boundary": {
+    "conditions": [
+      "磁场匀强，线圈始终在磁场中；转轴垂直于磁场，并与线圈平面平行（通常就在线圈平面内）",
+      "线圈匀速转动（ω 恒定）",
+      "不计线圈自感与分布电容，电流与电动势同相；电表为理想交流电表，读有效值",
+      "C3 的 Em/√2 只对正弦式交变电流成立",
+      "C5 为理想变压器：无漏磁、无铜损和铁损",
+      "C7 用有效值算热量，要求时间是半周期的整数倍；从中性面或平行位置算起时，1/4 周期的整数倍也可以；时间远大于周期时误差可忽略"
+    ],
+    "fallback": [
+      "法拉第电磁感应定律：e = NΔΦ/Δt（Δt → 0 为瞬时值）；或用切割：e = BLv⊥，v⊥ 为速度垂直于 B 的分量",
+      "闭合电路：每一时刻 i = e/(R + r)",
+      "电量：q = NΔΦ/(R + r)，对任何变化过程都成立",
+      "热量与有效值按定义：Q = Σi²RΔt；有效值 I 满足 I²RT = 一个周期内的 Σi²RΔt（半波整流得 Um/2）",
+      "能量守恒：外力做功 = 电路中的总焦耳热（转速变化时再加线圈动能的变化）"
+    ]
+  },
+  "presets": [
+    {
+      "label": "母题：从中性面开始",
+      "note": "θ₀ = 0，e = Em sin ωt，Em = 10 V；t = 0 时 Φ 最大、e = 0；转满一周后电压表 5.66 V、电流表 1.41 A。",
+      "load": {
+        "mode": "direct",
+        "N": 100,
+        "B": 0.5,
+        "L1": 0.2,
+        "L2": 0.1,
+        "w": 10,
+        "th0": 0,
+        "r": 1,
+        "R": 4,
+        "n1": 1,
+        "n2": 2,
+        "stop": 0
+      }
+    },
+    {
+      "label": "从平行位置开始",
+      "note": "θ₀ = 90°，e = Em cos ωt；t = 0 时 Φ = 0，e 却最大。",
+      "load": {
+        "mode": "direct",
+        "N": 100,
+        "B": 0.5,
+        "L1": 0.2,
+        "L2": 0.1,
+        "w": 10,
+        "th0": 90,
+        "r": 1,
+        "R": 4,
+        "n1": 1,
+        "n2": 2,
+        "stop": 0
+      }
+    },
+    {
+      "label": "转过 90°：平均值求电量",
+      "note": "转到 90° 自动暂停：q = NBS/(R + r) = 0.2 C，Q_R ≈ 1.26 J；用平均电流算热量只有 1.02 J，是错的。",
+      "load": {
+        "mode": "direct",
+        "N": 100,
+        "B": 0.5,
+        "L1": 0.2,
+        "L2": 0.1,
+        "w": 10,
+        "th0": 0,
+        "r": 1,
+        "R": 4,
+        "n1": 1,
+        "n2": 2,
+        "stop": 90
+      }
+    },
+    {
+      "label": "转过一周：电量为零，热量不为零",
+      "note": "一周后 q = 0，Q_R = 8 W × 0.628 s ≈ 5.03 J。",
+      "load": {
+        "mode": "direct",
+        "N": 100,
+        "B": 0.5,
+        "L1": 0.2,
+        "L2": 0.1,
+        "w": 10,
+        "th0": 0,
+        "r": 1,
+        "R": 4,
+        "n1": 1,
+        "n2": 2,
+        "stop": 360
+      }
+    },
+    {
+      "label": "转速加倍：峰值、周期一起变",
+      "note": "ω = 20 rad/s：Em = 20 V，T 减半为 0.314 s，P_R 变为 4 倍（32 W）；转 90° 的电量仍为 0.2 C（见理论预判）。",
+      "load": {
+        "mode": "direct",
+        "N": 100,
+        "B": 0.5,
+        "L1": 0.2,
+        "L2": 0.1,
+        "w": 20,
+        "th0": 0,
+        "r": 1,
+        "R": 4,
+        "n1": 1,
+        "n2": 2,
+        "stop": 0
+      }
+    },
+    {
+      "label": "B 加倍：只改峰值",
+      "note": "B = 1 T：Em = 20 V，周期不变；转 90° 的电量加倍为 0.4 C。与「转速加倍」对照。",
+      "load": {
+        "mode": "direct",
+        "N": 100,
+        "B": 1,
+        "L1": 0.2,
+        "L2": 0.1,
+        "w": 10,
+        "th0": 0,
+        "r": 1,
+        "R": 4,
+        "n1": 1,
+        "n2": 2,
+        "stop": 0
+      }
+    },
+    {
+      "label": "线圈电阻不计：U = E",
+      "note": "r = 0：电压表示数等于电动势有效值 E ≈ 7.07 V，P_R = 12.5 W。",
+      "load": {
+        "mode": "direct",
+        "N": 100,
+        "B": 0.5,
+        "L1": 0.2,
+        "L2": 0.1,
+        "w": 10,
+        "th0": 0,
+        "r": 0,
+        "R": 4,
+        "n1": 1,
+        "n2": 2,
+        "stop": 0
+      }
+    },
+    {
+      "label": "升压 1∶2：R′ = r（拓展）",
+      "note": "R′ = (n₁/n₂)²R = 1 Ω = r，R 的功率最大 12.5 W，U₂ ≈ 7.07 V。",
+      "load": {
+        "mode": "xfmr",
+        "N": 100,
+        "B": 0.5,
+        "L1": 0.2,
+        "L2": 0.1,
+        "w": 10,
+        "th0": 0,
+        "r": 1,
+        "R": 4,
+        "n1": 1,
+        "n2": 2,
+        "stop": 0
+      }
+    },
+    {
+      "label": "降压 2∶1：R′ = 16 Ω（拓展）",
+      "note": "U₂ ≈ 3.33 V，P_R ≈ 2.77 W，原线圈电流只有 0.42 A。",
+      "load": {
+        "mode": "xfmr",
+        "N": 100,
+        "B": 0.5,
+        "L1": 0.2,
+        "L2": 0.1,
+        "w": 10,
+        "th0": 0,
+        "r": 1,
+        "R": 4,
+        "n1": 2,
+        "n2": 1,
+        "stop": 0
+      }
+    },
+    {
+      "label": "1∶1：与直接接 R 相同",
+      "note": "理想变压器不改变频率，读数与母题相同。",
+      "load": {
+        "mode": "xfmr",
+        "N": 100,
+        "B": 0.5,
+        "L1": 0.2,
+        "L2": 0.1,
+        "w": 10,
+        "th0": 0,
+        "r": 1,
+        "R": 4,
+        "n1": 1,
+        "n2": 1,
+        "stop": 0
+      }
+    }
+  ],
+  "conclusions": [
+    {
+      "id": "C1",
+      "title": "峰值只由 N、B、S、ω 决定",
+      "formula": "Em = NBSω = NΦmω（切割：Em = 2NBL₁v，v = ωL₂/2）",
+      "derivation": "切割观点。设线圈从中性面转过 θ = ωt。ab、cd 两边长 L₁，到转轴的距离为 L₂/2，线速度 v = ωL₂/2。bc、da 两边与 v、B 在同一平面内，不切割磁感线。\n在中性面，线圈平面垂直于 B，ab、cd 的速度与 B 平行，不切割；转过 θ 时，速度垂直于 B 的分量为 v sin θ。\nab、cd 两边的电动势在回路中同向串联：e = 2NBL₁·(ωL₂/2)·sin θ = NBL₁L₂ω sin θ = NBSω sin θ，所以 Em = NBSω。\n磁通量观点：线圈在垂直于 B 方向上的投影面积为 S cos θ，Φ = BS cos θ，Φm = BS；由法拉第电磁感应定律可得同一结果，Em = NΦmω。\n转轴改在一条边上（2026 届杨浦二模 五-4）：只有对边切割，速度为 ωL₂，e = NBL₁·ωL₂·sin θ，结果不变。任意平面形状的线圈只要面积为 S，由磁通量观点 Em 都是 NBSω。\n注意：穿过线圈的磁通量 Φ = BS cos θ 与匝数无关，算电动势时才乘 N。"
+    },
+    {
+      "id": "C2",
+      "title": "瞬时值看起始位置（中性面）",
+      "formula": "e = Em sin(ωt + θ₀)；中性面计时 e = Em sin ωt",
+      "derivation": "θ = ωt + θ₀，代入 C1 得 e = Em sin(ωt + θ₀)；ω = 2πn = 2π/T。\nθ₀ = 0（中性面计时）：Φ = Φm cos ωt，e = Em sin ωt。θ₀ = 90°（线圈平面与磁场平行时计时）：Φ 从 0 开始变化，e = Em cos ωt。\n在中性面：Φ 最大，但 ab、cd 不切割，e = 0；越过中性面后速度的垂直分量反向，电流反向。每转一周两次经过中性面，电流方向改变 2 次，每秒改变 2f 次（2026 年 3 月南模曹二联考 3.2：ω = 20 rad/s，每秒改变 20/π 次）。\n线圈平面与磁场平行时：Φ = 0，但 Φ 变化最快，e 最大。规律：Φ 最大时 e = 0，Φ = 0 时 e 最大，e–t 曲线比 Φ–t 曲线错开 1/4 周期。\ne 与 Φ 的正负取决于各自规定的正方向，表达式中的符号按题目规定写；只问大小时写成 Em sin ωt 或 Em cos ωt 即可。"
+    },
+    {
+      "id": "C3",
+      "title": "有效值按电流的热效应定义",
+      "formula": "E = Em/√2，U = Um/√2，I = Im/√2；半波 U = Um/2",
+      "derivation": "有效值按热效应定义：让交变电流和恒定电流通过同一电阻，在一个周期内产生的热量相等，这个恒定电流的值就是有效值。\ni = Im sin ωt，一个周期内 sin²ωt 的平均值为 ½，所以热量 = Im²R·T/2，令 I²RT = Im²RT/2，得 I = Im/√2；同理 E = Em/√2，U = Um/√2。\n半波整流：一个周期内只有半个周期有电流，(Um/√2)²/R·(T/2) = U²/R·T，得 U = Um/2（2026 等级考 6.2(2)）。\n用途：交流电表的读数、用电器铭牌上的额定值、保险丝的熔断电流、电功率和焦耳热用有效值；电容器的耐压、气体击穿发光的电压看峰值。例：220 V 交流电的峰值为 220√2 V ≈ 311 V，要让副线圈峰值超过 4400 V，需 n₂/n₁ > 4400 ÷ 311 ≈ 14.1（2026 届徐汇二模 6.2）。"
+    },
+    {
+      "id": "C4",
+      "title": "闭合电路：发电机相当于电动势为 e、内阻为 r 的电源",
+      "formula": "I = E/(R + r)，U = IR，P_R = I²R；Fm = NBImL₁",
+      "derivation": "发电机是电动势为 e、内阻为 r 的电源。每一时刻 i = e/(R + r)，所以 i 也按正弦规律变化，Im = Em/(R + r)；取有效值 I = E/(R + r)。\n电压表接在 R 两端，读的是路端电压的有效值 U = IR，不是 E；只有 r = 0 或外电路断开时 U = E。\n功率：P_R = I²R = U²/R，P总 = EI = E²/(R + r)。\nab 边所受安培力 F = NBiL₁，线圈平面与磁场平行时 i 最大，Fm = NBImL₁；安培力总是阻碍线圈转动。\n转速变为 k 倍：Em ∝ ω 变为 k 倍，T = 2π/ω 变为 1/k；R 不变时 P ∝ E² 变为 k² 倍（2024 等级考 6.4：加速时峰值变大、周期变短；2026 届黄浦一模 4-4：速度减半，电流减半，功率变为 1/4）。改变 N、B、S 只改变 Em，周期不变。"
+    },
+    {
+      "id": "C5",
+      "title": "理想变压器",
+      "formula": "U₁/U₂ = n₁/n₂，I₁/I₂ = n₂/n₁，P₁ = P₂",
+      "derivation": "理想变压器无漏磁、无能量损失：U₁/U₂ = n₁/n₂；P₁ = P₂，即 U₁I₁ = U₂I₂，得 I₁/I₂ = n₂/n₁。电压比对有效值、峰值都成立，变压器不改变频率，不能改变恒定电压。\n拓展（等效电阻）：原线圈接在有内阻的发电机上，U₁ = E − I₁r。由 U₂ = I₂R 得 U₁/I₁ = (n₁/n₂)²·(U₂/I₂) = (n₁/n₂)²R，记为 R′，所以 I₁ = E/(r + R′)。输出功率由负载决定。\n拓展：R′ = r 时 R 得到的功率最大，为 E²/(4r)（母题默认参数即此情形）。"
+    },
+    {
+      "id": "C6",
+      "title": "电量用平均值",
+      "formula": "q = ĪΔt = NΔΦ/(R + r)；转一周 q = 0",
+      "derivation": "把转动过程分成许多小段，每段 i = NΔΦ/[(R + r)Δt]，q = ΣiΔt = NΣΔΦ/(R + r) = NΔΦ总/(R + r)，与转动快慢无关。\n从中性面转 90°：Φ 由 BS 减到 0，q = NBS/(R + r)。转 180°：磁感线从线圈另一面穿过，Φ 由 BS 变为 −BS，ΔΦ = 2BS，q = 2NBS/(R + r)。转一周：ΔΦ = 0，正、反向电量相等，净电量为 0。\n平均电动势 Ē = NΔΦ/Δt：从中性面起 1/4 周期，Ē = NBS ÷ (T/4) = 2NBSω/π = 2Em/π ≈ 0.64Em；有效值 E ≈ 0.71Em，两者不同，平均值只用来求电量。"
+    },
+    {
+      "id": "C7",
+      "title": "焦耳热用有效值；外力做功等于总焦耳热",
+      "formula": "Q_R = I²Rt（t 为半周期整数倍）；W外 = Q总",
+      "derivation": "热量按定义 Q = Σi²(R + r)Δt。半个周期内 sin² 的平均值恰为 ½，所以 t 为半周期的整数倍时 Q总 = I²(R + r)t。\n1/4 周期：从中性面或平行位置算起，sin² 的平均值也是 ½，公式成立；从其他位置算起不成立（例如从 45° 起，平均值为 ½ + 1/π ≈ 0.82）。时间远大于周期时，零头可以忽略（2026 届崇明一模 6.3 的页面注释即指此）。\n不能用平均电流算热量：Ī = 2Im/π < I = Im/√2，Ī²Rt 偏小（母题 ③：1.02 J < 1.26 J）。\n能量：线圈匀速转动，动能不变，外力克服安培力做的功全部转化为焦耳热，W外 = Q总 = EIt。"
+    }
+  ],
+  "variants": [
+    {
+      "id": "V1",
+      "title": "由转速写瞬时值，求焦耳热（峰值、有效值别混）",
+      "cs": [
+        "C1",
+        "C2",
+        "C3",
+        "C7"
+      ],
+      "source": "改编自 2026 届黄浦二模 五-2(2)（原题 N = 1000、S = 0.1 m²、B = 2√2/π T、n = 0.5 r/s，接 100 Ω，求 1 min 热量）",
+      "stem": "波浪能发电装置中，海浪通过浪板带动 N = 500 匝的矩形线圈在水平匀强磁场中绕垂直于磁场的中心轴匀速转动，线圈面积 S = 0.04 m²，B = √2/π T（约 0.45 T），转速 n = 1 r/s，线圈电阻不计。t = 0 时线圈平面与磁场方向平行。(1) 写出 e 随 t 变化的表达式；(2) 输出端接 R = 20 Ω 的电阻，求 1 min 内 R 产生的热量；(3) 某同学用 Q = Em²t/R 计算，结果是多少？错在哪里？",
+      "answer": "(1) e = 40√2 cos 2πt（V）≈ 56.6 cos 2πt（V）；(2) Q = 4.8×10³ J；(3) 9.6×10³ J，是正确值的 2 倍，错在用峰值代替了有效值",
+      "analysis": "(1) ω = 2πn = 2π rad/s，Em = NBSω = 500 × (√2/π T) × 0.04 m² × 2π rad/s = 40√2 V。t = 0 时线圈平面与磁场平行，由 C2，e = Em cos ωt = 40√2 cos 2πt（V）。(2) 线圈电阻不计，R 两端电压有效值 U = E = Em/√2 = 40 V。1 min = 60 个周期，由 C7，Q = U²t/R = (40 V)² × 60 s ÷ 20 Ω = 4.8×10³ J。(3) Em²t/R = (40√2 V)² × 60 s ÷ 20 Ω = 9.6×10³ J。原题页面的 e(t) 答案正是漏了 √2，写成了 200 cos πt（V），应为 200√2 cos πt（V）。加载后（L₁ = L₂ = 0.20 m，B 取 √2/π T）转满一周电压表读 40.0 V，Q_R 以 80 W 的功率增长，60 s 后为 4.8×10³ J。",
+      "load": {
+        "mode": "direct",
+        "N": 500,
+        "B": 0.45016,
+        "L1": 0.2,
+        "L2": 0.2,
+        "w": 6.2832,
+        "th0": 90,
+        "r": 0,
+        "R": 20,
+        "n1": 1,
+        "n2": 2,
+        "stop": 0
+      }
+    },
+    {
+      "id": "V2",
+      "title": "线框绕一条边转动：写 i(t)，比较转轴位置",
+      "cs": [
+        "C1",
+        "C2",
+        "C4"
+      ],
+      "source": "改编自 2026 届杨浦二模 五-4（原题为字母运算：ab = L、bc = d，绕 bc 边转动，总电阻 R）",
+      "stem": "单匝矩形线框 abcd，ab = 0.25 m，bc = 0.5 m，线框总电阻 1 Ω，处在 B = 0.4 T 的匀强磁场中。线框平面平行于磁场方向放置，以 bc 边为轴、ω = 40 rad/s 匀速转动。从图示位置（线框平面与磁场平行，ad 边正向上运动）开始计时，以此时线框中的电流方向为正。求：(1) 线框第一次转到磁通量最大的位置经过的时间；(2) 电流 i 随时间 t 变化的关系式；(3) 若改为绕过 ab、cd 中点并与 bc 平行的中心轴转动，其余不变，i(t) 是否改变？",
+      "answer": "(1) Δt = π/80 s ≈ 0.039 s；(2) i = 2 cos 40t（A）；(3) 不变",
+      "analysis": "(1) 从线框平面与磁场平行转到中性面（Φ 最大）要转 90°，Δt = (π/2)/ω = π/80 s ≈ 0.039 s。(2) 绕 bc 边转动时只有 ad 边切割，ad = bc = 0.5 m，速度 v = ω·ab = 40 rad/s × 0.25 m = 10 m/s，Em = B·ad·v = 0.4 T × 0.5 m × 10 m/s = 2 V，与 BSω = 0.4 T × 0.125 m² × 40 rad/s = 2 V 相同。Im = Em/R = 2 A；t = 0 时 e 最大，i = 2 cos 40t（A）。(3) 绕中心轴时 ad、bc 两边都切割，速度各为 5 m/s，Em = 2 × 0.4 T × 0.5 m × 5 m/s = 2 V，不变。由 C1，Em = NBSω 与转轴位置无关。加载后动画按中心轴转动（L₁ = 0.50 m 为切割边），Δθ = 90° 时在 t = 0.039 s 转到中性面暂停；读数与绕边转动相同，正是第 (3) 问的结论。",
+      "load": {
+        "mode": "direct",
+        "N": 1,
+        "B": 0.4,
+        "L1": 0.5,
+        "L2": 0.25,
+        "w": 40,
+        "th0": 90,
+        "r": 0,
+        "R": 1,
+        "n1": 1,
+        "n2": 2,
+        "stop": 90
+      }
+    },
+    {
+      "id": "V3",
+      "title": "半个周期内的电量与焦耳热（平均值求电量、有效值求热量）",
+      "cs": [
+        "C2",
+        "C3",
+        "C6",
+        "C7"
+      ],
+      "source": "改编自 2026 届松江二模 3.3（原题单匝线圈 r = 1 Ω、R = 9 Ω，由 Φ–t 图读 Φm = 0.2 Wb、T = 0.04 s）",
+      "stem": "发电机的单匝线圈电阻 r = 1 Ω，经滑环、电刷接 R = 3 Ω 的负载。从线圈处于中性面开始计时，穿过线圈的磁通量按余弦规律变化，最大值 Φm = 0.1 Wb，周期 T = 0.2 s。(1) 写出 e 随 t 变化的关系式；(2) 求 R 的电功率；(3) 求 0 ~ 0.1 s 内通过 R 的电量和 R 产生的热量；(4) 0 ~ 0.2 s 内通过 R 的电量是多少？",
+      "answer": "(1) e = π sin 10πt（V）≈ 3.14 sin 10πt（V）；(2) P_R = 3π²/32 W ≈ 0.93 W；(3) q = 0.05 C，Q_R ≈ 0.093 J；(4) q = 0（R 产生的热量为 0.185 J）",
+      "analysis": "(1) ω = 2π/T = 10π rad/s，Em = Φmω = 0.1 Wb × 10π rad/s = π V，从中性面计时 e = π sin 10πt（V）。(2) 由 C3、C4，I = Em/[√2(R + r)] = π/(4√2) A ≈ 0.555 A，P_R = I²R = 3π²/32 W ≈ 0.93 W。(3) 0 ~ 0.1 s 是半个周期，Φ 由 0.1 Wb 变为 −0.1 Wb，由 C6，q = 2Φm/(R + r) = 0.2 Wb ÷ 4 Ω = 0.05 C；由 C7，Q_R = P_R × 0.1 s ≈ 0.093 J。若用平均电流 Ī = q/t = 0.5 A 计算，Ī²Rt = 0.075 J，偏小，是错的。(4) 一个周期 ΔΦ = 0，q = 0，但热量不抵消，Q_R = P_R × 0.2 s ≈ 0.185 J。加载后 Δθ = 180°，暂停时读 q 与 Q_R；把 Δθ 改为 360° 再看一周（ω = 10π rad/s，画面慢放）。",
+      "load": {
+        "mode": "direct",
+        "N": 1,
+        "B": 0.5,
+        "L1": 0.5,
+        "L2": 0.4,
+        "w": 31.4159,
+        "th0": 0,
+        "r": 1,
+        "R": 3,
+        "n1": 1,
+        "n2": 2,
+        "stop": 180
+      }
+    },
+    {
+      "id": "V4",
+      "title": "换灯泡与理想变压器",
+      "cs": [
+        "C3",
+        "C4",
+        "C5"
+      ],
+      "source": "改编自 2024 上海等级考 6.2–6.3（原题发电机内阻 2 Ω，「12 V，6 W」换「24 V，6 W」，变压器匝数比 1∶2）",
+      "stem": "交流发电机（输出正弦交流电，线圈电阻 r = 4 Ω）以某一转速匀速转动时，接「8 V，4 W」的灯泡 L₁ 恰好正常发光（灯泡电阻不变）。(1) 求发电机电动势的有效值和峰值；(2) 转速不变，把 L₁ 换成「16 V，4 W」的灯泡 L₂，L₂ 两端电压比 8 V 大还是小？L₂ 的功率比 4 W 大还是小，约多大？(3) 转速不变，用 n₁∶n₂ = 1∶2 的理想变压器给 L₂ 供电，L₂ 能否正常发光？此时原线圈两端电压多大？",
+      "answer": "(1) E = 10 V，Em = 10√2 V ≈ 14.1 V；(2) 电压约 9.41 V，大于 8 V；功率约 1.38 W，小于 4 W；(3) 能正常发光，原线圈电压 8 V",
+      "analysis": "(1) R₁ = U²/P = (8 V)² ÷ 4 W = 16 Ω，I = P/U = 0.5 A，E = U + Ir = 8 V + 0.5 A × 4 Ω = 10 V（有效值），Em = √2E ≈ 14.1 V。(2) R₂ = (16 V)² ÷ 4 W = 64 Ω。转速不变，E 不变，U₂ = E·R₂/(R₂ + r) = 10 V × 64/68 ≈ 9.41 V > 8 V（外电阻变大，路端电压变大），但远小于额定 16 V，P₂ = U₂²/R₂ ≈ 1.38 W < 4 W。(3) 由 C5，从原线圈看 L₂ 相当于 R′ = (n₁/n₂)²R₂ = 64 Ω ÷ 4 = 16 Ω = R₁，电路与 (1) 完全相同：I₁ = 0.5 A，U₁ = 8 V，U₂ = 2U₁ = 16 V，I₂ = 0.25 A，L₂ 正常发光。加载后为 (1) 的电路（ω = 10√2 rad/s，使 E = 10 V，R = 16 Ω）；把 R 改为 64 Ω 看 (2)；再切换到「经变压器接 R」（n₁∶n₂ 已设为 1∶2）看 (3)。",
+      "load": {
+        "mode": "direct",
+        "N": 100,
+        "B": 0.5,
+        "L1": 0.2,
+        "L2": 0.1,
+        "w": 14.1421,
+        "th0": 0,
+        "r": 4,
+        "R": 16,
+        "n1": 1,
+        "n2": 2,
+        "stop": 0
+      }
+    },
+    {
+      "id": "V5",
+      "title": "由磁通量表达式写电动势；转速改变",
+      "cs": [
+        "C1",
+        "C2",
+        "C3",
+        "C4"
+      ],
+      "source": "改编自 2026 届黄浦一模 4-4（原题 Φ = 0.04 sin 2πt Wb、100 匝、R = 1 kΩ，速度减半求有效电流）；第 (4) 问取自 2024 上海等级考 6.4(1)",
+      "stem": "把动感单车改装成旋转电枢式发电机，骑行时 N = 200 匝的线圈在匀强磁场中转动。某次匀速骑行时，穿过线圈的磁通量 Φ = 0.02 sin 4πt（Wb），线圈电阻不计，外接 R = 100 Ω（含电流计）。(1) 写出 e 随 t 变化的关系式；(2) 电流计示数（有效值）多大？(3) 骑行速度减半（线圈转速随之减半），电流有效值、周期和 R 的功率各变为多少？(4) 若骑行速度逐渐增大，e–t 图像怎样变化？",
+      "answer": "(1) e = 16π cos 4πt（V）≈ 50.3 cos 4πt（V）；(2) I ≈ 0.36 A；(3) I ≈ 0.18 A，T 由 0.5 s 变为 1 s，P 由约 12.6 W 变为约 3.2 W；(4) 峰值越来越大，相邻两峰的间隔（周期）越来越短",
+      "analysis": "(1) 由 Φ 的表达式，Φm = 0.02 Wb，ω = 4π rad/s；t = 0 时 Φ = 0，线圈平面与磁场平行，e 最大。由 C1，Em = NΦmω = 200 × 0.02 Wb × 4π rad/s = 16π V ≈ 50.3 V，e = 16π cos 4πt（V）（只问大小时取正号，见 C2 推导）。(2) I = Em/(√2R) = 16π V ÷ (√2 × 100 Ω) ≈ 0.355 A。(3) 由 C4，ω 减半，Em、I 都减半：I ≈ 0.178 A；T = 2π/ω 由 0.5 s 变为 1 s；P = I²R 由 12.6 W 变为 3.16 W（1/4）。(4) 加速时 ω 增大，Em ∝ ω 增大，T ∝ 1/ω 减小，两者同时变（2024 等级考 6.4(1) 答案 C）。加载 ω = 4π rad/s（L₁ = L₂ = 0.20 m，Φm = 0.02 Wb）；再把 ω 改为 6.28 rad/s 对比第 (3) 问。",
+      "load": {
+        "mode": "direct",
+        "N": 200,
+        "B": 0.5,
+        "L1": 0.2,
+        "L2": 0.2,
+        "w": 12.5664,
+        "th0": 90,
+        "r": 0,
+        "R": 100,
+        "n1": 1,
+        "n2": 2,
+        "stop": 0
+      }
+    }
+  ],
+  "reskins": [
+    {
+      "id": "R1",
+      "title": "电吉他拾音器",
+      "map": "线圈不动，Φ = Φ₀ + Φ₁ sin ωt；恒定部分 Φ₀ 不产生电动势，Em = NΦ₁ω，相当于 C1 中 Φm 换成变化部分的振幅 Φ₁",
+      "anim": false,
+      "source": "改编自 2026 上海等级考 3.4（原题 500 匝，Φ 在 1.00 μWb 上下变化，T = 3.8 ms，答案 263 Hz、0.0785 V）",
+      "stem": "电吉他拾音器的线圈有 400 匝。琴弦振动时，穿过线圈的磁通量在 1.92 μWb 与 2.08 μWb 之间按正弦规律变化，周期为 2.5 ms。(1) 求线圈中感应电动势的频率和最大值；(2) 若磁通量的平均值变大而变化幅度不变，电动势最大值如何变化？",
+      "answer": "(1) f = 400 Hz，Em ≈ 0.080 V；(2) 不变",
+      "analysis": "(1) 电动势与磁通量变化同周期，f = 1/T = 1 ÷ 2.5×10⁻³ s = 400 Hz，ω = 2πf ≈ 2513 rad/s。Φ = 2.00 μWb + 0.08 μWb × sin ωt，变化部分振幅 Φ₁ = 0.08 μWb = 8×10⁻⁸ Wb。Em = NΦ₁ω = 400 × 8×10⁻⁸ Wb × 2513 rad/s ≈ 0.080 V。(2) 电动势取决于 ΔΦ/Δt，恒定的 2.00 μWb 不变化，不产生电动势，所以 Em 不变。原题给的是 Φ–t 图，也可作切线求最大斜率，结果允许有误差（页面答案 0.0785 V 与 0.0781 V 均可）。"
+    },
+    {
+      "id": "R2",
+      "title": "磁电式轮速传感器",
+      "map": "齿圈每转过一个齿距，线圈中的磁通量完成一次周期性变化；信号周期 T = 车轮转动周期 ÷ 齿数；Em ∝ 转速",
+      "anim": false,
+      "source": "改编自 2026 上海等级考 6.2（原题齿数 N、车轮直径 D、输出周期 2t₀，车速 πD/(2Nt₀)；半波整流有效值 Um/2）",
+      "stem": "轮速传感器的齿圈有 40 个齿，与直径 D = 0.6 m 的车轮同轴转动，车轮不打滑。汽车匀速行驶时，线圈输出的正弦交流电压周期为 2.5 ms，最大值 Um = 3.0 V。(1) 求车速；(2) 输出电压经半波整流后的有效值；(3) 若车速变为原来的 1.2 倍，输出电压的周期和最大值各变为多少？",
+      "answer": "(1) v ≈ 18.8 m/s（约 68 km/h）；(2) 1.5 V；(3) 周期约 2.08 ms，最大值 3.6 V",
+      "analysis": "(1) 每转过一个齿距完成一个周期，车轮转一圈用时 40 × 2.5 ms = 0.1 s，v = πD ÷ 0.1 s = π × 0.6 m ÷ 0.1 s ≈ 18.8 m/s。(2) 由 C3 的半波整流，U = Um/2 = 1.5 V。(3) 转速变为 1.2 倍，周期变为 2.5 ms ÷ 1.2 ≈ 2.08 ms；磁通量变化的幅度由齿形决定不变，变化快了，由 C1、C4，Um ∝ ω，变为 3.6 V。"
+    },
+    {
+      "id": "R3",
+      "title": "旋转磁极式发电机（四极、六极发电机）",
+      "map": "磁极转、线圈不动，只看线圈中 Φ 怎样变；转子每转一圈，线圈经历 p 个周期（p 为磁极对数），f = p·n；2024 等级考的自行车发电机是 p = 1 的情形",
+      "anim": false,
+      "source": "改编自 2026 届闵行二模 四-2（原题四极转子、100 匝线圈、Φm = 2 Wb、T = 0.02 s、串 20 Ω，答案 1500 r/min、10 C）",
+      "stem": "六极汽轮发电机的转子由三对 N、S 磁极组成，定子上一个 50 匝线圈中的磁通量随时间按 Φ = Φm sin ωt 变化，Φm = 0.04 Wb，周期 0.02 s。线圈电阻不计，与 20 Ω 电阻串联。(1) 在 0 ~ 0.02 s 内，线圈中电动势为零的时刻；(2) 转子的转速（r/min）；(3) 电动势的最大值；(4) 0 ~ 0.005 s 内通过电阻的电量。",
+      "answer": "(1) t = 0.005 s 和 0.015 s；(2) 1000 r/min；(3) Em = 200π V ≈ 628 V；(4) q = 0.1 C",
+      "analysis": "(1) 由 C2，Φ 最大（Φ–t 图的峰、谷）时 e = 0，即 t = T/4 = 0.005 s 和 3T/4 = 0.015 s。(2) f = 50 Hz，转子每转一圈三对磁极依次经过线圈，线圈中完成 3 个周期，转速 n = f/3 = 50/3 r/s = 1000 r/min。(3) Em = NΦmω = 50 × 0.04 Wb × 100π rad/s = 200π V ≈ 628 V。(4) 0 ~ 0.005 s 内 Φ 由 0 增到 Φm，由 C6，q = NΦm/R = 50 × 0.04 Wb ÷ 20 Ω = 0.1 C，与转速无关。"
+    }
+  ],
+  "sources": [
+    {
+      "src": "2024 上海等级考 第 6 大题 6.1–6.3",
+      "desc": "自行车发电照明：磁铁在匚形铁芯开口处转动、线圈不动；换灯泡后电压与功率的变化；经 1∶2 理想变压器使灯正常发光（→ V4，装置为换皮 R3）"
+    },
+    {
+      "src": "2024 上海等级考 6.4",
+      "desc": "匀加速骑行时 u–t 图峰值变大、周期变小；车灯功率与骑车人功率（→ V5 第 (4) 问，关联 MEC-ENG-01）"
+    },
+    {
+      "src": "2026 上海等级考 3.4",
+      "desc": "电吉他拾音器：Φ 在恒定值上下按正弦变化，由 Φ–t 图求 f 与 Em（→ 换皮 R1）"
+    },
+    {
+      "src": "2026 上海等级考 6.1–6.2",
+      "desc": "磁电式轮速传感器：一个齿距对应一个周期，求车速；半波整流有效值 Um/2（→ 换皮 R2）"
+    },
+    {
+      "src": "2026 届杨浦二模 第五大题 五-4",
+      "desc": "单匝线框绕 bc 边转动，从与磁场平行开始计时：转到 Φ 最大的时间、i(t)（→ V2）"
+    },
+    {
+      "src": "2026 届徐汇二模 第 2 大题 2.1",
+      "desc": "正方形线框绕中轴转动：ab 中电流方向、安培力方向，Φm = BL²，Em = 2BLv（C1 的切割观点）"
+    },
+    {
+      "src": "2026 届徐汇二模 6.2",
+      "desc": "220 V 交流电经理想变压器，电势差超过 4400 V 才发光，选匝数比（C3 峰值 + C5）"
+    },
+    {
+      "src": "2026 届黄浦一模 第 4 大题 4-4",
+      "desc": "动感单车发电机：由 Φ = 0.04 sin 2πt 写 e(t)；速度减半求有效电流（→ V5；原卷无解析，已复算）"
+    },
+    {
+      "src": "2026 届黄浦二模 第五大题 五-2(2)",
+      "desc": "波浪能发电：写 e(t)，接 100 Ω 求 1 min 焦耳热（→ V1；原页面 e(t) 答案漏 √2，应为 200√2 cos πt V）"
+    },
+    {
+      "src": "2026 届松江二模 第 3 大题 3.3",
+      "desc": "石墨烯发电机：由 Φ–t 图写 e(t)，有效值求功率，平均值求半周期电量（→ V3；「二模」按站内命名推定）"
+    },
+    {
+      "src": "2026 届闵行二模 第四大题 四-2",
+      "desc": "四极汽轮发电机：e = 0 的时刻、转子转速、串联电阻的电量（→ 换皮 R3；原卷无解析，已复算）"
+    },
+    {
+      "src": "2026 届崇明一模 第 6 大题 6.3",
+      "desc": "电磁制动发电机：平行位置的电流方向、Φ 与 e；Im 与时间 t 内的热量（C4、C7 的适用条件；「一模」按命名推定）"
+    },
+    {
+      "src": "2026 届奉贤二模 第 6 大题 6.1–6.2",
+      "desc": "风电：由 u–t 图求 ω 与有效值，反求中性面磁通量 Φ = Um/(Nω)（C1）；6.3 起为远距离输电，超出本母题"
+    },
+    {
+      "src": "2026 年 3 月南模曹二联考 第 3 大题 3.2",
+      "desc": "N = 100、B = 0.5 T、ω = 20 rad/s：转 60° 的 ΔΦ、电压表示数、AB 边最大安培力、每秒换向次数（母题原型）"
+    },
+    {
+      "src": "2026 届松江一模 第 4 大题 4.1(2)(3)",
+      "desc": "风力发电：线圈平面与磁场平行时刻的判断（C2）；输电部分超出本母题（原图未见，B 项所涉方向未核）"
+    },
+    {
+      "src": "2025 届杨浦二模 第四大题 四-2（来源待核）",
+      "desc": "单匝正方形线圈，由 i–t 图求边长与 0 ~ 0.2 s 内热量（C1、C7；OCR 文本，i–t 图未见，数值无法复算）"
+    }
+  ]
+}
+</script>
+
+<style>
+/* Layout: 实验报告 / 图纸标题栏。题头左标题右标题栏表格；母题独占一行；考点与边界并排；动画区左画布右控制台；结论、变式、换皮题依次向下 */
+:root{
+  --paper:#f2f4f3; --grid:#e4e9e6; --card:#ffffff; --sunk:#f6f8f7;
+  --ink:#142030; --muted:#5b6979; --faint:#8a96a3; --line:#d6dedA; --hair:#e7ece9;
+  --accent:#2443a6; --accent-soft:#e9eefb; --mark:#f7e9b0;
+  --g:#c0502a; --n:#17806a; --v:#2f62b3; --a:#a0661a; --track:#34404f; --fig-ink:#1d232b; --fig-aux:#75808c; --warn:#a85a14; --ok:#18845a;
+  --shadow:0 1px 0 rgba(20,32,48,.04),0 10px 28px -18px rgba(20,32,48,.28);
+  --f-display:"Noto Serif SC","Songti SC","STSong",serif;
+  --f-body:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#10161d; --grid:#18202a; --card:#171f28; --sunk:#131a22;
+  --ink:#e4e9ef; --muted:#9aa7b6; --faint:#6f7d8c; --line:#2a3542; --hair:#212b36;
+  --accent:#93acff; --accent-soft:#1f2a44; --mark:#4a4020;
+  --g:#ef8f6e; --n:#5cc7a0; --v:#8db0ef; --a:#e3ac5c; --track:#c3ccd8; --fig-ink:#dde3ea; --fig-aux:#8794a2; --warn:#f0a35a; --ok:#52d39c;
+  --shadow:0 1px 0 rgba(0,0,0,.25),0 12px 30px -20px rgba(0,0,0,.7); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#10161d; --grid:#18202a; --card:#171f28; --sunk:#131a22;
+  --ink:#e4e9ef; --muted:#9aa7b6; --faint:#6f7d8c; --line:#2a3542; --hair:#212b36;
+  --accent:#93acff; --accent-soft:#1f2a44; --mark:#4a4020;
+  --g:#ef8f6e; --n:#5cc7a0; --v:#8db0ef; --a:#e3ac5c; --track:#c3ccd8; --fig-ink:#dde3ea; --fig-aux:#8794a2; --warn:#f0a35a; --ok:#52d39c;
+  --shadow:0 1px 0 rgba(0,0,0,.25),0 12px 30px -20px rgba(0,0,0,.7); color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.7;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:28px 28px;background-position:-1px -1px}
+.wrap{max-width:1160px;margin:0 auto;padding-inline:16px;padding-block:16px 56px;display:flex;flex-direction:column;gap:16px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;font-weight:800}
+p{margin:0}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 22px;min-width:0;display:flex;flex-direction:column;gap:10px;box-shadow:var(--shadow)}
+@media (max-width:520px){.panel{padding:16px;border-radius:12px}}
+.sh{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.sh h2{font-size:20px;letter-spacing:.02em}
+.sh small{font-size:13px;color:var(--muted)}
+.sh::after{content:"";flex:1 1 40px;height:1px;background:var(--hair);align-self:center}
+.label{font-size:12px;letter-spacing:.12em;color:var(--faint);font-weight:700}
+.note{font-size:13px;color:var(--muted)}
+
+/* 题头：标题 + 图纸标题栏 */
+.top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px 28px;align-items:end;padding-bottom:6px}
+@media (max-width:760px){.top{grid-template-columns:1fr}}
+.brand{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);margin-bottom:6px}
+.seal{font-family:var(--f-display);font-weight:800;font-size:13px;color:var(--card);background:var(--ink);padding:2px 8px;border-radius:3px;letter-spacing:.18em}
+.top h1{font-size:clamp(22px,3vw,30px);line-height:1.2;letter-spacing:.01em}
+.top .sub{margin-top:4px;color:var(--muted);font-size:14px}
+.tb{border-collapse:collapse;font-size:13px;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:var(--shadow);min-width:0}
+.tb th,.tb td{border:1px solid var(--hair);padding:6px 12px;text-align:left;white-space:nowrap}
+.tb th{color:var(--faint);font-weight:500;font-size:12px;letter-spacing:.06em;background:var(--sunk)}
+.tb td{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.tb td.code{color:var(--accent);font-weight:600}
+.tbwrap{overflow-x:auto;max-width:100%}
+
+/* 母题 */
+.problem{display:flex;flex-direction:column;gap:10px;min-width:0}
+.lead{font-family:var(--f-display);font-size:clamp(16px,1.7vw,17px);line-height:1.8;font-weight:600}
+.num{font-family:var(--f-mono);font-weight:600;font-size:.92em;color:var(--ink);white-space:nowrap;
+  background:linear-gradient(transparent 55%,var(--mark) 55%);padding:0 2px;transition:background-color .2s}
+.asks{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 26px}
+.asks li{display:flex;gap:8px;align-items:baseline;min-width:0}
+.asks li b{flex:none}
+.asks li b{display:inline-grid;place-items:center;width:1.6em;height:1.6em;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-family:var(--f-mono);font-size:13px}
+.given{background:var(--sunk);border:1px solid var(--hair);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.given dl{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;font-size:14px}
+.given dt{font-family:var(--f-mono);color:var(--muted)}
+.given dd{margin:0;font-family:var(--f-mono);font-variant-numeric:tabular-nums;text-align:right}
+
+/* 考点 + 边界 */
+.row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:28px;align-items:start}
+@media (max-width:860px){.row2{grid-template-columns:1fr}}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{font-size:14px;border:1px solid var(--line);background:var(--sunk);padding:4px 12px;border-radius:999px}
+.bnd{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+@media (max-width:620px){.bnd{grid-template-columns:1fr}}
+.bnd ul{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.bnd li{display:grid;grid-template-columns:1.2em minmax(0,1fr);gap:6px}
+.bnd .ok li::before{content:"✓";color:var(--ok);font-weight:700}
+.bnd .back li::before{content:"→";color:var(--accent);font-weight:700}
+
+/* 选项卡 */
+.board{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);min-width:0;overflow:hidden}
+.tabs{display:flex;gap:2px;padding:0 10px;border-bottom:1px solid var(--line);background:var(--sunk);overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{border:none;border-radius:0;background:none;padding:13px 14px 11px;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap;font-size:15px}
+.tab:hover{color:var(--ink);border-color:transparent;border-bottom-color:var(--line)}
+.tab[aria-selected="true"]{color:var(--ink);font-weight:700;border-bottom-color:var(--accent)}
+.tab .n{font-family:var(--f-mono);font-size:11px;color:var(--faint);margin-left:5px;font-weight:500}
+.pane{padding:16px 22px 22px;display:flex;flex-direction:column;gap:16px;min-width:0}
+@media (max-width:520px){.pane{padding:16px}}
+.hint{font-size:13px;color:var(--muted)}
+
+/* 动画区 */
+.lab{display:flex;flex-wrap:wrap;gap:22px 28px;align-items:flex-start}
+.stage{flex:0 1 auto;width:min(100%,max(300px,calc(100vh - 430px)),640px);display:flex;flex-direction:column;gap:10px;min-width:0}
+.canvas-box{position:relative;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card)}
+canvas{width:100%;max-width:100%;aspect-ratio:1/1;display:block}
+.status{position:absolute;left:12px;top:12px;max-width:calc(100% - 24px);display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;
+  padding:5px 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow)}
+.status::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--faint);flex:none}
+.status.warn{color:var(--warn)} .status.warn::before{background:var(--warn)}
+.status.ok{color:var(--ok)} .status.ok::before{background:var(--ok)}
+@media (max-width:640px){.status{position:static;margin:8px 10px 10px;max-width:none}}
+.legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--muted)}
+.legend i{display:inline-block;width:16px;height:3px;vertical-align:middle;margin-right:6px;border-radius:2px}
+.readout{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card)}
+.ro{padding:7px 12px;min-width:0;box-shadow:1px 0 0 var(--hair),0 1px 0 var(--hair)}
+.ro span{display:block;font-size:12px;color:var(--faint)}
+.ro b{font-family:var(--f-mono);font-weight:600;font-variant-numeric:tabular-nums;font-size:15px;overflow-wrap:anywhere}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+button{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:7px 16px;border-radius:999px;cursor:pointer;transition:border-color .15s,background-color .15s,color .15s}
+button:hover{border-color:var(--accent)}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.primary{background:var(--accent);color:var(--card);border-color:var(--accent);font-weight:700;padding-inline:22px}
+.ctrl{flex:1 1 300px;display:flex;flex-direction:column;gap:18px;min-width:0}
+.side{display:flex;flex-direction:column;gap:12px;min-width:0}
+.group{display:flex;flex-direction:column;gap:10px}
+.field{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"l o" "r r";gap:2px 10px;align-items:baseline}
+.field label{grid-area:l;font-size:14px}
+.field label .s{font-family:var(--f-mono);font-weight:600;margin-right:6px}
+.field label .note{font-size:12px}
+.numin{grid-area:o;display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:8px;padding:1px 8px 1px 2px;background:var(--sunk)}
+.numin:focus-within{border-color:var(--accent)}
+.numin input{width:6.2em;border:none;background:transparent;color:var(--accent);font:600 14px var(--f-mono);font-variant-numeric:tabular-nums;text-align:right;padding:3px 2px;outline:none;-moz-appearance:textfield}
+.numin input::-webkit-outer-spin-button,.numin input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.numin .u{font:500 12px var(--f-mono);color:var(--muted);min-width:1.5em}
+.presets button[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:700}
+.pnote{font-size:13px;color:var(--muted);border-left:2px solid var(--accent-soft);padding:2px 0 2px 10px}
+.pnote b{color:var(--ink);font-weight:600}
+.field input{grid-area:r}
+input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
+.seg{display:flex;padding:3px;gap:3px;border-radius:999px;background:var(--sunk);border:1px solid var(--line)}
+.seg button{flex:1;border:none;padding:6px 10px;background:transparent;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--card);color:var(--ink);font-weight:700;box-shadow:var(--shadow)}
+.seg button small{display:block;font-size:12px;font-weight:400;color:var(--faint);line-height:1.4}
+.presets{display:flex;flex-wrap:wrap;gap:6px}
+.presets button{font-size:13px;padding:4px 12px;background:var(--sunk)}
+.verdict{background:var(--sunk);border:1px solid var(--hair);border-radius:10px;padding:12px 14px;font-size:14px;line-height:1.8}
+.verdict b{color:var(--accent);font-family:var(--f-mono)}
+
+/* 结论 */
+.cl{display:flex;flex-direction:column}
+.cl details{border-top:1px solid var(--hair)}
+.cl details:last-child{border-bottom:1px solid var(--hair)}
+.cl summary{display:grid;grid-template-columns:2.6em minmax(0,1fr) minmax(0,auto) 1em;gap:6px 14px;align-items:center;padding:12px 4px;cursor:pointer;list-style:none}
+.cl summary::-webkit-details-marker{display:none}
+.cl summary:hover .t{color:var(--accent)}
+.badge{display:inline-grid;place-items:center;min-width:2.3em;height:1.7em;padding:0 6px;border-radius:6px;background:var(--accent-soft);color:var(--accent);font-family:var(--f-mono);font-weight:600;font-size:13px}
+.cl .f{font-family:var(--f-mono);font-size:14px;background:var(--sunk);border:1px solid var(--hair);border-radius:6px;padding:2px 10px;justify-self:end;text-align:right}
+.chev{width:8px;height:8px;border-right:2px solid var(--faint);border-bottom:2px solid var(--faint);transform:rotate(45deg);transition:transform .2s;justify-self:center}
+details[open]>summary .chev{transform:rotate(225deg)}
+@media (max-width:640px){.cl summary{grid-template-columns:2.6em minmax(0,1fr) 1em}.cl .f{grid-column:2;grid-row:2;justify-self:start;text-align:left}.chev{grid-column:3;grid-row:1}}
+.deriv{margin:0 4px 14px calc(2.6em + 18px);padding:4px 0 4px 14px;border-left:2px solid var(--accent-soft);white-space:pre-line;font-size:14px;color:var(--ink)}
+@media (max-width:640px){.deriv{margin-left:4px}}
+
+/* 变式 / 换皮题 */
+.qs{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:14px}
+.q{border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px;background:var(--card);min-width:0}
+.q .head{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+.q h3{font-size:16px;margin-right:auto}
+.chip{font-size:12px;font-family:var(--f-mono);border:1px solid var(--line);border-radius:999px;padding:0 8px;color:var(--muted)}
+.src{font-size:12px;color:var(--faint)}
+.map{font-size:13px;color:var(--muted)}
+.map b{font-weight:500;color:var(--ink)}
+.q details{border-top:1px dashed var(--line);padding-top:8px}
+.q details summary{cursor:pointer;color:var(--accent);font-size:14px;font-weight:500;list-style:none;display:flex;align-items:center;gap:8px;width:fit-content}
+.q details summary::-webkit-details-marker{display:none}
+.ans{margin-top:8px;display:flex;flex-direction:column;gap:6px;font-size:14px;background:var(--sunk);border-radius:8px;padding:10px 12px}
+.ans .a{font-weight:700}
+.q .foot{margin-top:auto;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:space-between}
+.q .foot button{font-size:13px;padding:4px 14px;color:var(--accent);border-color:var(--accent-soft);background:var(--accent-soft)}
+.srcs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.srcs li{display:grid;grid-template-columns:minmax(0,15em) minmax(0,1fr);gap:4px 16px;padding:8px 0;border-top:1px solid var(--hair);font-size:14px}
+.srcs li b{font-family:var(--f-mono);font-weight:500;font-size:13px}
+.srcs li span{color:var(--muted)}
+@media (max-width:620px){.srcs li{grid-template-columns:1fr}}
+footer{font-size:12px;color:var(--faint);text-align:center}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+
+<div class="wrap" id="app">
+  <header class="top">
+    <div>
+      <div class="brand"><span class="seal">格物</span><span>Gewu · 高中物理母题</span></div>
+      <h1 id="hName"></h1>
+      <p class="sub" id="hSub"></p>
+    </div>
+    <div class="tbwrap"><table class="tb" id="hTable"></table></div>
+  </header>
+
+  <section class="panel">
+    <div class="sh"><h2>母题</h2><small>题干数字随动画参数实时变化</small></div>
+    <div class="problem">
+      <p class="lead" id="stem"></p>
+      <ol class="asks" id="asks"></ol>
+      <p class="note" id="stemNote"></p>
+    </div>
+  </section>
+
+  <div class="board">
+    <nav class="tabs" role="tablist" aria-label="母题内容">
+      <button class="tab" role="tab" id="tab-lab" aria-controls="pane-lab" data-pane="pane-lab">动画实验</button>
+      <button class="tab" role="tab" id="tab-scope" aria-controls="pane-scope" data-pane="pane-scope">考点与边界</button>
+      <button class="tab" role="tab" id="tab-concl" aria-controls="pane-concl" data-pane="pane-concl">结论<span class="n" id="nConcl"></span></button>
+      <button class="tab" role="tab" id="tab-var" aria-controls="pane-var" data-pane="pane-var">变式<span class="n" id="nVar"></span></button>
+      <button class="tab" role="tab" id="tab-skin" aria-controls="pane-skin" data-pane="pane-skin">换皮题<span class="n" id="nSkin"></span></button>
+      <button class="tab" role="tab" id="tab-src" aria-controls="pane-src" data-pane="pane-src">题源<span class="n" id="nSrc"></span></button>
+    </nav>
+
+    <section class="pane" role="tabpanel" id="pane-lab" aria-labelledby="tab-lab">
+      <div class="lab">
+        <div class="stage">
+          <div class="legend" id="legend"></div>
+          <div class="canvas-box">
+            <canvas id="cv" aria-label="母题动画画布"></canvas>
+            <div class="status" id="status" role="status">准备就绪</div>
+          </div>
+          <div class="btns">
+            <button class="primary" id="play">▶ 发射</button>
+            <button id="reset">重置</button>
+            <button id="slow">慢放 ×0.25</button>
+          </div>
+        </div>
+        <div class="ctrl">
+          <div class="group"><div class="label">参数</div><div id="params" class="group"></div></div>
+          <div class="group"><div class="label">预设情形 <span id="presetMode"></span></div><div class="presets" id="presets"></div><p class="pnote" id="pnote" hidden></p></div>
+          <div class="group"><div class="label">理论预判</div><div class="verdict" id="verdict"></div></div>
+        </div>
+      </div>
+      <div class="group"><div class="label">实时读数</div><div class="readout" id="readout"></div></div>
+    </section>
+
+    <section class="pane" role="tabpanel" id="pane-scope" aria-labelledby="tab-scope" hidden>
+      <div class="row2">
+        <div class="group"><div class="label">核心考点</div><div class="tags" id="tags"></div></div>
+        <div class="group"><div class="label">适用边界</div>
+          <div class="bnd">
+            <div><div class="hint">结论成立条件</div><ul class="ok" id="bCond"></ul></div>
+            <div><div class="hint">超出边界时回到</div><ul class="back" id="bBack"></ul></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pane" role="tabpanel" id="pane-concl" aria-labelledby="tab-concl" hidden>
+      <p class="hint">点开每条结论看推导。</p>
+      <div class="cl" id="concl"></div>
+    </section>
+
+    <section class="pane" role="tabpanel" id="pane-var" aria-labelledby="tab-var" hidden>
+      <p class="hint">同一骨架，换条件或问法。点「加载到动画」可直接在动画里验证。</p>
+      <div class="qs" id="variants"></div>
+    </section>
+
+    <section class="pane" role="tabpanel" id="pane-skin" aria-labelledby="tab-skin" hidden>
+      <p class="hint">同一骨架，换情境外形。</p>
+      <div class="qs" id="reskins"></div>
+    </section>
+
+    <section class="pane" role="tabpanel" id="pane-src" aria-labelledby="tab-src" hidden>
+      <ul class="srcs" id="sources"></ul>
+    </section>
+  </div>
+
+  <footer id="foot"></footer>
+</div>
+
+<script>
+/* ================= 线稿绘图工具 FIG（所有母题共用，不改） =================
+   画法照试卷插图：装置用墨线，固定面画斜线阴影，辅助线用虚线，物理量和点的字母用斜体衬线；
+   只有矢量带颜色（--g 重力/外力，--n 弹力/约束力，--v 速度，--a 其他矢量）。
+   用法：SIM.draw 里 const F=FIG(ctx,W,tok)；坐标是画布像素，F.u = W/720 是线宽与几何的基准单位，
+   F.ut 是字号单位（窄屏时不再随画布缩小，保证字母不小于约 11 CSS 像素；自写文字函数也要用 F.ut 算字号）。
+   颜色：F.ink 墨线、F.auxColor 辅助线、F.paper 纸色（F.aux 是画辅助线的方法，不是颜色）。 */
+const FIG=(ctx,W,tok)=>{
+  const u=W/720,ink=tok('--fig-ink'),aux=tok('--fig-aux'),paper=tok('--card');
+  const dp=W/(ctx.canvas.clientWidth||W),ut=Math.max(u,dp*11/19);   // dp：每 CSS 像素的画布像素数
+  const SERIF='"Times New Roman","STIX Two Text",Times,serif',SANS=tok('--f-body');
+  const path=(fn,{w=1.6,color=ink,dash=null,fill=null}={})=>{ctx.save();ctx.beginPath();fn();
+    if(fill){ctx.fillStyle=fill;ctx.fill()}
+    if(w>0){ctx.lineWidth=w*u;ctx.strokeStyle=color;ctx.setLineDash(dash?dash.map(d=>d*u):[]);ctx.lineCap='round';ctx.lineJoin='round';ctx.stroke()}
+    ctx.restore()};
+  // 文字先描一圈底色再填色，压在线条上也清楚
+  const text=(t,x,y,font,color,align,base)=>{ctx.save();ctx.font=font;ctx.textAlign=align;ctx.textBaseline=base;
+    ctx.lineJoin="round";ctx.lineWidth=5*ut;ctx.strokeStyle=paper;ctx.strokeText(t,x,y);ctx.fillStyle=color;ctx.fillText(t,x,y);ctx.restore()};
+  const F={u,ut,ink,auxColor:aux,paper,
+    clear(){ctx.save();ctx.setLineDash([]);ctx.fillStyle=paper;ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);ctx.restore()},
+    line(x1,y1,x2,y2,o){path(()=>{ctx.moveTo(x1,y1);ctx.lineTo(x2,y2)},o)},
+    poly(pts,o){path(()=>pts.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y)),o)},
+    circle(x,y,r,o){path(()=>ctx.arc(x,y,r,0,2*Math.PI),o)},
+    arc(x,y,r,a0,a1,o){path(()=>ctx.arc(x,y,r,a0,a1),o)},
+    rect(x,y,w,h,o){path(()=>ctx.rect(x,y,w,h),o)},
+    // 辅助线（中心线、投影线等）
+    aux(x1,y1,x2,y2,o={}){F.line(x1,y1,x2,y2,{w:1,color:aux,dash:[6,5],...o})},
+    // 运动轨迹：细虚线
+    trail(pts,o={}){if(pts.length>1)F.poly(pts,{w:1.3,color:aux,dash:[5,5],...o})},
+    // 固定面斜线：沿 (x1,y1)→(x2,y2) 的直线，画在 side 一侧（屏幕坐标下，1 = 前进方向右手侧）
+    hatch(x1,y1,x2,y2,side=1,{gap=12,len=10}={}){const L=Math.hypot(x2-x1,y2-y1),n=Math.max(1,Math.round(L/(gap*u)));
+      const tx=(x2-x1)/L,ty=(y2-y1)/L,nx=-ty*side,ny=tx*side,ox=(nx-tx)*len*u/Math.SQRT2,oy=(ny-ty)*len*u/Math.SQRT2;
+      path(()=>{for(let i=0;i<=n;i++){const x=x1+(x2-x1)*i/n,y=y1+(y2-y1)*i/n;ctx.moveTo(x,y);ctx.lineTo(x+ox,y+oy)}},{w:1,color:aux})},
+    // 圆弧形固定面的斜线：out = true 画在圆外侧
+    hatchArc(cx,cy,r,a0,a1,out=true,{gap=12,len=10}={}){const n=Math.max(1,Math.round(r*Math.abs(a1-a0)/(gap*u))),s=out?1:-1;
+      path(()=>{for(let i=0;i<=n;i++){const a=a0+(a1-a0)*i/n,c=Math.cos(a),si=Math.sin(a),x=cx+r*c,y=cy+r*si;
+        const nx=c*s,ny=si*s,tx=-si,ty=c;ctx.moveTo(x,y);ctx.lineTo(x+(nx-tx)*len*u/Math.SQRT2,y+(ny-ty)*len*u/Math.SQRT2)}},{w:1,color:aux})},
+    // 矢量：从 (x,y) 画到 (x+dx,y+dy)，细杆 + 窄实心箭头；label 用斜体写在箭头外侧，
+    // 与别的矢量共线时用 off=[dx,dy]（单位 u，相对箭头尖）把标注挪到旁边
+    arrow(x,y,dx,dy,color,label,{w=2,head=12,size=19,off=null}={}){const L=Math.hypot(dx,dy);if(L<2*u)return;
+      const ux=dx/L,uy=dy/L,h=Math.min(head*u,L*.6),hw=h*.34,tx=x+dx,ty=y+dy;
+      F.line(x,y,tx-ux*h*.7,ty-uy*h*.7,{w,color});
+      path(()=>{ctx.moveTo(tx,ty);ctx.lineTo(tx-ux*h-uy*hw,ty-uy*h+ux*hw);ctx.lineTo(tx-ux*h+uy*hw,ty-uy*h-ux*hw);ctx.closePath()},{w:0,fill:color});
+      if(label)F.label(label,off?tx+off[0]*u:tx+ux*14*u,off?ty+off[1]*u:ty+uy*14*u,{color,size})},
+    // 斜体衬线字母（物理量、点名）
+    label(t,x,y,{color=ink,size=19,align='center',base='middle',italic=true}={}){text(t,x,y,`${italic?'italic ':''}${size*ut}px ${SERIF}`,color,align,base)},
+    // 中文小注
+    zh(t,x,y,{color=aux,size=14,align='center',base='middle'}={}){text(t,x,y,`${size*ut}px ${SANS}`,color,align,base)},
+    dot(x,y,r=2.6,color=ink){F.circle(x,y,r*u,{w:0,fill:color})},
+    // 带名字的点：实心小点 + 斜体字母（dx、dy 为字母相对点的偏移，单位 u）
+    point(x,y,name,dx=-13,dy=13){F.dot(x,y);if(name)F.label(name,x+dx*u,y+dy*u)},
+    // 小球：空心圆，球心另用 F.dot 标出（矢量画完后再点，表示力作用在重心）
+    ball(x,y,r){F.circle(x,y,r,{w:1.6,fill:paper})},
+    // 尺寸标注：两端带箭头的细线，文字写在中点外侧 off（单位 u）
+    dim(x1,y1,x2,y2,t,{off=14,color=ink}={}){const L=Math.hypot(x2-x1,y2-y1);if(L<4*u)return;const ux=(x2-x1)/L,uy=(y2-y1)/L,h=Math.min(8*u,L/3),hw=h*.38;
+      F.line(x1,y1,x2,y2,{w:1,color});
+      for(const[px,py,sx]of[[x1,y1,1],[x2,y2,-1]])path(()=>{ctx.moveTo(px,py);ctx.lineTo(px+sx*ux*h-uy*hw,py+sx*uy*h+ux*hw);ctx.lineTo(px+sx*ux*h+uy*hw,py+sx*uy*h-ux*hw);ctx.closePath()},{w:0,fill:color});
+      if(t)F.label(t,(x1+x2)/2-uy*off*u,(y1+y2)/2+ux*off*u,{color})},
+  };
+  return F;
+};
+
+/* ================= SIM 模块：每个母题替换这一段 =================
+   约定接口：
+   SIM.legend            [{label, color(CSS 变量名)}]
+   SIM.init(P)           → 状态 S（含 S.done、S.status={text,cls}）
+   SIM.step(S,P,dt)      推进 dt 秒（引擎保证 dt ≤ 0.5 ms）
+   SIM.readouts(S,P)     → [[标签, 带单位的值]]
+   SIM.draw(ctx,S,P,W,H,tok)  tok(name) 取主题色
+   SIM.verdict(P)        → 理论预判 HTML
+*/
+const SIM=(()=>{
+  const PI=Math.PI,D2R=PI/180,C45=Math.SQRT1_2;
+  const SUP={'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  // n 位有效数字；负号用 −，很小的数写成 ×10⁻ⁿ
+  const sf=(x,n=3)=>{if(!isFinite(x))return'—';const a=Math.abs(x),sg=x<0?'−':'';if(a<1e-12)return'0';
+    if(a>=Math.pow(10,n))return sg+a.toFixed(0);
+    const r=+a.toPrecision(n),p=Math.floor(Math.log10(r));                 // 先按有效数字舍入，避免 9.9996 → 10.000 多出一位
+    if(r<1e-3)return sg+(r/Math.pow(10,p)).toFixed(n-1)+'×10'+String(p).replace(/./g,c=>SUP[c]);
+    return sg+r.toFixed(Math.max(0,n-1-p))};
+  const z=(x,scale)=>Math.abs(x)<5e-5*scale?0:x;               // 相对量程小于 5×10⁻⁵ 的数显示为 0（读数只到 4 位有效数字）
+  /* 参数换算与理论值（理论值只用于预判、画图比例和暂停时的对照，不参与积分） */
+  function cfg(P){
+    const S=P.L1*P.L2,Pm=P.B*S,w=P.w,Em=P.N*Pm*w,T=2*PI/w,xf=P.mode==='xfmr';
+    const k=xf?P.n1/P.n2:1,Rq=k*k*P.R,Rt=P.r+Rq;            // k = n₁/n₂；Rq：从发电机看外电路的电阻（直接接时就是 R）
+    const E=Em/Math.SQRT2,I1=E/Rt,IR=I1*k;
+    const slow=w<=4*PI*1.001?1:w/(2*PI);                      // ω > 4π 时画面放慢到约 1 s 一圈
+    return{S,Pm,w,Em,T,f:1/T,xf,k,Rq,Rt,E,I1,IR,U1:I1*Rq,UR:IR*P.R,PR:IR*IR*P.R,Im:Em/Rt,
+      th0:P.th0*D2R,stop:P.stop>0?P.stop*D2R:0,tStop:P.stop>0?P.stop*D2R/w:0,h:Math.min(1e-3,T/2000),slow};
+  }
+  const cross=(a,b)=>[a[1]*b[2]-a[2]*b[1],a[2]*b[0]-a[0]*b[2],a[0]*b[1]-a[1]*b[0]];
+  const dot=(a,b)=>a[0]*b[0]+a[1]*b[1]+a[2]*b[2];
+  /* 动生电动势：坐标 x 沿 B（N → S），y 竖直向上，z 沿转轴伸向纸内。θ 为线圈平面与中性面的夹角。
+     ab 边中点 (−½L₂ sinθ, ½L₂ cosθ, 0)，速度 v = (−½L₂ω cosθ, −½L₂ω sinθ, 0)，a → b 沿 +z；cd 在对称位置，c → d 沿 −z。
+     e = N[(v_ab × B)·L_ab + (v_cd × B)·L_cd]；bc、da 的 v × B 沿转轴，与导线垂直，不产生电动势。 */
+  function emf(P,th){
+    const h=P.L2/2,s=Math.sin(th),c=Math.cos(th),Bv=[P.B,0,0];
+    const vab=[-h*P.w*c,-h*P.w*s,0],vcd=[h*P.w*c,h*P.w*s,0],lab=[0,0,P.L1],lcd=[0,0,-P.L1];
+    return{e:P.N*(dot(cross(vab,Bv),lab)+dot(cross(vcd,Bv),lcd)),vab,vcd,lab,lcd,Bv};
+  }
+  const flux=(P,K,th)=>P.B*K.S*Math.cos(th);                 // 单匝磁通量 Φ = B·S·(n·x̂)，法线 n = (cosθ, sinθ, 0)
+  // 状态 y = [θ, q, Q_R, Q总, W外, ∫i₁²dt, ∫i_R²dt] 的导数
+  function der(P,K,th){
+    const m=emf(P,th),i1=m.e/K.Rt,iR=i1*K.k;
+    const Fab=cross(m.lab,m.Bv).map(x=>x*P.N*i1),Fcd=cross(m.lcd,m.Bv).map(x=>x*P.N*i1);   // 安培力 F = N i L × B
+    const Pext=-(dot(Fab,m.vab)+dot(Fcd,m.vcd));                                          // 匀速转动：外力功率 = 克服安培力的功率
+    return[P.w,i1,iR*iR*P.R,i1*i1*P.r+iR*iR*P.R,Pext,i1*i1,iR*iR];
+  }
+  function rk4(P,K,y,h){
+    const ad=(a,b,c)=>a.map((v,i)=>v+b[i]*c),f=yy=>der(P,K,yy[0]);
+    const k1=f(y),k2=f(ad(y,k1,h/2)),k3=f(ad(y,k2,h/2)),k4=f(ad(y,k3,h));
+    return y.map((v,i)=>v+h/6*(k1[i]+2*k2[i]+2*k3[i]+k4[i]));
+  }
+  const flips=(K,th)=>Math.floor(th/PI+1e-9)-Math.floor(K.th0/PI+1e-9);   // 经过中性面（θ = kπ）的次数 = 电流换向次数
+  // 起始位置 θ₀ 转过 Δθ 的理论值：q = NΔΦ/(R+r)，Q_R 按 ∫sin² 精确积分，错误值 Ī²Rt
+  function turn(P,K,dth){
+    const a=K.th0,b=a+dth,t=dth/P.w,q=P.N*P.B*K.S*(Math.cos(a)-Math.cos(b))/K.Rt;
+    const G=dth/2-(Math.sin(2*b)-Math.sin(2*a))/4,QR=K.Em*K.Em*K.Rq/(K.Rt*K.Rt)/P.w*G;
+    const IRt=K.I1*K.I1*K.Rq*t,Ib=q/t;
+    return{t,q,QR,IRt,eq:Math.abs(Math.sin(2*b)-Math.sin(2*a))<1e-9,wrong:Ib*Ib*K.Rq*t};
+  }
+  function idle(P,K){
+    const d=((P.th0%180)+180)%180;
+    return d<1e-9?'准备就绪：中性面，Φ 最大、e = 0':Math.abs(d-90)<1e-9?'准备就绪：与磁场平行，Φ = 0、e 最大':'准备就绪';
+  }
+  return{
+    legend:[{label:'安培力 F安',color:'--n'},{label:'速度 v',color:'--v'},{label:'感应电流 i',color:'--a'}],
+    init(P){
+      const K=cfg(P),th=K.th0,e=emf(P,th).e;
+      return{K,t:0,th,q:0,QR:0,Qt:0,W:0,J1:0,JR:0,emax:Math.abs(e),chk:0,nextB:K.T,lastJ:[0,0],meter:null,
+        hist:[[0,e,flux(P,K,th)]],lastH:0,done:false,status:{text:idle(P,K),cls:''}};
+    },
+    step(S,P,dt){
+      if(S.done)return;
+      const K=S.K;let rem=dt/K.slow;                         // 慢放：画面时间 dt 对应物理时间 dt/slow，积分按物理时间
+      while(rem>0&&!S.done){
+        let tt=Math.min(S.t+Math.min(rem,K.h),S.nextB);       // 步长 ≤ min(1 ms, T/2000)，并落在整周期边界与暂停时刻上
+        if(K.tStop)tt=Math.min(tt,K.tStop);
+        const h=tt-S.t;let hit=false;
+        if(h>0){
+          const th0=S.th,y=rk4(P,K,[S.th,S.q,S.QR,S.Qt,S.W,S.J1,S.JR],h);
+          [S.th,S.q,S.QR,S.Qt,S.W,S.J1,S.JR]=y;S.t=tt;rem-=h;
+          const e=emf(P,S.th).e;S.emax=Math.max(S.emax,Math.abs(e));
+          // 用 Φ 的数值差分 −NΔΦ/Δt 校核切割算出的 e（取步长中点）
+          if(h>1e-9)S.chk=Math.max(S.chk,Math.abs(-P.N*(flux(P,K,S.th)-flux(P,K,th0))/h-emf(P,(th0+S.th)/2).e));
+          if(S.t<=K.T*(1+1e-9)&&S.t-S.lastH>=K.T/400-1e-12){S.hist.push([S.t,e,flux(P,K,S.th)]);S.lastH=S.t}
+        }
+        if(S.t>=S.nextB){                                       // 整周期：电表读这一周期的方均根
+          hit=true;S.meter={I1:Math.sqrt((S.J1-S.lastJ[0])/K.T),IR:Math.sqrt((S.JR-S.lastJ[1])/K.T)};
+          S.lastJ=[S.J1,S.JR];S.nextB+=K.T;
+        }
+        if(K.tStop&&S.t>=K.tStop){S.done=true;S.t=K.tStop}
+        if(h<=0&&!hit)break;                                    // 剩下的时间小于浮点分辨率
+      }
+      if(S.done){S.status={text:`转过 ${+P.stop.toFixed(1)}°，已暂停：读 q 与 Q_R`,cls:'ok'};return}
+      const d=((S.th/D2R)%180+180)%180;
+      S.status=d<90?{text:'由中性面转向平行位置：|Φ|↓，|e|↑',cls:''}:{text:'由平行位置转向中性面：|Φ|↑，|e|↓',cls:''};
+    },
+    readouts(S,P){
+      const K=S.K,e=emf(P,S.th).e,i1=e/K.Rt,iR=i1*K.k,deg=((S.th/D2R)%360+360)%360,xf=K.xf;
+      const qs=2*P.N*K.Pm/K.Rt;
+      const r=[['时间 t',sf(S.t,4)+' s'],['转角 θ（与中性面）',deg.toFixed(1)+'°'],['已转圈数',((S.th-K.th0)/(2*PI)).toFixed(3)+' 圈'],
+        ['电流换向次数',flips(K,S.th)+' 次'],['磁通量 Φ（单匝）',sf(z(flux(P,K,S.th),K.Pm))+' Wb'],['电动势 e',sf(z(e,K.Em))+' V'],
+        [xf?'原线圈电流 i₁':'电流 i',sf(z(i1,K.Im))+' A'],['R 两端电压 u_R',sf(z(iR*P.R,K.Im*K.k*P.R))+' V'],['ab 边安培力 F安',sf(z(Math.abs(P.N*P.B*i1*P.L1),P.N*P.B*K.Im*P.L1))+' N']];
+      const M=S.meter,wait='待满一周';
+      if(xf)r.push(['电流表 I₁',M?sf(M.I1,4)+' A':wait],['原线圈电压 U₁',M?sf(M.I1*K.Rq,4)+' V':wait],
+        ['电压表 U₂',M?sf(M.IR*P.R,4)+' V':wait],['副线圈电流 I₂',M?sf(M.IR,4)+' A':wait]);
+      else r.push(['电压表 U',M?sf(M.IR*P.R,4)+' V':wait],['电流表 I',M?sf(M.I1,4)+' A':wait]);
+      r.push(['R 的功率 P_R',M?sf(M.IR*M.IR*P.R,4)+' W':wait],['峰值 Em（实测）',sf(S.emax,4)+' V'],
+        ['周期 T',sf(K.T,4)+' s'],['频率 f',sf(K.f,4)+' Hz'],['转速 n',sf(K.f,4)+' r/s'],
+        [xf?'原线圈电量 q₁':'通过 R 的电量 q',sf(z(S.q,qs),4)+' C'],['R 的热量 Q_R',sf(S.QR,4)+' J'],['总热量 Q总',sf(S.Qt,4)+' J'],['外力做功 W外',sf(S.W,4)+' J']);
+      if(S.done&&K.stop){const t=turn(P,K,K.stop);
+        r.push([xf?'q₁ 理论 NΔΦ/(r+R′)':'q 理论 NΔΦ/(R+r)',sf(z(t.q,qs),4)+' C'],['Q_R 理论值',sf(t.QR,4)+' J'],['用 Ī²Rt 算（错）',sf(t.wrong,4)+' J'])}
+      return r;
+    },
+    draw(ctx,S,P,W,H,tok){
+      const F=FIG(ctx,W,tok),u=F.u,ut=F.ut,k=ut/u,K=S.K,ink=F.ink,paper=F.paper,cX=F.auxColor;
+      const cN=tok('--n'),cV=tok('--v'),cA=tok('--a');
+      F.clear();
+      // 字号、测宽和跟文字大小有关的偏移都用 F.ut（窄屏时字不随画布缩小），几何仍用 u
+      const SERIF='"Times New Roman","STIX Two Text",Times,serif',SANS=tok('--f-body');
+      const wid=(str,s,o={})=>{ctx.save();ctx.font=o.zh?`${s*ut}px ${SANS}`:`${o.i===false?'':'italic '}${s*ut}px ${SERIF}`;const w=ctx.measureText(str).width;ctx.restore();return w};
+      const pw=parts=>parts.reduce((a,[str,o={}])=>a+wid(str,(o.s||19)*(o.sub?.66:1),o),0);
+      // 一行混排：parts = [[文字, {i:false 正体, s 字号, sub 下标, zh 中文}]]，按 align 对齐到 (x,y)
+      const run=(parts,x,y,{color=ink,align='left'}={})=>{
+        let cx=x-(align==='center'?.5:align==='right'?1:0)*pw(parts);
+        for(const[str,o={}]of parts){const s=(o.s||19)*(o.sub?.66:1),w=wid(str,s,o),y1=y+(o.sub?6*ut:0);
+          if(o.zh)F.zh(str,cx,y1,{color,size:s,align:'left'});else F.label(str,cx,y1,{color,size:s,align:'left',italic:o.i!==false});cx+=w}};
+      const head=(x,y,ux,uy,color,h=8*u)=>{const hw=h*.36;F.poly([[x,y],[x-ux*h-uy*hw,y-uy*h+ux*hw],[x-ux*h+uy*hw,y-uy*h-ux*hw]],{w:0,fill:color})};
+      const darrow=(x,y,dx,dy,color)=>{const L=Math.hypot(dx,dy);if(L<5*u)return;const ux=dx/L,uy=dy/L;
+        F.line(x,y,x+dx-ux*6*u,y+dy-uy*6*u,{w:1.3,color,dash:[4,3]});head(x+dx,y+dy,ux,uy,color,9*u)};
+      const th=S.th,e=emf(P,th).e,i1=e/K.Rt,ir=K.Im>0?i1/K.Im:0,Phi=flux(P,K,th);
+      // 桌面宽度时状态条（一行，底边约 46 CSS px）浮在画布左上角，图从它下面开始；窄屏（≤ 640px）时状态条排在画布下方
+      const narrow=typeof matchMedia==='function'&&matchMedia('(max-width:640px)').matches,cw=ctx.canvas.clientWidth||640;
+      const y0=narrow?10*u+8*ut:(46*720/cw+8)*u;
+      /* ---------- 发电机示意图（斜二测：转轴 z 伸向纸内，画成向左上 45°、长度减半） ---------- */
+      const Gx=218*u,Gy=y0+136*u,yw1=Gy+122*u,yw2=Gy+158*u;
+      const sc=Math.min(62/(P.L2/2),124/(P.L1/2))*u,rho=P.L2/2*sc,hz=P.L1/2*sc;   // 线圈按真实比例缩放
+      const P3=(x,y,z)=>[Gx+x-.5*z*C45,Gy-y-.5*z*C45];
+      const zK=-hz-60*u,zL=-hz-110*u,zF=-hz-165*u,zB=hz+185*u,zW=hz+160*u;
+      // 转轴 OO′（细虚线，先画，被磁极和线圈挡住的部分自然断开）
+      const[ofx,ofy]=P3(0,0,zF),[obx,oby]=P3(0,0,zB);
+      F.aux(obx,oby,ofx,ofy);
+      // 磁极：墨线轮廓，极面为相对的凹弧（画在转轴所在的竖直截面上，线圈在它前面转）
+      const Rp=115*u,Hp=70*u,Wp=58*u;
+      for(const s of[-1,1]){const pts=[[Gx+s*(Rp+Wp),Gy-Hp]];
+        for(let j=0;j<=36;j++){const yy=-Hp+2*Hp*j/36;pts.push([Gx+s*Math.sqrt(Rp*Rp-yy*yy),Gy+yy])}
+        pts.push([Gx+s*(Rp+Wp),Gy+Hp],pts[0]);F.poly(pts,{w:1.8,fill:paper});
+        F.label(s<0?'N':'S',Gx+s*(Rp+Wp*.5+4*u),Gy,{italic:false,size:24})}
+      // 磁感线：N → S，细墨线带箭头
+      for(const yy of[-52,-26,0,26,52]){const y=Gy+yy*u,xe=Math.sqrt(Rp*Rp-yy*yy*u*u)-2*u;
+        F.line(Gx-xe,y,Gx+xe,y,{w:1});head(Gx+xe-14*u,y,1,0,ink,8*u)}
+      F.label('B',Gx+70*u,Gy-52*u-13*ut);
+      // 转动方向 ω：在转轴后段画一个绕轴的弧形箭头（从前往后看逆时针）
+      {const[wx,wy]=P3(0,0,zW),R=14*u,a0=-PI*.15,a1=-PI*1.55;F.arc(wx,wy,R,a1,a0,{w:1.3});
+        head(wx+R*Math.cos(a1),wy+R*Math.sin(a1),Math.sin(a1),-Math.cos(a1),ink,8*u);F.label('ω',wx-R-11*ut,wy+4*u)}
+      // 线圈 abcd：先描一圈纸色再画墨线，压在磁感线上时把它们断开
+      const s0=Math.sin(th),c0=Math.cos(th),ax=-s0*rho,ay=c0*rho;
+      const A=P3(ax,ay,-hz),Bq=P3(ax,ay,hz),Cq=P3(-ax,-ay,hz),Dq=P3(-ax,-ay,-hz),M=P3(0,0,-hz);
+      const loop=[A,Bq,Cq,Dq,A];F.poly(loop,{w:7,color:paper});F.poly(loop,{w:2.3});
+      // 线圈旁的感应电流方向（ab 中 a → b 为正）
+      const showI=Math.abs(ir)>.05;            // 电流箭头长度随 |i| 变化，太小时不画
+      if(showI){const L=(12+20*Math.abs(ir))*u,sg=Math.sign(ir),off=rho+13*u,dx=-C45*sg*L,dy=-C45*sg*L;
+        const[px,py]=P3(-s0*off,c0*off,0),[qx,qy]=P3(s0*off,-c0*off,0);
+        F.arrow(px-dx/2,py-dy/2,dx,dy,cA,null,{w:1.6,head:9});F.arrow(qx+dx/2,qy+dy/2,-dx,-dy,cA,null,{w:1.6,head:9})}
+      // 转轴、滑环与电刷（都在线圈前方）
+      const[Kx,Ky]=P3(0,0,zK),[Lx,Ly]=P3(0,0,zL),rr=9*u,bw=9*u,bh=11*u;
+      F.line(M[0],M[1],Kx,Ky,{w:6,color:paper});F.line(M[0],M[1],Kx,Ky,{w:1.8});
+      F.circle(Kx,Ky,rr,{w:1.5,fill:paper});F.line(Kx,Ky,Lx,Ly,{w:1.8});F.circle(Lx,Ly,rr,{w:1.5,fill:paper});
+      for(const[x,y]of[[Kx,Ky],[Lx,Ly]])F.rect(x-bw/2,y+rr,bw,bh,{w:1.4,fill:paper});
+      // 引线：d → 滑环 L → 上导线；a → 滑环 K → 下导线
+      const xf=K.xf,xA=430*u,mr=Math.max(12*u,10*ut);
+      const xR=xf?624*u:566*u,xV=xf?684*u:668*u,xc0=494*u,xc1=560*u,ct=8*u,xT=xf?xc0-5*u:xV;
+      const lead=pts=>{F.poly(pts,{w:6,color:paper});F.poly(pts,{w:1.6})};
+      lead([[Lx,Ly+rr+bh],[Lx,yw1],[xT,yw1]]);lead([[Kx,Ky+rr+bh],[Kx,yw2],[xT,yw2]]);
+      F.label('O',ofx+12*ut,ofy-2*ut);F.label('O′',obx-12*ut,oby-9*ut);
+      // 顶点字母放在该角的外侧（两条邻边方向之和的反方向）
+      const Q=[A,Bq,Cq,Dq],nv=(p,q)=>{const dx=q[0]-p[0],dy=q[1]-p[1],L=Math.hypot(dx,dy)||1;return[dx/L,dy/L]};
+      ['a','b','c','d'].forEach((t,j)=>{const p=Q[j],e1=nv(p,Q[(j+1)%4]),e2=nv(p,Q[(j+3)%4]);let dx=-(e1[0]+e2[0]),dy=-(e1[1]+e2[1]);
+        const L=Math.hypot(dx,dy);if(L<.2){dx=p[0]-Gx;dy=p[1]-Gy}const M2=Math.hypot(dx,dy)||1;F.label(t,p[0]+dx/M2*12*ut,p[1]+dy/M2*12*ut)});
+      // 外电路：电流表 Ⓐ 串在干路；直接接时 R 与 Ⓥ 并联在两导线之间；变压器模式接口字形铁芯
+      const ym=(yw1+yw2)/2;
+      const meter=(x,y,t)=>{F.circle(x,y,mr,{w:1.5,fill:paper});F.label(t,x,y+.5*u,{italic:false,size:16})};
+      const resistor=(x)=>{F.line(x,yw1,x,yw2,{w:1.6});const rh=Math.min(26*u,yw2-yw1-8*u);F.rect(x-6*u,ym-rh/2,12*u,rh,{w:1.6,fill:paper});
+        F.label('R',x-6*u-11*ut,ym);F.dot(x,yw1,2.6);F.dot(x,yw2,2.6)};
+      const vbranch=x=>{F.line(x,yw1,x,yw2,{w:1.6});meter(x,ym,'V')};
+      meter(xA,yw1,'A');
+      const iw=(x,y,sg,L)=>{if(L>=4*u)F.arrow(x-sg*L/2,y,sg*L,0,cA,null,{w:1.6,head:9})};
+      const xm=(Math.max(Lx,Kx)+xA-mr)/2,Lw=(10+18*Math.abs(ir))*u,sgn=Math.sign(ir);
+      if(showI){iw(xm,yw1-9*u,sgn,Lw);iw(xm,yw2+9*u,-sgn,Lw)}
+      if(!xf){F.line(xR,yw1,xV,yw1,{w:1.6});F.line(xR,yw2,xV,yw2,{w:1.6});resistor(xR);vbranch(xV);
+        if(showI&&Lw>=4*u)F.arrow(xR+13*u,ym-sgn*Lw/2,0,sgn*Lw,cA,null,{w:1.6,head:9})}
+      else{
+        const yc0=yw1-16*u,yc1=yw2+16*u,nmax=Math.max(P.n1,P.n2);
+        F.rect(xc0,yc0,xc1-xc0,yc1-yc0,{w:1.5});F.rect(xc0+ct,yc0+ct,xc1-xc0-2*ct,yc1-yc0-2*ct,{w:1.5});
+        // 绕组：在铁芯柱上画折线，匝数多少按 n₁∶n₂ 示意
+        const wind=(xo,xi,n)=>{const pts=[[xo,yw1]];for(let j=0;j<n;j++){const y=yw1+(yw2-yw1)*(j+.5)/n;pts.push([xi,y-3*u],[xo,y+3*u])}pts.push([xo,yw2]);F.poly(pts,{w:1.5})};
+        wind(xc0-5*u,xc0+ct+5*u,2+Math.round(4*P.n1/nmax));wind(xc1+5*u,xc1-ct-5*u,2+Math.round(4*P.n2/nmax));
+        run([['n'],['1',{sub:1,i:false}]],xc0+ct/2,yc1+13*ut,{align:'center'});run([['n'],['2',{sub:1,i:false}]],xc1-ct/2,yc1+13*ut,{align:'center'});
+        F.line(xc1+5*u,yw1,xV,yw1,{w:1.6});F.line(xc1+5*u,yw2,xV,yw2,{w:1.6});resistor(xR);vbranch(xV);
+        const LR=(10+18*Math.abs(ir))*u;   // 副线圈电流与 i₁ 同相
+        if(showI&&LR>=4*u){iw((xc1+5*u+xR)/2,yw1-9*u,sgn,LR*.8);F.arrow(xR+13*u,ym-sgn*LR/2,0,sgn*LR,cA,null,{w:1.6,head:9})}
+      }
+      /* ---------- 侧视图：沿转轴方向看（从前往后） ---------- */
+      const Sx=596*u,Sy=y0+112*u,rs=60*u;
+      for(const yy of[-76,-38,38,76])F.arrow(Sx-106*u,Sy+yy*u,212*u,0,ink,null,{w:1,head:8});
+      F.label('B',Sx+98*u,Sy-76*u-13*ut);
+      F.aux(Sx,Sy-92*u,Sx,Sy+92*u);F.zh('中性面',Sx,Sy-92*u-10*ut);
+      const pA=[Sx-rs*s0,Sy-rs*c0],pC=[Sx+rs*s0,Sy+rs*c0];
+      // 标注避让：segs 为已画的线段，labs 为已放的文字（圆心 + 半径），候选位置取离它们最远的
+      const segs=[[pC,pA]],labs=[];
+      const segD=(x,y,[a,b])=>{const dx=b[0]-a[0],dy=b[1]-a[1],L2=dx*dx+dy*dy||1,t=Math.max(0,Math.min(1,((x-a[0])*dx+(y-a[1])*dy)/L2));return Math.hypot(x-a[0]-t*dx,y-a[1]-t*dy)};
+      const clear=(x,y,r)=>Math.min(1e9,...segs.map(g=>segD(x,y,g)-r),...labs.map(([lx,ly,lr])=>Math.hypot(x-lx,y-ly)-r-lr));
+      const place=(cands,r)=>{let best=cands[0],bs=-1e9;for(const[c,bonus=0]of cands.map(c=>Array.isArray(c[0])?c:[c,0])){const v=clear(c[0],c[1],r)+bonus;if(v>bs){bs=v;best=c}}labs.push([best[0],best[1],r]);return best};
+      // θ：从中性面（向上）到 ab 的转角
+      const tm=((th%(2*PI))+2*PI)%(2*PI),aA=-PI/2-tm;
+      if(tm>.06&&tm<2*PI-.06){F.arc(Sx,Sy,20*u,aA,-PI/2,{w:1.1});const am=aA+tm/2,x=Sx+(20*u+10*ut)*Math.cos(am),y=Sy+(20*u+10*ut)*Math.sin(am);
+        F.label('θ',x,y,{size:17});labs.push([x,y,7*ut])}
+      F.line(pC[0],pC[1],pA[0],pA[1],{w:2.4});F.dot(Sx,Sy,2.4);
+      // ab、cd 两端：小圆圈内标电流方向（ab 中 a → b 为正，即垂直纸面向里 ⊗）
+      const end=([x,y],sgI)=>{F.circle(x,y,6.5*u,{w:1.4,fill:paper});if(!showI)return;
+        if(sgI>0){const d=3.4*u;F.line(x-d,y-d,x+d,y+d,{w:1.4,color:cA});F.line(x+d,y-d,x-d,y+d,{w:1.4,color:cA})}else F.dot(x,y,2.2,cA)};
+      // 速度、v⊥ 与安培力（ab 端标字母，cd 端只画箭头）
+      const Lv=36*u,vx=-c0*Lv,vy=s0*Lv,LF=40*u*Math.abs(ir),fy=-Math.sign(ir)*LF,vp=k<1.15&&Math.abs(vy)>=5*u;
+      for(const[p,sg]of[[pA,1],[pC,-1]]){
+        if(vp){darrow(p[0],p[1],0,sg*vy,cV);segs.push([p,[p[0],p[1]+sg*vy]])}
+        if(LF>=3*u){F.arrow(p[0],p[1],0,sg*fy,cN,null,{w:2,head:11});segs.push([p,[p[0],p[1]+sg*fy]])}
+        F.arrow(p[0],p[1],sg*vx,sg*vy,cV,null,{w:2,head:11});segs.push([p,[p[0]+sg*vx,p[1]+sg*vy]]);
+      }
+      end(pA,ir);end(pC,-ir);
+      {const[x0,y0a]=pA,ux=vx/Lv,uy=vy/Lv,sF=Math.sign(fy)||1;
+        if(LF>=10*u){const[x,y]=place([[[x0+(vx>0?-14:14)*ut,y0a+fy+sF*7*ut],2*u],[x0-(vx>0?-14:14)*ut,y0a+fy+sF*7*ut],[x0,y0a+fy+sF*13*ut]],10*ut);
+          run([['F'],['安',{zh:1,sub:1}]],x,y,{color:cN,align:'center'})}
+        {const tx=x0+vx,ty=y0a+vy,[x,y]=place([[[tx+ux*11*ut,ty+uy*11*ut],2*u],[tx-uy*11*ut,ty+ux*11*ut],[tx+uy*11*ut,ty-ux*11*ut]],7*ut);run([['v']],x,y,{color:cV,align:'center'})}
+        if(vp&&Math.abs(c0)>.25&&Math.abs(vy)>8*u){const[x,y]=place([[x0+11*ut,y0a+vy],[x0-11*ut,y0a+vy],[x0+11*ut,y0a+vy*.55],[x0-11*ut,y0a+vy*.55]],8*ut);
+          run([['v'],['⊥',{sub:1,i:false}]],x,y,{color:cV,align:'center'})}}
+      // 端点名称与 O：在候选方向里挑离线段和其他文字最远的位置（略偏向沿线圈朝外）
+      for(const[p,t]of[[pA,'ab'],[pC,'cd']]){const ao=Math.atan2(p[1]-Sy,p[0]-Sx),cs=[];
+        for(let j=0;j<8;j++){const c=ao+j*PI/4,d=6.5*u+(9+6*Math.abs(Math.cos(c)))*ut;cs.push([[p[0]+d*Math.cos(c),p[1]+d*Math.sin(c)],j===0?3*u:0])}
+        const[x,y]=place(cs,10*ut);run([[t]],x,y,{align:'center'})}
+      {const cs=[];for(let j=0;j<8;j++){const c=PI/4+j*PI/4;cs.push([Sx+13*ut*Math.cos(c),Sy+13*ut*Math.sin(c)])}
+        const[x,y]=place(cs,7*ut);F.label('O',x,y,{size:17})}
+      /* ---------- e–t 图（叠画单匝 Φ–t 虚线），横轴一个周期 ---------- */
+      const gTop=yw2+(xf?30*u+16*ut:26*u),gx0=74*u,gx1=598*u,gxA=618*u,gxR=704*u;
+      const gT=gTop+16*ut+14*u,gB=H-8*u,gyc=(gT+gB)/2,Ah=(gB-gT)/2-12*u,Ae=.86*Ah,Af=.7*Ah;
+      const TX=t=>gx0+t/K.T*(gx1-gx0),EY=v=>gyc-v/K.Em*Ae,FY=v=>gyc-v/K.Pm*Af;
+      // 图例行：e 实线、Φ 虚线、经过中性面的刻度；右侧周期与慢放倍数
+      {let x=gx0-30*u;const y=gTop+8*ut;
+        F.line(x,y,x+22*u,y,{w:2});x+=28*u;run([['e']],x,y);x+=pw([['e']])+18*u;
+        F.line(x,y,x+22*u,y,{w:1.3,color:cX,dash:[5,4]});x+=28*u;run([['Φ'],['（单匝）',{zh:1,s:14}]],x,y);x+=pw([['Φ'],['（单匝）',{zh:1,s:14}]])+18*u;
+        F.line(x+4*u,y-8*u,x+4*u,y+8*u,{w:1.6});x+=14*u;F.zh('经过中性面',x,y,{align:'left'});
+        const tx=[['T',{s:17}],[` = ${sf(K.T,3)} s`,{i:false,s:15}]],sl=K.slow>1?`慢放 1/${K.slow<10?+K.slow.toFixed(1):Math.round(K.slow)}　`:'';
+        const xr=gxR,wT=pw(tx),wS=sl?wid(sl,14,{zh:1}):0,x2=x+wid('经过中性面',14,{zh:1})+16*u;
+        if(xr-wT-wS>=x2){run(tx,xr,y,{align:'right'});if(sl)F.zh(sl,xr-wT,y,{align:'right',color:tok('--warn')})}
+        else{run(tx,xr,y+20*ut,{align:'right'});if(sl)F.zh(sl,xr-wT,y+20*ut,{align:'right',color:tok('--warn')})}}
+      // ±Em、±Φm
+      F.aux(gx0,EY(K.Em),gx1,EY(K.Em));F.aux(gx0,EY(-K.Em),gx1,EY(-K.Em));
+      F.label(sf(K.Em,3),gx0-7*u,EY(K.Em),{italic:false,size:14,align:'right'});F.label(sf(-K.Em,3),gx0-7*u,EY(-K.Em),{italic:false,size:14,align:'right'});
+      // 坐标轴
+      F.arrow(gx0,gB,0,gT-gB,ink,null,{w:1.3,head:10});F.arrow(gx0,gyc,gxR-gx0,0,ink,null,{w:1.3,head:10});
+      F.arrow(gxA,gB,0,gT-gB,ink,null,{w:1.3,head:10});
+      for(const v of[K.Pm,-K.Pm]){const y=FY(v);F.line(gxA-5*u,y,gxA,y,{w:1});
+        const s=K.Pm>=1e-3?sf(v,2):(v>0?'':'−')+'Φm';F.label(s,gxA+6*u,y,{italic:K.Pm<1e-3,size:14,align:'left'})}
+      F.label('O',gx0-10*ut,gyc+12*ut);
+      run([['e'],['/V',{i:false,s:15}]],gx0+9*u,gT+6*u);run([['Φ'],['/Wb',{i:false,s:15}]],gxA-8*u,gT+6*u,{align:'right'});
+      run([['t'],['/s',{i:false,s:15}]],gxR,gyc+17*ut,{align:'right'});
+      // 横轴刻度 T/4、T/2、3T/4、T
+      for(const[j,parts]of[[1,[['T'],['/4',{i:false}]]],[2,[['T'],['/2',{i:false}]]],[3,[['3',{i:false}],['T'],['/4',{i:false}]]],[4,[['T']]]]){
+        const x=TX(K.T*j/4);F.line(x,gyc,x,gyc-5*u,{w:1});run(parts.map(([s,o={}])=>[s,{s:15,...o}]),x,gyc+15*ut,{align:'center'})}
+      // 曲线：第一个周期边转边描，之后完整保留，当前时刻按 t mod T 移动
+      const tc=S.t<=1e-12?0:S.t-K.T*Math.floor(S.t/K.T-1e-9),pts=S.hist.map(([t,v])=>[TX(t),EY(v)]),fps=S.hist.map(([t,,f])=>[TX(t),FY(f)]);
+      if(S.t<K.T){pts.push([TX(S.t),EY(e)]);fps.push([TX(S.t),FY(Phi)])}
+      F.poly(fps,{w:1.3,color:cX,dash:[5,4]});F.poly(pts,{w:2});
+      // 经过中性面：横轴上的小刻度
+      for(let j=Math.ceil(K.th0/PI-1e-9);j<=Math.floor(th/PI+1e-9);j++){const tk=(j*PI-K.th0)/P.w,tq=tk-K.T*Math.floor(tk/K.T-1e-9);
+        const x=TX(tk<=1e-12?0:tq);F.line(x,gyc-8*u,x,gyc+8*u,{w:1.6})}
+      const xc=TX(tc);F.aux(xc,gT+8*u,xc,gB,{dash:[3,4]});F.dot(xc,FY(Phi),2.4,cX);F.dot(xc,EY(e),3);
+    },
+    verdict(P){
+      const K=cfg(P),b=x=>`<b>${x}</b>`;
+      const t0=((P.th0%360)+360)%360,wt=sf(P.w,3)+'t',Emt=sf(K.Em,3);
+      const ex=t0<1e-9?`e = ${Emt} sin ${wt}`:Math.abs(t0-90)<1e-9?`e = ${Emt} cos ${wt}`:Math.abs(t0-180)<1e-9?`e = −${Emt} sin ${wt}`:Math.abs(t0-270)<1e-9?`e = −${Emt} cos ${wt}`:`e = ${Emt} sin(${wt} + ${sf(K.th0,3)})`;
+      let h=`S = L₁L₂ = ${b(sf(K.S,3)+' m²')}，Φm = BS = ${b(sf(K.Pm,3)+' Wb')}（单匝）；Em = NBSω = ${b(sf(K.Em,3)+' V')}（切割：v = ωL₂/2 = ${sf(P.w*P.L2/2,3)} m/s，Em = 2NBL₁v）（C1）。<br>`;
+      h+=`T = 2π/ω = ${b(sf(K.T,3)+' s')}，f = n = ${b(sf(K.f,3))} Hz（r/s）；${b(ex+'（V）')}（C2），电流方向每秒改变 2f = ${sf(2*K.f,3)} 次。<br>`;
+      h+=`有效值 E = Em/√2 = ${b(sf(K.E,3)+' V')}（C3）。`;
+      if(!K.xf)h+=`电流表 I = E/(R + r) = ${b(sf(K.I1,3)+' A')}，电压表 U = IR = ${b(sf(K.UR,3)+' V')}（不是 E）；P_R = I²R = ${b(sf(K.PR,3)+' W')}，P总 = EI = ${sf(K.E*K.I1,3)} W（C4）。`;
+      else{h+=`（拓展）R′ = (n₁/n₂)²R = ${b(sf(K.Rq,3)+' Ω')}：电流表 I₁ = E/(r + R′) = ${b(sf(K.I1,3)+' A')}，U₁ = I₁R′ = ${sf(K.U1,3)} V；电压表 U₂ = (n₂/n₁)U₁ = ${b(sf(K.UR,3)+' V')}，I₂ = (n₁/n₂)I₁ = ${sf(K.IR,3)} A，P_R = U₂²/R = ${b(sf(K.PR,3)+' W')}（C5）。`;
+        if(P.r>0&&Math.abs(K.Rq-P.r)<1e-9)h+='R′ = r，R 得到的功率最大，为 E²/(4r)（拓展）。'}
+      h+=`<br>${K.xf?'I₁m':'Im'} = ${sf(K.Im,3)} A，ab 边安培力最大值 Fm = NBImL₁ = ${b(sf(P.N*P.B*K.Im*P.L1,3)+' N')}（线圈平面与磁场平行时）。<br>`;
+      const dd=P.stop>0?P.stop:90,tz=turn(P,K,dd*D2R),Rs=K.xf?'(r + R′)':'(R + r)';
+      h+=`从起始位置转过 ${+dd.toFixed(1)}°${P.stop>0?'':'（Δθ 为 0 时按 90° 预判）'}，用时 ${sf(tz.t,3)} s：q = NΔΦ/${Rs} = ${b(sf(tz.q,3)+' C')}（C6）；Q_R = ${b(sf(tz.QR,3)+' J')}`;
+      h+=tz.eq?`，等于 I²Rt（C7）`:`（起止位置不都在中性面或平行位置，I²Rt = ${sf(tz.IRt,3)} J 不准）`;
+      h+=`；用平均电流算 Ī²Rt = ${sf(tz.wrong,3)} J，是错的。`;
+      return h;
+    },
+    _cfg:cfg,_emf:emf,_turn:turn
+  };
+})();
+
+/* ================= 通用渲染引擎（所有母题共用，不改） ================= */
+(()=>{
+const D=JSON.parse(document.getElementById('data').textContent);
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const root=document.documentElement;
+const tok=n=>getComputedStyle(root).getPropertyValue(n).trim();
+const PS=D.problem.params;
+const P={};PS.forEach(p=>P[p.key]=p.def);
+const unitSep=u=>/^[°′″]/.test(u)?'':' ';   // 角度单位紧贴数字：90°
+const fmtP=p=>p.type==='choice'?p.options.find(o=>o.value===P[p.key]).label:(+P[p.key]).toFixed(p.dec??2)+(p.unit?unitSep(p.unit)+p.unit:'');
+
+/* 静态内容 */
+document.title=`格物 ${D.id} ${D.name.replace(/（.*）/,'')}`;
+$('hName').textContent=D.name;
+$('hSub').textContent=`${D.module} · ${D.chapter}　关联：${D.related.join('、')}`;
+$('hTable').innerHTML=`<tr><th>编号</th><th>考查频率</th><th>难度</th><th>版本</th></tr>
+<tr><td class="code">${esc(D.id)}</td><td>${esc(D.freq)}</td><td title="${D.difficulty} / 5">${'●'.repeat(D.difficulty)}${'○'.repeat(5-D.difficulty)}</td><td>${esc(D.version)}</td></tr>`;
+$('foot').textContent=`格物 Gewu · ${D.id} · ${D.version} · ${D.footer??'g 取 10 m/s²'}`;   // 数据里可用 footer 改写页脚常量
+$('tags').innerHTML=D.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('');
+$('stemNote').textContent=D.problem.note||'';
+$('bCond').innerHTML=D.boundary.conditions.map(c=>`<li><span>${esc(c)}</span></li>`).join('');
+$('bBack').innerHTML=D.boundary.fallback.map(c=>`<li><span>${esc(c)}</span></li>`).join('');
+$('legend').innerHTML=SIM.legend.map(l=>`<span><i style="background:var(${l.color})"></i>${esc(l.label)}</span>`).join('');
+$('concl').innerHTML=D.conclusions.map(c=>`<details><summary><span class="badge">${c.id}</span><span class="t">${esc(c.title)}</span><span class="f">${esc(c.formula)}</span><span class="chev" aria-hidden="true"></span></summary><div class="deriv">${esc(c.derivation)}</div></details>`).join('');
+const qCard=(q,isVar)=>`<article class="q">
+  <div class="head"><span class="badge">${q.id}</span><h3>${esc(q.title)}</h3>${isVar?q.cs.map(c=>`<span class="chip">${c}</span>`).join(''):`<span class="chip">${q.anim?'计划做动画':'不做动画'}</span>`}</div>
+  <p>${esc(q.stem)}</p>
+  ${isVar?'':`<p class="map">映射：<b>${esc(q.map)}</b></p>`}
+  <details><summary><span class="chev" aria-hidden="true"></span>答案与解析</summary><div class="ans"><p class="a">答案：${esc(q.answer)}</p><p>${esc(q.analysis)}</p></div></details>
+  <div class="foot"><span class="src">${esc(q.source)}</span>${isVar?`<button data-load="${q.id}">加载到动画 ↑</button>`:''}</div>
+</article>`;
+$('variants').innerHTML=D.variants.map(v=>qCard(v,true)).join('');
+$('reskins').innerHTML=D.reskins.map(r=>qCard(r,false)).join('');
+$('sources').innerHTML=D.sources.map(s=>`<li><b>${esc(s.src)}</b><span>${esc(s.desc)}</span></li>`).join('');
+
+/* 参数控件 */
+const box=$('params');
+PS.forEach(p=>{
+  if(p.type==='choice'){
+    const d=document.createElement('div');d.className='seg';d.setAttribute('role','group');d.setAttribute('aria-label',p.label);
+    d.innerHTML=p.options.map(o=>`<button id="opt-${p.key}-${o.value}" data-k="${p.key}" data-v="${o.value}">${esc(o.label)}${o.hint?`<small>${esc(o.hint)}</small>`:""}</button>`).join('');
+    box.appendChild(d);
+  }else{
+    const d=document.createElement('div');d.className='field';d.id=`f-${p.key}`;
+    d.innerHTML=`<label for="num-${p.key}"><span class="s">${esc(p.sym)}</span><span class="note">${esc(p.label)}</span></label><span class="numin"><input type="number" id="num-${p.key}" min="${p.min}" max="${p.max}" step="any" inputmode="decimal" aria-label="${esc(p.label)}"><span class="u">${esc(p.unit||'')}</span></span><input type="range" id="in-${p.key}" min="${p.min}" max="${p.max}" step="${p.step}" value="${p.def}" aria-label="${esc(p.label)} 滑块">`;
+    box.appendChild(d);
+    d.querySelector('input[type=range]').addEventListener('input',e=>{P[p.key]=+e.target.value;active=-1;sync();reset()});
+    const num=d.querySelector('input[type=number]');
+    num.addEventListener('change',()=>{let v=parseFloat(num.value);
+      if(Number.isFinite(v)){v=Math.min(p.max,Math.max(p.min,v));P[p.key]=v;active=-1;reset()}sync()});
+    num.addEventListener('keydown',e=>{if(e.key==='Enter')num.blur()});
+  }
+});
+box.addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(!b)return;P[b.dataset.k]=b.dataset.v;active=-1;sync();reset()});
+let active=-1;
+const shown=w=>!w||Object.entries(w).every(([k,v])=>[].concat(v).includes(P[k]));
+const chosen=o=>PS.every(p=>p.type!=='choice'||o[p.key]===undefined||o[p.key]===P[p.key]);
+const numTxt=(p,v)=>String(+(+v).toFixed(Math.max(p.dec??2,4)));
+function sync(){
+  PS.forEach(p=>{
+    if(p.type==='choice')p.options.forEach(o=>$(`opt-${p.key}-${o.value}`).setAttribute('aria-pressed',P[p.key]===o.value));
+    else{$(`in-${p.key}`).value=P[p.key];const n=$(`num-${p.key}`);if(document.activeElement!==n)n.value=numTxt(p,P[p.key]);$(`f-${p.key}`).hidden=!shown(p.when)}
+  });
+  const fill=s=>esc(s).replace(/\{(\w+)\}/g,(m,k)=>{
+    if(k==='constraint'){const p=PS.find(x=>x.type==='choice');return esc(p.options.find(o=>o.value===P[p.key]).text)}
+    const p=PS.find(x=>x.key===k);return p?`<span class="num">${esc(fmtP(p))}</span>`:m});
+  const [lead,ask='']=D.problem.stem.split(/问[:：]/);
+  $('stem').innerHTML=fill(lead.trim());
+  const qs=ask.split(/[①②③④⑤⑥]/).map(s=>s.trim()).filter(Boolean);
+  $('asks').innerHTML=qs.map((q,i)=>`<li><b>${i+1}</b><span>${fill(q)}</span></li>`).join('');
+  $('asks').hidden=!qs.length;
+  $('verdict').innerHTML=SIM.verdict(P);
+  const ch=PS.find(p=>p.type==='choice');
+  $('presetMode').textContent=ch?`· ${ch.options.find(o=>o.value===P[ch.key]).label}`:'';
+  $('presets').innerHTML=D.presets.map((p,i)=>chosen(p.load)?`<button data-preset="${i}" aria-pressed="${i===active}" title="${esc(p.note||'')}">${esc(p.label)}</button>`:'').join('');
+  const pn=$('pnote'),ap=D.presets[active];pn.hidden=!(ap&&ap.note);if(ap&&ap.note)pn.innerHTML=`<b>${esc(ap.label)}</b>：${esc(ap.note)}`;
+}
+function load(o,i=-1){Object.assign(P,o);active=i;sync();reset()}
+$('presets').addEventListener('click',e=>{const b=e.target.closest('[data-preset]');if(b)load(D.presets[+b.dataset.preset].load,+b.dataset.preset)});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-load]');if(!b)return;
+  load(D.variants.find(v=>v.id===b.dataset.load).load);
+  show('pane-lab');document.querySelector('.board').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})});
+
+/* 画布与循环 */
+const cv=$('cv'),ctx=cv.getContext('2d');let S,running=false,speed=1,lastT=0;
+function size(){const r=cv.getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);const w=Math.max(200,Math.round(r.width*dpr));if(cv.width!==w){cv.width=w;cv.height=w}}
+function render(){size();SIM.draw(ctx,S,P,cv.width,cv.height,tok);
+  $('readout').innerHTML=SIM.readouts(S,P).map(([k,v])=>`<div class="ro"><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('');
+  const st=$('status');st.textContent=S.status.text;st.className='status '+S.status.cls}
+function reset(){running=false;S=SIM.init(P);$('play').textContent='▶ 发射';render()}
+function loop(t){if(!running)return;const real=Math.min(.05,(t-lastT)/1000);lastT=t;
+  const sim=real*speed,n=Math.max(1,Math.ceil(sim/5e-4));for(let i=0;i<n;i++)SIM.step(S,P,sim/n);
+  render();if(S.done){running=false;$('play').textContent='▶ 再发射';return}requestAnimationFrame(loop)}
+$('play').onclick=()=>{if(running){running=false;$('play').textContent='▶ 继续';return}
+  if(S.done)S=SIM.init(P);running=true;$('play').textContent='❚❚ 暂停';lastT=performance.now();requestAnimationFrame(loop)};
+$('reset').onclick=reset;
+$('slow').onclick=()=>{speed=speed===1?.25:1;$('slow').textContent=speed===1?'慢放 ×0.25':'正常速度'};
+new ResizeObserver(render).observe(cv);
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',render);
+new MutationObserver(render).observe(root,{attributes:true,attributeFilter:['data-theme']});
+/* 选项卡 */
+const tabs=[...document.querySelectorAll('[role=tab]')];
+function show(id){tabs.forEach(t=>{const on=t.dataset.pane===id;t.setAttribute('aria-selected',on);t.tabIndex=on?0:-1;$(t.dataset.pane).hidden=!on});
+  if(id==='pane-lab')requestAnimationFrame(render)}
+tabs.forEach((t,i)=>{t.addEventListener('click',()=>show(t.dataset.pane));
+  t.addEventListener('keydown',e=>{const d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(!d)return;e.preventDefault();
+    const n=tabs[(i+d+tabs.length)%tabs.length];n.focus();show(n.dataset.pane)})});
+$('nConcl').textContent=D.conclusions.length;$('nVar').textContent=D.variants.length;$('nSkin').textContent=D.reskins.length;$('nSrc').textContent=D.sources.length;
+show('pane-lab');
+sync();reset();
+})();
+</script>
