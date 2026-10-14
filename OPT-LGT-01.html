@@ -1441,7 +1441,7 @@ $('sources').innerHTML=D.sources.map(s=>`<li><b>${esc(s.src)}</b><span>${esc(s.d
 const box=$('params');
 PS.forEach(p=>{
   if(p.type==='choice'){
-    const d=document.createElement('div');d.className='seg';d.setAttribute('role','group');d.setAttribute('aria-label',p.label);
+    const d=document.createElement('div');d.className='seg';d.id=`f-${p.key}`;d.setAttribute('role','group');d.setAttribute('aria-label',p.label);
     d.innerHTML=p.options.map(o=>`<button id="opt-${p.key}-${o.value}" data-k="${p.key}" data-v="${o.value}">${esc(o.label)}${o.hint?`<small>${esc(o.hint)}</small>`:""}</button>`).join('');
     box.appendChild(d);
   }else{
@@ -1458,11 +1458,12 @@ PS.forEach(p=>{
 box.addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(!b)return;P[b.dataset.k]=b.dataset.v;active=-1;sync();reset()});
 let active=-1;
 const shown=w=>!w||Object.entries(w).every(([k,v])=>[].concat(v).includes(P[k]));
-const chosen=o=>PS.every(p=>p.type!=='choice'||o[p.key]===undefined||o[p.key]===P[p.key]);
+const CH0=PS.find(p=>p.type==='choice');   // 预设只按第一个选项参数（情境 / 模式）分组，其余选项由预设的 load 带过去
+const chosen=o=>!CH0||o[CH0.key]===undefined||o[CH0.key]===P[CH0.key];
 const numTxt=(p,v)=>String(+(+v).toFixed(Math.max(p.dec??2,4)));
 function sync(){
   PS.forEach(p=>{
-    if(p.type==='choice')p.options.forEach(o=>$(`opt-${p.key}-${o.value}`).setAttribute('aria-pressed',P[p.key]===o.value));
+    if(p.type==='choice'){p.options.forEach(o=>$(`opt-${p.key}-${o.value}`).setAttribute('aria-pressed',P[p.key]===o.value));if(p.when)$(`f-${p.key}`).hidden=!shown(p.when)}
     else{$(`in-${p.key}`).value=P[p.key];const n=$(`num-${p.key}`);if(document.activeElement!==n)n.value=numTxt(p,P[p.key]);$(`f-${p.key}`).hidden=!shown(p.when)}
   });
   const fill=s=>esc(s).replace(/\{(\w+)\}/g,(m,k)=>{
