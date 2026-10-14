@@ -1,0 +1,1575 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>格物 MEC-PRJ-01 平抛运动的临界问题</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;800&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" media="print" onload="this.media='all'">
+
+<!-- ================= 母题数据（由 {编号}.md 转换，页面只改这里和 SIM 模块） ================= -->
+<script type="application/json" id="data">
+{
+  "id": "MEC-PRJ-01",
+  "name": "平抛运动的临界问题（过网不出界 / 斜面上的平抛 / 垂直打在斜面上）",
+  "module": "力学",
+  "chapter": "必修二 · 抛体运动",
+  "freq": "中",
+  "difficulty": 3,
+  "version": "v0.1",
+  "related": [
+    "EM-ESF-01 带电粒子在匀强电场中的偏转（类平抛，同样 tanα = 2tanφ）",
+    "MEC-CIR-01 圆轨道最高点水平飞出",
+    "MEC-MOM-01 碰撞后平抛测速度",
+    "MEC-GRV-01 由平抛测星球表面 g"
+  ],
+  "tags": [
+    "平抛运动的分解（x = v₀t，y = ½gt²）",
+    "时间由高度决定 t = √(2h/g)",
+    "速度偏角与位移偏角 tanα = 2tanφ",
+    "过网与不出界：v₀ 的取值范围",
+    "斜面上的平抛 / 离斜面最远 / 垂直打在斜面上"
+  ],
+  "problem": {
+    "stem": "不计空气阻力，物体从 O 点以水平初速度 v₀ 抛出，分三种情境。（一）过网不出界：网球场长 L = {L}，球网高 h = {h}，离发球机所在的底线 d = {d}；发球机在这条底线中点的正上方 H = {H1} 处，垂直于网水平射出网球，v₀ = {v1}。（二）斜面上的平抛：跳台滑雪运动员从着陆坡顶端 O 点以 v₀ = {v2} 水平飞出，着陆坡倾角 θ = {th2}、高 H = {H2}，坡底接水平地面。（三）垂直打在斜面上：倾角 θ = {th3} 的斜面固定在水平地面上，小钢球从斜面底端正上方 H = {H3} 处的 O 点向斜面水平抛出。问：① 过网不出界：网球飞行多长时间？能否过网、落在界内？落地时速度大小、速度偏角 α 和位移偏角 φ 各多大？② 过网不出界：要使网球既能过网又不出界，v₀ 应在什么范围？发球机高度低于多少时，无论 v₀ 多大都做不到？③ 斜面上的平抛：运动员在空中飞行多长时间？落点离 O 点多远？落到坡上时速度方向怎样，与 v₀ 有关吗？何时离坡面最远，最远多远？v₀ 超过多少会越过坡底落到地面上？④ 垂直打在斜面上：v₀ 多大时小钢球恰好垂直打在斜面上？飞行时间多长？",
+    "note": "g 取 10 m/s²；按试卷惯例取 sin37° = 0.6、cos37° = 0.8、tan37° = 0.75，所以 37° 一律按 36.87°（3∶4∶5 三角形的角）载入，53° 按 53.13° 载入。三个情境各用自己的一组参数，切换情境不会互相覆盖；d 自动保持小于 L。h = 0 表示无网，「过网」即落点越过 d。情境（三）的 v₀ 是动画参数，用来试出「恰好垂直」的速度。",
+    "params": [
+      {
+        "key": "scene",
+        "sym": "情境",
+        "label": "情境",
+        "type": "choice",
+        "def": "net",
+        "options": [
+          {
+            "value": "net",
+            "label": "过\u2060网\u200B不\u2060出\u2060界",
+            "hint": "网\u2060球\u200B发\u2060球\u2060机",
+            "text": ""
+          },
+          {
+            "value": "slope",
+            "label": "斜\u2060面\u2060上\u200B的\u2060平\u2060抛",
+            "hint": "跳\u2060台\u200B滑\u2060雪",
+            "text": ""
+          },
+          {
+            "value": "perp",
+            "label": "垂\u2060直\u2060打\u200B在\u2060斜\u2060面\u2060上",
+            "hint": "迎\u2060着\u200B斜\u2060面",
+            "text": ""
+          }
+        ]
+      },
+      {
+        "key": "v1",
+        "sym": "v₀",
+        "label": "初速度",
+        "unit": "m/s",
+        "def": 20,
+        "min": 1,
+        "max": 50,
+        "step": 0.1,
+        "dec": 1,
+        "when": {
+          "scene": [
+            "net"
+          ]
+        }
+      },
+      {
+        "key": "H1",
+        "sym": "H",
+        "label": "发球机（抛出点）离地高度",
+        "unit": "m",
+        "def": 3.2,
+        "min": 0.1,
+        "max": 6,
+        "step": 0.01,
+        "dec": 2,
+        "when": {
+          "scene": [
+            "net"
+          ]
+        }
+      },
+      {
+        "key": "d",
+        "sym": "d",
+        "label": "抛出点到球网的水平距离（自动保持 d < L）",
+        "unit": "m",
+        "def": 12,
+        "min": 0.2,
+        "max": 30,
+        "step": 0.1,
+        "dec": 1,
+        "when": {
+          "scene": [
+            "net"
+          ]
+        }
+      },
+      {
+        "key": "h",
+        "sym": "h",
+        "label": "网高（0 表示无网）",
+        "unit": "m",
+        "def": 0.9,
+        "min": 0,
+        "max": 3,
+        "step": 0.01,
+        "dec": 2,
+        "when": {
+          "scene": [
+            "net"
+          ]
+        }
+      },
+      {
+        "key": "L",
+        "sym": "L",
+        "label": "抛出点到对方底线的水平距离",
+        "unit": "m",
+        "def": 24,
+        "min": 0.5,
+        "max": 40,
+        "step": 0.1,
+        "dec": 1,
+        "when": {
+          "scene": [
+            "net"
+          ]
+        }
+      },
+      {
+        "key": "v2",
+        "sym": "v₀",
+        "label": "初速度",
+        "unit": "m/s",
+        "def": 20,
+        "min": 1,
+        "max": 40,
+        "step": 0.1,
+        "dec": 1,
+        "when": {
+          "scene": [
+            "slope"
+          ]
+        }
+      },
+      {
+        "key": "th2",
+        "sym": "θ",
+        "label": "斜面倾角",
+        "unit": "°",
+        "def": 36.87,
+        "min": 10,
+        "max": 70,
+        "step": 0.01,
+        "dec": 2,
+        "when": {
+          "scene": [
+            "slope"
+          ]
+        }
+      },
+      {
+        "key": "H2",
+        "sym": "H",
+        "label": "斜面高度（O 在斜面顶端，坡底接水平地面）",
+        "unit": "m",
+        "def": 60,
+        "min": 1,
+        "max": 150,
+        "step": 0.1,
+        "dec": 1,
+        "when": {
+          "scene": [
+            "slope"
+          ]
+        }
+      },
+      {
+        "key": "v3",
+        "sym": "v₀",
+        "label": "初速度",
+        "unit": "m/s",
+        "def": 3,
+        "min": 0.5,
+        "max": 20,
+        "step": 0.01,
+        "dec": 2,
+        "when": {
+          "scene": [
+            "perp"
+          ]
+        }
+      },
+      {
+        "key": "th3",
+        "sym": "θ",
+        "label": "斜面倾角",
+        "unit": "°",
+        "def": 36.87,
+        "min": 10,
+        "max": 80,
+        "step": 0.01,
+        "dec": 2,
+        "when": {
+          "scene": [
+            "perp"
+          ]
+        }
+      },
+      {
+        "key": "H3",
+        "sym": "H",
+        "label": "抛出点在斜面底端正上方的高度",
+        "unit": "m",
+        "def": 1.7,
+        "min": 0.2,
+        "max": 20,
+        "step": 0.01,
+        "dec": 2,
+        "when": {
+          "scene": [
+            "perp"
+          ]
+        }
+      }
+    ]
+  },
+  "boundary": {
+    "conditions": [
+      "只受重力：不计空气阻力（乒乓球、羽毛球等轻球和高速球受阻力明显，实际射程比计算值小）",
+      "g 恒定：高度和水平距离都远小于地球半径（速度大到 7.9 km/s 时物体绕地球运动，见 MEC-GRV-01）；在其他星球上把 g 换成 g星 = GM/R²",
+      "初速度水平；抛出后不再受推力（投镖机器人、发球机的加速段不在本模型内）",
+      "质点：不计球的大小，擦网、压线、落到荷叶边缘都按球心判断",
+      "网、地面、斜面是理想几何边界，物体碰到即停，不反弹（反弹另行分析）",
+      "C5、C6 要求落点在斜面范围内（斜面足够长）；斜面高度有限时先用 C5 的 v₀c 判断落在斜面上还是地面上",
+      "C7 指迎着斜面抛出（斜面向运动方向升高，抛出点在斜面之外）；顺着斜面抛出、落回斜面时速度不可能垂直于斜面"
+    ],
+    "fallback": [
+      "分运动独立：a_x = 0，a_y = g（受其他恒力时 a = F合/m，加速度不竖直就要沿合力方向分解，如类平抛 EM-ESF-01、风洞实验）",
+      "运动学：水平方向 x = v_x·t；竖直方向按初速度、加速度 g 的匀变速直线运动处理（斜抛以 v₀ 与水平方向成 β 角抛出时，v_x = v₀cosβ，竖直方向是初速度 v₀sinβ 的竖直上抛）",
+      "约束（临界）写成几何方程再解 t：落地 y = H，落到斜面 y = x·tanθ（顺坡）或 H − y = x·tanθ（迎坡），经过网顶 x = d 时 y ≤ H − h",
+      "与竖直挡板弹性碰撞（竖直分速度不变，水平分速度反向）：把挡板另一侧的轨迹关于挡板镜像展开，仍是一条平抛轨迹（R3）",
+      "逆向思维：斜抛到最高点后的半段是平抛；「垂直击中竖直墙面」可看成从击中点反向平抛（R1）",
+      "有空气阻力：没有解析式，只能数值积分"
+    ]
+  },
+  "presets": [
+    {
+      "label": "母题",
+      "note": "v₀ = 20 m/s、H = 3.2 m：过网时高出网顶 0.50 m，落点 16 m，界内；tanα = 0.40 = 2tanφ。",
+      "load": {
+        "scene": "net",
+        "v1": 20,
+        "H1": 3.2,
+        "d": 12,
+        "h": 0.9,
+        "L": 24
+      }
+    },
+    {
+      "label": "恰好擦网",
+      "note": "v₀ = 17.7 m/s（载入 17.69 m/s）：从网顶擦过，落点 14.2 m；再小就触网。",
+      "load": {
+        "scene": "net",
+        "v1": 17.69,
+        "H1": 3.2,
+        "d": 12,
+        "h": 0.9,
+        "L": 24
+      }
+    },
+    {
+      "label": "恰好压线",
+      "note": "v₀ = 30 m/s：落在底线上（24 m）；再大就出界。",
+      "load": {
+        "scene": "net",
+        "v1": 30,
+        "H1": 3.2,
+        "d": 12,
+        "h": 0.9,
+        "L": 24
+      }
+    },
+    {
+      "label": "触网",
+      "note": "v₀ = 16 m/s：到网时离地只有 0.39 m，低于网高 0.9 m。",
+      "load": {
+        "scene": "net",
+        "v1": 16,
+        "H1": 3.2,
+        "d": 12,
+        "h": 0.9,
+        "L": 24
+      }
+    },
+    {
+      "label": "出界",
+      "note": "v₀ = 35 m/s：落点 28 m，出界 4 m。",
+      "load": {
+        "scene": "net",
+        "v1": 35,
+        "H1": 3.2,
+        "d": 12,
+        "h": 0.9,
+        "L": 24
+      }
+    },
+    {
+      "label": "最低发球高度",
+      "note": "H = 1.2 m、v₀ = 49 m/s（载入 48.99 m/s）：只剩一条擦网又压线的轨迹，两条临界轨迹重合；H 再低就无解（V1）。",
+      "load": {
+        "scene": "net",
+        "v1": 48.99,
+        "H1": 1.2,
+        "d": 12,
+        "h": 0.9,
+        "L": 24
+      }
+    },
+    {
+      "label": "无网：落到荷叶上",
+      "note": "h = 0、H = 0.20 m、d = 0.30 m、L = 0.50 m、v₀ = 2.0 m/s：1.5 ~ 2.5 m/s 都落在荷叶上，2.0 m/s 落在中心（V2）。",
+      "load": {
+        "scene": "net",
+        "v1": 2,
+        "H1": 0.2,
+        "d": 0.3,
+        "h": 0,
+        "L": 0.5
+      }
+    },
+    {
+      "label": "母题：跳台滑雪",
+      "note": "v₀ = 20 m/s、θ = 37°、H = 60 m：3.0 s 后落在坡上离 O 点 75 m 处；tanα = 1.5；1.5 s 时离坡面最远，9.0 m。",
+      "load": {
+        "scene": "slope",
+        "v2": 20,
+        "th2": 36.87,
+        "H2": 60
+      }
+    },
+    {
+      "label": "初速度减半",
+      "note": "v₀ = 10 m/s：时间减半为 1.5 s，落点距离变为 1/4（18.75 m），落到坡上的速度方向不变。",
+      "load": {
+        "scene": "slope",
+        "v2": 10,
+        "th2": 36.87,
+        "H2": 60
+      }
+    },
+    {
+      "label": "恰好落在坡底",
+      "note": "v₀ = 23.1 m/s（载入 23.094 m/s）：落点恰在坡底（水平 80 m 处）。",
+      "load": {
+        "scene": "slope",
+        "v2": 23.094,
+        "th2": 36.87,
+        "H2": 60
+      }
+    },
+    {
+      "label": "越过坡底",
+      "note": "v₀ = 28 m/s：落到水平地面，tanα ≈ 1.24，比落在坡上时平。",
+      "load": {
+        "scene": "slope",
+        "v2": 28,
+        "th2": 36.87,
+        "H2": 60
+      }
+    },
+    {
+      "label": "倾角变大",
+      "note": "θ = 45°、H = 150 m、v₀ = 20 m/s：4.0 s 后落在离 O 点 113 m 处，tanα = 2，离坡面最远 14.1 m。",
+      "load": {
+        "scene": "slope",
+        "v2": 20,
+        "th2": 45,
+        "H2": 150
+      }
+    },
+    {
+      "label": "矮斜面",
+      "note": "H = 3.6 m、v₀ = 4.0 m/s：0.60 s 后落在离 O 点 3.0 m 处；v₀ 超过 5.66 m/s 就越过坡底（V5）。",
+      "load": {
+        "scene": "slope",
+        "v2": 4,
+        "th2": 36.87,
+        "H2": 3.6
+      }
+    },
+    {
+      "label": "母题：恰好垂直",
+      "note": "v₀ = 3.0 m/s、θ = 37°、H = 1.7 m：0.40 s 后打在离地 0.90 m 处，v = 5.0 m/s，tanα = 4/3。",
+      "load": {
+        "scene": "perp",
+        "v3": 3,
+        "th3": 36.87,
+        "H3": 1.7
+      }
+    },
+    {
+      "label": "v₀ 偏小",
+      "note": "v₀ = 2.0 m/s：0.45 s 后打中，速度偏竖直，与斜面约成 77°。",
+      "load": {
+        "scene": "perp",
+        "v3": 2,
+        "th3": 36.87,
+        "H3": 1.7
+      }
+    },
+    {
+      "label": "v₀ 偏大",
+      "note": "v₀ = 4.0 m/s：0.36 s 后打中，速度偏水平，与斜面约成 79°。",
+      "load": {
+        "scene": "perp",
+        "v3": 4,
+        "th3": 36.87,
+        "H3": 1.7
+      }
+    },
+    {
+      "label": "v₀ 很大",
+      "note": "v₀ = 15 m/s：0.14 s 后打在几乎与 O 等高处，速度接近水平，与斜面约成 42°。",
+      "load": {
+        "scene": "perp",
+        "v3": 15,
+        "th3": 36.87,
+        "H3": 1.7
+      }
+    },
+    {
+      "label": "倾角 53°",
+      "note": "θ = 53°、H = 2.05 m、v₀ = 4.0 m/s：0.30 s 后垂直打中，v = 5.0 m/s。",
+      "load": {
+        "scene": "perp",
+        "v3": 4,
+        "th3": 53.13,
+        "H3": 2.05
+      }
+    }
+  ],
+  "conclusions": [
+    {
+      "id": "C1",
+      "title": "平抛运动的分解：水平匀速直线、竖直自由落体，两个分运动互不影响；轨迹是抛物线；速度变化量竖直向下",
+      "formula": "x = v₀t，y = ½gt²；v_x = v₀，v_y = gt；y = gx²/(2v₀²)；Δv = gΔt，Δp = mgΔt（竖直向下）",
+      "derivation": "平抛物体只受重力，加速度为 g，竖直向下。把运动分解到水平、竖直两个方向：水平方向不受力、初速度 v₀，做匀速直线运动，x = v₀t，v_x = v₀；竖直方向初速度为 0、加速度 g，做自由落体运动，y = ½gt²，v_y = gt。两个分运动同时进行、互不影响（同一高度同时平抛和自由下落的两球同时落地）。\n消去 t 得 y = gx²/(2v₀²)，轨迹是以抛出点为顶点、开口向下的抛物线。\n速度变化量 Δv = gΔt，方向竖直向下，与从哪一时刻算起无关；所以动量变化量 Δp = mgΔt，也竖直向下（#4：Δv = gt ≈ 2.6 m/s；#7：Δp = mgt = 0.05 N·s）。频闪照片上，相等时间间隔内水平位移相等，竖直位移之比为 1∶3∶5∶…（动画中的频闪点及其投影）。"
+    },
+    {
+      "id": "C2",
+      "title": "时间只由下落高度决定；射程由高度和初速度共同决定",
+      "formula": "t = √(2h/g)；x = v₀√(2h/g)；v = √(v₀² + 2gh)，ΔEk = mgh",
+      "derivation": "竖直方向 y = ½gt² 与 v₀ 无关，下落高度 h 所用时间 t = √(2h/g)，只由高度决定（2026 江苏高考第 4 题：同一高度水平击出三次，飞行时间相同）。\n水平射程 x = v₀t = v₀√(2h/g)，由 v₀ 和 h 共同决定（#2：0.80 m；#9：1.2 m）。\n落地速度 v = √(v₀² + (gt)²) = √(v₀² + 2gh)；重力做功 mgh 全部变为动能的增量，ΔEk = mgh（#7）。\n反过来，已知 h、x 求 v₀ = x√(g/(2h))（#7、2026 届嘉定二模 2-2）；已知 v₀、h、x 求 g = 2hv₀²/x²（#8 火星）。"
+    },
+    {
+      "id": "C3",
+      "title": "速度偏角与位移偏角：任一时刻 tanα = 2tanφ；速度的反向延长线交于水平位移的中点",
+      "formula": "tanα = gt/v₀，tanφ = gt/(2v₀)，tanα = 2tanφ；交点横坐标 x/2",
+      "derivation": "速度偏角 α 是速度与水平方向的夹角：tanα = v_y/v_x = gt/v₀。位移偏角 φ 是抛出点到物体的连线与水平方向的夹角：tanφ = y/x = (½gt²)/(v₀t) = gt/(2v₀)。所以 tanα = 2tanφ，任一时刻都成立。注意是正切成 2 倍，不是角度成 2 倍。\n几何意义：把速度反向延长，交过抛出点的水平线于 Q。物体在 (x, y) 处，Q 到物体的水平距离为 y/tanα = (½gt²)/(gt/v₀) = v₀t/2 = x/2，所以 Q 在水平位移的中点。\n逆向思维：斜抛到最高点时速度水平，此后就是平抛；把「斜抛到最高点」倒过来看，就是从最高点平抛回到抛出点。所以斜抛的出射角 β 与抛出点到最高点连线的倾角满足 tanβ = 2tan(连线倾角)（#11、#12：垂直击中竖直墙面就是在最高点击中；#12 中水平距离 10 m、高 20 m，连线倾角的正切为 2，出射角的正切为 4）。\n类平抛（EM-ESF-01）把 g 换成 qE/m，同样有 tanα = 2tanφ，粒子飞出电场时速度的反向延长线过板长的中点。"
+    },
+    {
+      "id": "C4",
+      "title": "恰好经过某点（擦网、压线、恰好落到边缘）时 v₀ 唯一；过网与不出界给出 v₀ 的范围；高度太低时无解",
+      "formula": "经过 (x, y)：v₀ = x√(g/(2y))；d√(g/(2(H − h))) ≤ v₀ ≤ L√(g/(2H))；H_min = hL²/(L² − d²)",
+      "derivation": "轨迹 y = gx²/(2v₀²)。要求轨迹恰好经过某点（相对抛出点水平距离 x、低 y），v₀ 唯一：v₀ = x√(g/(2y))。v₀ 越大，轨迹越平，在同一 x 处下落越少。\n过网与不出界（#3 的情境）：抛出点高 H，网在 x = d 处、高 h，界线在 x = L 处。\n· 过网：到网用时 d/v₀，下落 ½g(d/v₀)² 不能超过 H − h，得 v₀ ≥ d√(g/(2(H − h)))，取等号为恰好擦网\n· 不出界：落地用时 √(2H/g)（C2），射程 v₀√(2H/g) ≤ L，得 v₀ ≤ L√(g/(2H))，取等号为恰好压线\n· 两式同时满足，v₀ 才有解：d√(g/(2(H − h))) ≤ L√(g/(2H))，两边平方整理得 H ≥ hL²/(L² − d²) = H_min。H < H_min 时，速度小了触网、大了出界。母题 d = L/2，H_min = 4h/3\n网高 h = 0 时，「过网」就变成「落点越过 x = d」：恰好落到某一范围内（#1 松鼠起跳速度至少 L√(g/(2H))；#6 青蛙落到荷叶上）。越过坑沿、跨过沟壑（#13、2026 届宝山一模 1-3）同理：近侧边沿相当于网顶，对面坑壁的底部相当于界线。\n比较落到不同位置所需的速度（#6）：v₀ = x√(g/(2y))，水平距离大、落差小的位置需要的 v₀ 大，不能只看水平距离。"
+    },
+    {
+      "id": "C5",
+      "title": "斜面上的平抛（从斜面上抛出又落回斜面）：位移偏角等于倾角；落到斜面时速度方向与 v₀ 无关；落点距离 ∝ v₀²",
+      "formula": "t = 2v₀tanθ/g；s = 2v₀²tanθ/(g cosθ)；tanα = 2tanθ；落在斜面上的条件 v₀ ≤ √(gH/2)/tanθ",
+      "derivation": "物体从斜面上的 O 点向斜面下方水平抛出，又落回倾角为 θ 的斜面。落点在斜面上，从 O 到落点的位移沿斜面，所以位移偏角 φ = θ：tanθ = y/x = gt/(2v₀)，t = 2v₀tanθ/g。\n水平位移 x = v₀t = 2v₀²tanθ/g，下落 y = x tanθ = 2v₀²tan²θ/g，落点到 O 点的距离 s = x/cosθ = 2v₀²tanθ/(g cosθ)：t ∝ v₀，s ∝ v₀²。\n由 C3，落到斜面时 tanα = 2tanφ = 2tanθ，与 v₀ 无关：不论 v₀ 多大，落到同一斜面上的速度方向都相同，速度与斜面的夹角 α − θ 也相同。\n斜面高 H 有限时，落点要在斜面上，须 y ≤ H，即 2v₀²tan²θ/g ≤ H，v₀ ≤ √(gH/2)/tanθ = v₀c。v₀ > v₀c 时越过坡底落到地面：t = √(2H/g) 不再随 v₀ 变，tanα = √(2gH)/v₀ < 2tanθ，速度方向变平（V5）。"
+    },
+    {
+      "id": "C6",
+      "title": "离斜面最远：速度与斜面平行时离斜面最远，用时是落回斜面的一半",
+      "formula": "t₁ = v₀tanθ/g = t/2；d_max = (v₀sinθ)²/(2g cosθ)",
+      "derivation": "沿斜面向下取 x′ 轴、垂直斜面向外取 y′ 轴，分解初速度和重力加速度：\n· 垂直斜面：初速度 v₀sinθ（离开斜面），加速度 g cosθ（指向斜面），像竖直上抛一样先远离后返回\n· 沿斜面：初速度 v₀cosθ，加速度 g sinθ，匀加速\n垂直斜面的分速度减为 0 时离斜面最远，此时速度与斜面平行：t₁ = v₀sinθ/(g cosθ) = v₀tanθ/g = t/2，d_max = (v₀sinθ)²/(2g cosθ)。\n用水平、竖直分解也一样：速度与斜面平行即 v_y/v₀ = tanθ，t₁ = v₀tanθ/g。\n注意：t₁ 时物体的水平位移恰为落点水平位移的一半，但它在斜面上的垂足不在 OP 的中点，而是偏向 O（母题：垂足离 O 点 30.75 m，OP 的一半是 37.5 m），因为沿斜面方向是匀加速运动。"
+    },
+    {
+      "id": "C7",
+      "title": "垂直打在斜面上（迎着斜面抛出）：速度与竖直方向的夹角等于倾角 θ",
+      "formula": "tanα = 1/tanθ ⇒ t = v₀/(g tanθ)；tanφ = 1/(2tanθ)；坡底正上方 H 处抛出：v₀ = tanθ·√(2gH/(1 + 2tan²θ))",
+      "derivation": "小球迎着斜面抛出，打到斜面时速度与斜面垂直。斜面的法线与竖直方向成 θ 角，所以速度与竖直方向的夹角也是 θ，速度偏角 α = 90° − θ：tanα = gt/v₀ = 1/tanθ，t = v₀/(g tanθ)。\n此时 tanφ = tanα/2 = 1/(2tanθ)，下落 y = v₀²/(2g tan²θ)，水平 x = v₀²/(g tanθ)。\n#5 用这一关系测重力加速度：g = v₀/(t tanθ)，再由 GMm/R² = mg 得 M = gR²/G = v₀R²/(Gt tanθ)。\n母题情境三中抛出点在坡底正上方 H 处，击中点还必须在斜面上：H − y = x tanθ。代入 x、y 得 H = v₀²(1 + 2tan²θ)/(2g tan²θ)，v₀ = tanθ·√(2gH/(1 + 2tan²θ))。v₀ 比它小，打到斜面时速度偏竖直；比它大，偏水平。\n对比 C5：顺着斜面抛出、落回斜面时 tanα = 2tanθ，速度与斜面的夹角 α − θ 小于 90°，不可能垂直打在斜面上。"
+    }
+  ],
+  "variants": [
+    {
+      "id": "V1",
+      "title": "过网不出界：选发球高度与速度",
+      "cs": [
+        "C4",
+        "C2",
+        "C3"
+      ],
+      "source": "改编自 2026 届杨浦区二模 三-2(2)（原题 AB = 26a、网高 a，从 h = 5a/4、4a/3、2a 与 v = 19√(ga)、14√(ga)、10√(ga) 三组中选，答案 C）",
+      "stem": "网球场一侧长边 AB = 24 m，球网在 AB 中点，高 0.9 m。发球机在 A 点正上方，垂直于网水平射出网球。(1) 下列发球机高度 H 与发射速度 v₀ 的组合中，能使网球越过球网并落在对方界内（含底线）的是：A. 2.45 m，35 m/s B. 1.8 m，25 m/s C. 3.2 m，25 m/s D. 1.25 m，20 m/s。(2) 其余各项为什么不行？(3) 发球机高度至少多大？此时 v₀ 多大？(4) 选项 C 中网球落地时速度偏角 α 和位移偏角 φ 的正切各多大？",
+      "answer": "(1) C；(2) A 出界（落点 24.5 m），B 触网（到网时离地 0.648 m），D 还没到网就落地（落点 10 m）；(3) 1.2 m，v₀ ≈ 49 m/s；(4) tanα = 0.32，tanφ = 0.16",
+      "analysis": "落地时间 t = √(2H/g)，到网时间 12 m/v₀，到网时离地 H − ½g(12 m/v₀)²。A：t = 0.70 s，落点 35 m/s × 0.70 s = 24.5 m > 24 m，出界（到网时离地 1.86 m，能过网）。B：t = 0.60 s，落点 15 m；到网用时 0.48 s，下落 1.152 m，离地 0.648 m < 0.9 m，触网。C：t = 0.80 s，落点 20 m ≤ 24 m；到网时离地 3.2 m − 1.152 m = 2.048 m > 0.9 m，成功。D：t = 0.50 s，落点 10 m < 12 m，没到网就落地。(3) 由 C4，H_min = hL²/(L² − d²) = 0.9 m × 24² ÷ (24² − 12²) = 1.2 m；此时 v_min = v_max = 24 m ÷ √(2 × 1.2 m ÷ 10 m/s²) ≈ 49 m/s，校核：到网用时 0.245 s，下落 0.30 m，离地恰为 0.9 m。若 H = 1.25 m，可行范围只剩 45.4 ~ 48 m/s。(4) tanα = gt/v₀ = 8.0 m/s ÷ 25 m/s = 0.32，tanφ = 3.2 m ÷ 20 m = 0.16，tanα = 2tanφ（C3）。原题：h = 2a、v = 10√(ga) 时，到网（13a）用时 1.3√(a/g)，下落 0.845a，离地 1.155a > a，射程 10√(ga) × 2√(a/g) = 20a < 26a，所以选 C。加载的是选项 C；第 (3) 问可点预设「最低发球高度」（H = 1.2 m，v₀ = 48.99 m/s，读数判为恰好擦网、恰好压线）。",
+      "load": {
+        "scene": "net",
+        "v1": 25,
+        "H1": 3.2,
+        "d": 12,
+        "h": 0.9,
+        "L": 24
+      }
+    },
+    {
+      "id": "V2",
+      "title": "青蛙跳荷叶：落到哪里所需的起跳速度最小",
+      "cs": [
+        "C4",
+        "C2"
+      ],
+      "source": "改编自 2025 届闵行区一模 一-4（原题湖岸高 6h，荷叶 a、b 高 4h，c、d 高 h，求落到 a 的起跳速度 (l/2)√(g/h)，比较哪片所需速度最小，答案 c）；第 (3) 问改编自 2026 上海等级考 5.1（松鼠跳到对面稍低的树枝上，跳出速度至少为 L√(g/(2H))）",
+      "stem": "四片荷叶伸出水面，青蛙蹲在湖岸边缘。湖岸高出水面 0.80 m，荷叶 a、b 高出水面 0.60 m，荷叶 c、d 高出水面 0.20 m。四片荷叶的茎与水面的交点是边长 l = 0.40 m 的正方形的四个顶点，正方形的一边与湖岸平行，a 离湖岸 0.40 m，a、b 与青蛙在同一竖直平面内（b 在 a 正前方），c、d 分别在 a、b 的侧方。荷叶中心在茎的正上方，青蛙的跳跃视为平抛运动。(1) 青蛙要跳到荷叶 a 的中心，起跳速度多大？(2) 跳到哪片荷叶的中心所需起跳速度最小？哪片最大？(3) 荷叶 a 可看作半径 r = 0.10 m 的水平圆盘，青蛙沿垂直于湖岸的方向起跳，要落在荷叶 a 上，起跳速度至少多大、至多多大？",
+      "answer": "(1) 2.0 m/s；(2) c 最小（约 1.63 m/s），b 最大（4.0 m/s）；(3) 至少 1.5 m/s，至多 2.5 m/s",
+      "analysis": "落到 a、b 下落 0.20 m，t = √(2 × 0.20 m ÷ 10 m/s²) = 0.20 s；落到 c、d 下落 0.60 m，t = √0.12 s ≈ 0.346 s（C2）。由 C4，v₀ = x/t。(1) a：0.40 m ÷ 0.20 s = 2.0 m/s。(2) b：0.80 m ÷ 0.20 s = 4.0 m/s；c：水平距离 0.40√2 m ≈ 0.566 m，v₀ ≈ 0.566 m ÷ 0.346 s ≈ 1.63 m/s；d：0.40√5 m ≈ 0.894 m，v₀ ≈ 2.58 m/s。c 比 a 远，但落差是 a 的 3 倍，飞行时间是 √3 倍，所需速度反而最小。(3) 落到 a 所在高度都用时 0.20 s，落点须在 0.30 m（近边）到 0.50 m（远边）之间：1.5 m/s ≤ v₀ ≤ 2.5 m/s。「至少」对应恰好落在近边（与松鼠题「至少」恰好落到树梢同理），「至多」对应恰好落在远边。加载后 H = 0.20 m 是湖岸比荷叶 a 高出的高度，d、L 是荷叶 a 的近边、远边，h = 0 表示无网。",
+      "load": {
+        "scene": "net",
+        "v1": 2,
+        "H1": 0.2,
+        "d": 0.3,
+        "h": 0,
+        "L": 0.5
+      }
+    },
+    {
+      "id": "V3",
+      "title": "飞镖：同一出手速度击中同一点",
+      "cs": [
+        "C2",
+        "C1",
+        "C3"
+      ],
+      "source": "改编自 2026 届长宁区一模 4-3（原题男、女生到靶的水平距离 5 m、3 m，男生出手点高 20 cm，出手速度相同、击中同一点，求时间比、出手点比击中点高多少、ΔEk 与 Δp；第 (4) 问用推力 F 使 v₀ = Ft/m，作 1/F²–h₀ 图像求 g）；速度变化量的问法参考 2026 届浦东新区一模 3-2",
+      "stem": "靶固定在竖直墙上。成人在离靶 4.0 m 处、少年在离靶 2.0 m 处，各将质量 20 g 的飞镖水平投出，出手速度大小相同，都击中靶上同一点；成人的出手点比少年的高 0.30 m。不计空气阻力。(1) 两人飞镖的飞行时间之比；(2) 成人的出手点比击中点高多少？出手速度多大？(3) 成人的飞镖从出手到击中靶，动能变化量和动量变化量各多大？(4) 两支飞镖击中靶时，速度与水平方向夹角的正切各多大？(5) 保持水平距离 4.0 m 不变，改变出手速度 v₀，同时调整出手高度 h₀，使每次都击中靶心，作 h₀–1/v₀² 图像得到一条直线，斜率 k = 80 m³/s²，求重力加速度。",
+      "answer": "(1) 2∶1；(2) 0.40 m，v₀ = 10√2 m/s ≈ 14.1 m/s；(3) ΔEk = 0.080 J，Δp ≈ 0.057 N·s，竖直向下；(4) 成人 0.20，少年 0.10；(5) 10 m/s²",
+      "analysis": "(1) v₀ 相同，t = x/v₀ ∝ x，t成∶t少 = 4.0∶2.0 = 2∶1。(2) 下落 y = ½gt² ∝ t²，y成 = 4y少，又 y成 − y少 = 0.30 m，得 y少 = 0.10 m，y成 = 0.40 m。t成 = √(2 × 0.40 m ÷ 10 m/s²) ≈ 0.283 s，v₀ = 4.0 m ÷ 0.283 s ≈ 14.1 m/s；校核少年：t少 ≈ 0.141 s，14.1 m/s × 0.141 s ≈ 2.0 m。(3) 由 C2，ΔEk = mgy成 = 0.020 kg × 10 m/s² × 0.40 m = 0.080 J；由 C1，Δp = mgt成 = 0.020 kg × 10 m/s² × 0.283 s ≈ 0.057 N·s，竖直向下。(4) 由 C3，tanα = gt/v₀：成人 2.83 m/s ÷ 14.1 m/s ≈ 0.20，少年 0.10，成人的飞镖插得更斜。(5) h₀ − h₁ = gx²/(2v₀²)（h₁ 为靶心离地高度），h₀ 与 1/v₀² 成线性关系，斜率 k = gx²/2，g = 2k/x² = 2 × 80 m³/s² ÷ (4.0 m)² = 10 m/s²，纵截距就是 h₁。原题用推力 F 作用时间 t 使 v₀ = Ft/m，作 1/F²–h₀ 图像，是同一思路（化曲为直）。加载的是成人（v₀ 载入 14.142 m/s，以击中点所在水平面当作「地面」，落点恰在 L 处即击中该点）；少年改 H = 0.10 m、d = 1.0 m、L = 2.0 m。",
+      "load": {
+        "scene": "net",
+        "v1": 14.142,
+        "H1": 0.4,
+        "d": 2,
+        "h": 0,
+        "L": 4
+      }
+    },
+    {
+      "id": "V4",
+      "title": "垂直打在斜面上：由飞行时间测星球质量",
+      "cs": [
+        "C7",
+        "C3"
+      ],
+      "source": "改编自 2026 届黄浦区一模 3-7（原题从倾角 θ 的斜面上方以 v₀ 水平抛出，经时间 t 恰好垂直击中斜面，求地球质量；页面答案错位，见题源 #5）；星球部分参考 2026 届虹口区二模 4-4（火星表面平抛，求 g火 与火星质量）",
+      "stem": "(1) 在地面上，小钢球从倾角 37° 的斜面上方以 v₀ = 3.0 m/s 水平抛出，恰好垂直击中斜面。求飞行时间、击中时的速度大小，以及抛出点与击中点的高度差和水平距离。(2) 击中时位移偏角的正切多大？与速度偏角的正切有什么关系？(3) 宇航员在某星球表面做同样的实验：v₀ = 3.0 m/s，斜面倾角 37°，测得小钢球经 1.08 s 恰好垂直击中斜面。星球半径 R = 3.4×10⁶ m，G = 6.67×10⁻¹¹ N·m²/kg²，不计星球自转，求星球表面的重力加速度和星球质量。(4) 若小钢球改为从斜面顶端向斜面下方水平抛出、落回斜面，有没有可能垂直打在斜面上？",
+      "answer": "(1) t = 0.40 s，v = 5.0 m/s，高度差 0.80 m，水平距离 1.2 m；(2) tanφ = 2/3，tanα = 4/3 = 2tanφ；(3) g星 ≈ 3.7 m/s²，M ≈ 6.4×10²³ kg；(4) 不可能",
+      "analysis": "(1) 由 C7，速度与竖直方向的夹角等于 37°：tan37° = v₀/v_y，v_y = 3.0 m/s ÷ 0.75 = 4.0 m/s，t = v_y/g = 0.40 s，v = √(3.0² + 4.0²) m/s = 5.0 m/s；y = ½gt² = 0.80 m，x = v₀t = 1.2 m。(2) tanφ = 0.80 m ÷ 1.2 m = 2/3，tanα = v_y/v₀ = 4/3，正好是 2 倍（C3）。(3) g星 = v₀/(t tanθ) = 3.0 m/s ÷ (1.08 s × 0.75) ≈ 3.70 m/s²；由 GMm/R² = mg星，M = g星R²/G = 3.70 m/s² × (3.4×10⁶ m)² ÷ 6.67×10⁻¹¹ N·m²/kg² ≈ 6.4×10²³ kg（与火星质量相近）。原题字母答案：M = v₀R²/(Gt tanθ)。(4) 落回斜面时 tanα = 2tanθ（C5），速度与斜面的夹角 α − θ < 90°，不可能垂直；垂直打中只发生在迎着斜面抛出的情形。加载后抛出点在坡底正上方 1.7 m，击中点离地 0.90 m。",
+      "load": {
+        "scene": "perp",
+        "v3": 3,
+        "th3": 36.87,
+        "H3": 1.7
+      }
+    },
+    {
+      "id": "V5",
+      "title": "斜面上的平抛：落在斜面上还是地面上",
+      "cs": [
+        "C5",
+        "C6",
+        "C3"
+      ],
+      "source": "改编自人教版（2019）必修第二册第五章「复习与提高」A 组第 7 题（跳台滑雪落在 30° 斜坡上，求速度、时间，选做离坡面最大距离；见题源 #14）；上海 2022–2026 等级考与区卷中未见同类计算题，第 (3)–(5) 问为本卡在原题上的延伸",
+      "stem": "倾角 37°、高 H = 3.6 m 的斜面固定在水平地面上，小球从斜面顶端 O 点向斜面下方水平抛出。(1) v₀ = 4.0 m/s 时，小球落在何处？飞行多长时间？落到斜面时速度多大、方向如何？(2) v₀ = 4.0 m/s 时，小球何时离斜面最远？最远多远？(3) v₀ 不超过多少，小球都落在斜面上？(4) v₀ = 8.0 m/s 时落在何处？落地速度方向与 (1) 相同吗？(5) v₀ 由 2.0 m/s 增大为 4.0 m/s，落点到 O 点的距离变为几倍？再增大为 8.0 m/s，水平射程还变为 4 倍吗？",
+      "answer": "(1) 落在斜面上离 O 点 3.0 m 处，t = 0.60 s，v ≈ 7.2 m/s，tanα = 1.5（与水平方向约成 56°，与斜面约成 19°）；(2) t = 0.30 s 时，0.36 m；(3) 4√2 m/s ≈ 5.7 m/s；(4) 落在地面上离坡底约 2.0 m 处，tanα ≈ 1.06（约 47°），比 (1) 平；(5) 4 倍；不是，只增大约 2.8 倍",
+      "analysis": "(1) 由 C5，t = 2v₀tanθ/g = 2 × 4.0 m/s × 0.75 ÷ 10 m/s² = 0.60 s，x = 2.4 m，y = 1.8 m < 3.6 m，落在斜面上，s = x/cosθ = 3.0 m；v_y = 6.0 m/s，v = √(4.0² + 6.0²) m/s ≈ 7.2 m/s，tanα = 1.5 = 2tan37°，α ≈ 56.3°，与斜面夹角 α − θ ≈ 19.4°。(2) 由 C6，t₁ = t/2 = 0.30 s，d_max = (v₀sinθ)²/(2g cosθ) = (2.4 m/s)² ÷ 16 m/s² = 0.36 m。(3) y ≤ H：2v₀²tan²θ/g ≤ 3.6 m，v₀ ≤ √(gH/2)/tanθ = √18 m/s ÷ 0.75 = 4√2 m/s ≈ 5.7 m/s。(4) 8.0 m/s > 5.7 m/s，落到地面：t = √(2 × 3.6 m ÷ 10 m/s²) ≈ 0.849 s，x ≈ 6.8 m，坡底在水平 4.8 m 处，离坡底约 2.0 m；tanα = 8.49 m/s ÷ 8.0 m/s ≈ 1.06，比落在斜面上的 1.5 小，落在斜面上时「速度方向与 v₀ 无关」的结论不再成立。(5) 都落在斜面上时 s ∝ v₀²：2.0 m/s 时 s = 0.75 m，4.0 m/s 时 3.0 m，是 4 倍；8.0 m/s 时落到地面，飞行时间被高度限定，水平射程 6.8 m 只是 2.4 m 的约 2.8 倍。第 (3)(4) 问可依次把 v₀ 改为 5.657 m/s（恰好落在坡底）、8.0 m/s。",
+      "load": {
+        "scene": "slope",
+        "v2": 4,
+        "th2": 36.87,
+        "H2": 3.6
+      }
+    }
+  ],
+  "reskins": [
+    {
+      "id": "R1",
+      "title": "逆向平抛：灭火弹恰好垂直击中竖直墙面",
+      "map": "斜抛到最高点时速度水平，垂直击中竖直墙面就是在最高点击中；倒过来看，是从击中点 P 以水平速度 v_P 平抛落回出弹口 O。O、P 的高度差 ↔ 下落高度，水平距离 ↔ 射程，出射角 β ↔ 逆过程落地时的速度偏角，OP 的倾角 ↔ 位移偏角，tanβ = 2tan(OP 倾角)",
+      "anim": false,
+      "source": "改编自 2026 届奉贤区二模 4-2（原题已知高度差 h、OP 与水平面夹角 θ，求 v₀ = √(gh(4 + cot²θ)/2)，并证明重力势能与动能相等的高度 h′ > h/2），并参考 2026 届崇明区二模 6-2(2)（喷水枪水柱垂直击中竖直墙，H = 20 m、v_P = 5 m/s，求 v₀ = 5√17 m/s 及 tanθ = 4）",
+      "stem": "消防车出弹口 O 发射灭火弹，恰好垂直击中高楼竖直外墙上的着火点 P。P 比 O 高 20 m，O、P 的水平距离为 20 m，不计空气阻力。(1) 求灭火弹在 P 点的速度和飞行时间；(2) 求出射速度的大小及其与水平方向夹角 β 的正切；(3) 以 O 所在水平面为零势能面，灭火弹上升到多高时重力势能与动能相等？",
+      "answer": "(1) v_P = 10 m/s，水平指向墙面，t = 2.0 s；(2) v₀ = 10√5 m/s ≈ 22.4 m/s，tanβ = 2；(3) 12.5 m（高于 h/2 = 10 m）",
+      "analysis": "逆过来看，从 P 以 v_P 水平抛出，下落 20 m 到 O：t = √(2 × 20 m ÷ 10 m/s²) = 2.0 s，v_P = 20 m ÷ 2.0 s = 10 m/s（C2）。到 O 时竖直分速度 gt = 20 m/s，v₀ = √(10² + 20²) m/s = 10√5 m/s ≈ 22.4 m/s，tanβ = 20/10 = 2；OP 倾角的正切为 20 m ÷ 20 m = 1，tanβ = 2 × 1（C3）。代入原题结论 v₀ = √(gh(4 + cot²θ)/2) = √(10 × 20 × 5 ÷ 2) m/s = √500 m/s，一致。(3) 设该处高 h′：mgh′ = ½mv²，又 mgh′ + ½mv² = ½mv₀²，得 h′ = v₀²/(4g) = 500 m²/s² ÷ 40 m/s² = 12.5 m；写成 h′ = h/2 + v_P²/(4g) = 10 m + 2.5 m，因为最高点速度 v_P ≠ 0，所以 h′ > h/2（原题的论证）。动画不演示：逆过程的下落高度 20 m 超出「过网不出界」情境 H 的取值范围；把平抛轨迹倒过来放就是灭火弹的轨迹。"
+    },
+    {
+      "id": "R2",
+      "title": "月球阴影坑：越过坑沿、不撞坑壁",
+      "map": "抛出点相对着陆线的高度 H + h ↔ 发球高度；近侧坑沿（比着陆线高 h）↔ 网顶，越过坑沿 ↔ 过网；对面坑壁与着陆线的交点 ↔ 底线，不撞对面坑壁 ↔ 不出界；g 换成 g月",
+      "anim": false,
+      "source": "改编自 2026 广东高考第 5 题（原题 H = 1.28 km、l = 1.2 km、d = 3 km、h = 1.6 km、g月 = 1.6 m/s²，选 v₀ 可能的值，答案 B（50 m/s），可行范围 30 ~ 70 m/s）",
+      "stem": "月球上一个圆柱形阴影坑的竖直截面中，坑的直径 d = 3.0 km，月面到坑内着陆线的深度 h = 1.28 km。飞行器在月面上空 H = 0.72 km 处向坑中心方向水平飞行，在距坑边 l = 1.5 km 的 P 点正上方关闭动力，此后只受月球重力，g月 = 1.6 m/s²。(1) 要越过近侧坑沿进入坑内，速度至少多大？(2) 要在撞上对面坑壁之前到达着陆线，速度至多多大？(3) 速度为 40 m/s、60 m/s、95 m/s、100 m/s 时，哪个能安全到达着陆线？(4) 速度为 70 m/s 时，到达着陆线处离近侧坑壁多远？",
+      "answer": "(1) 50 m/s；(2) 90 m/s；(3) 60 m/s；(4) 2.0 km",
+      "analysis": "(1) 下落到月面高度用时 t₁ = √(2H/g月) = √(2 × 720 m ÷ 1.6 m/s²) = 30 s，这段时间内水平位移至少为 l：v₀ ≥ 1500 m ÷ 30 s = 50 m/s（C4，恰好擦过坑沿）。(2) 下落到着陆线共 H + h = 2000 m，t₂ = √(2 × 2000 m ÷ 1.6 m/s²) = 50 s，水平位移不能超过 l + d = 4500 m：v₀ ≤ 4500 m ÷ 50 s = 90 m/s（恰好到达对面坑壁与着陆线的交点）。越过坑沿后水平速度向前，不会再碰近侧坑壁。(3) 只有 60 m/s 在 50 ~ 90 m/s 之内。(4) x = 70 m/s × 50 s = 3500 m，离近侧坑壁 3500 m − 1500 m = 2000 m = 2.0 km。动画不演示：g月 = 1.6 m/s²，页面 g 固定为 10 m/s²；换成地面上同样几何尺寸时，速度范围乘 √(10/1.6) = 2.5，尺寸也超出参数范围。"
+    },
+    {
+      "id": "R3",
+      "title": "弹珠机：碰竖直挡板后落回",
+      "map": "与竖直挡板弹性碰撞时竖直分速度不变、水平分速度反向，把挡板另一侧的轨迹关于挡板镜像展开，仍是一条完整的平抛轨迹；水平路程 = 到挡板的距离 + 反弹后的水平距离",
+      "anim": false,
+      "source": "改编自 2026 届闵行区二模 二-2、二-4（原题正方形面板边长 2R，弹珠经半径 R 的 1/4 圆弧从顶边中点 H 水平飞出，与挡板 CD 弹性碰撞后直接落回 A 点，答案 v_H = (3/2)√(gR)；恰能到达 H 时 v_H = √(gR)；碰撞过程动量变化 2mv、水平向右）",
+      "stem": "竖直放置的弹珠机面板 ABCD 是边长 0.80 m 的正方形，A 在右下角，D 在左下角，左侧 CD 为竖直挡板。质量 20 g 的弹珠沿右侧通道上升，经半径 R = 0.40 m 的 1/4 圆弧轨道（弹珠在轨道内侧）从顶边中点 H 水平向左飞出，与挡板 CD 发生弹性碰撞（竖直分速度不变，水平分速度反向、大小不变），然后落到底边 AD 上。不计摩擦。(1) 弹珠能从 H 点飞出，在 H 点的速度至少多大？(2) 要使弹珠碰挡板后恰好落回 A 点，在 H 点的速度多大？碰撞过程中动量变化量多大、方向如何？(3) 弹珠在 H 点的速度为 v_H 时，落点到 D 点的距离 x 多大？x 的可能范围？",
+      "answer": "(1) 2.0 m/s；(2) 3.0 m/s，Δp = 0.12 N·s，水平向右；(3) x = (0.40 s)·v_H − 0.40 m，0.40 m ≤ x ≤ 0.80 m（对应 2.0 m/s ≤ v_H ≤ 3.0 m/s）",
+      "analysis": "(1) H 是圆弧的最高点，弹珠在轨道内侧，恰好能到达时只由重力提供向心力：mg = mv²/R，v_H = √(gR) = 2.0 m/s（MEC-CIR-01 的 C1）。(2) 下落高度 2R = 0.80 m，t = √(2 × 0.80 m ÷ 10 m/s²) = 0.40 s（C2），碰撞不改变竖直分运动。把 CD 另一侧的轨迹镜像展开，水平路程为 0.40 m（到挡板）+ 0.80 m（返回 A）= 1.2 m，v_H = 1.2 m ÷ 0.40 s = 3.0 m/s。碰撞时水平分速度由 3.0 m/s 向左变为 3.0 m/s 向右，Δp = 2mv_H = 2 × 0.020 kg × 3.0 m/s = 0.12 N·s，水平向右。(3) 展开后的水平路程为 v_H × 0.40 s，减去到挡板的 0.40 m，就是落点到 D 的距离：x = (0.40 s)·v_H − 0.40 m。v_H 最小 2.0 m/s 时 x = 0.40 m（AD 中点），v_H = 3.0 m/s 时 x = 0.80 m（A 点）。v_H ≥ 2.0 m/s 时展开路程 ≥ 0.80 m > 0.40 m，所以弹珠一定先碰挡板再落地。页面不画挡板；可在「过网不出界」中按镜像展开后的路程验证：v₀ = 3.0 m/s，H = 0.80 m，d = 0.40 m（挡板位置），h = 0，L = 1.2 m（展开后的 A 点），落点恰在 L 处。"
+    }
+  ],
+  "sources": [
+    {
+      "src": "2026 上海等级考 第 5 大题 5.1",
+      "desc": "松鼠从树梢水平跳到对面稍低的树枝上，跳出速度至少为 L√(g/(2H))：恰好落到边缘的临界（C4）→ V2 第 (3) 问。原卷转述（有解析）"
+    },
+    {
+      "src": "2024 上海等级考 第 4 大题 4.1(2)③",
+      "desc": "摆球与等质量的 b 弹性碰撞，b 从离地 1.6 m 的支架上以 1.4 m/s 平抛，射程 0.8 m（原题 g 取 9.8 m/s²）：射程 x = v₀√(2h/g)（C2）；碰撞部分属 MEC-MOM-01。原卷转述"
+    },
+    {
+      "src": "2026 届杨浦区二模 第三大题 三-2(2)",
+      "desc": "网球发球机在 A 点正上方垂直于网水平射出，从 (h, v) 三组中选能过网又落在界内的一组（C：h = 2a，v = 10√(ga)）：过网与不出界（C4）的原型 → V1。原卷转述，仅答案（已核原图并逐项复算）"
+    },
+    {
+      "src": "2026 届浦东新区一模 第 3 大题 3-2",
+      "desc": "乒乓球在离桌面 35 cm 处被水平击出，落到对面台面，水平距离 2.7 m：飞行时间 0.27 s，速度变化量 2.6 m/s（g 取 9.8 m/s²）：时间由高度决定、Δv = gt 竖直向下（C1、C2）→ V3 参考。原卷转述，仅答案"
+    },
+    {
+      "src": "2026 届黄浦区一模 第 3 大题 3-7",
+      "desc": "从倾角 θ 的斜面上方以 v₀ 水平抛出，经时间 t 恰好垂直击中斜面，求地球质量：垂直打在斜面上（C7）→ V4。原卷转述，无解析；页面答案错位（第 7 空给的是第 8(2) 问的答案），按原图复算应为 M = v₀R²/(Gt tanθ)"
+    },
+    {
+      "src": "2025 届闵行区一模 第一大题 一-4",
+      "desc": "青蛙跳荷叶：湖岸高 6h，荷叶 a、b 高 4h，c、d 高 h，茎构成边长 l 的正方形；落到 a 的起跳速度 (l/2)√(g/h)，落到 c 所需速度最小：落差与水平距离共同决定 v₀（C4）→ V2。原卷转述，仅答案（与 21 世纪教育网原卷预览图一致）"
+    },
+    {
+      "src": "2026 届长宁区一模 第 4 大题 4-3",
+      "desc": "飞镖：男、女生到靶 5 m、3 m，出手速度相同、击中同一点：时间比 5∶3，男生出手点比击中点高 0.31 m，ΔEk = 0.063 J，Δp = 0.05 N·s；投镖机器人作 1/F²–h₀ 图像求 g：同 v₀ 时 t ∝ x、下落 ∝ x²（C1、C2）→ V3。原卷转述（有解析）"
+    },
+    {
+      "src": "2026 届虹口区二模 第 4 大题 4-4",
+      "desc": "火星表面高 h 处以 v₀ 水平抛出，水平位移 L：g火 = 2hv₀²/L²，M火 = 2hR²v₀²/(GL²)：由平抛测星球表面 g（C2）→ V4 参考。原卷转述，仅答案"
+    },
+    {
+      "src": "2026 届崇明区一模 第 3 大题 3-4①",
+      "desc": "光滑半圆轨道最高点 D 的 vD = 3 m/s，R = 0.4 m，小球从 D 水平抛出，落点距 B 1.2 m：C2 与 MEC-CIR-01 组合 → R3 参考。原卷转述，仅答案"
+    },
+    {
+      "src": "2026 届闵行区二模 第二大题 二-2、二-4",
+      "desc": "弹珠机：弹珠经半径 R 的 1/4 圆弧从顶边中点 H 水平飞出，与竖直挡板弹性碰撞后落回 A 点，v_H = (3/2)√(gR)；恰能到达 H 时 v_H = √(gR)：碰挡板 = 轨迹镜像展开 → R3。原卷转述，仅答案（页面题干「半径为 1/4 R 的圆弧」应为「半径为 R 的 1/4 圆弧」）"
+    },
+    {
+      "src": "2026 届奉贤区二模 第 4 大题 4-2",
+      "desc": "灭火弹恰好垂直墙面击中着火点 P，P 比 O 高 h，OP 与水平面夹角 θ：v₀ = √(gh(4 + cot²θ)/2)；证明势能与动能相等的高度 h′ > h/2：斜抛到最高点 = 逆向平抛（C3）→ R1。原卷转述，仅答案"
+    },
+    {
+      "src": "2026 届崇明区二模 第 6 大题 6-2(2)",
+      "desc": "喷水枪水柱恰好垂直击中竖直墙面 P 点，H = 20 m，v_P = 5 m/s：v₀ = 5√17 m/s，v₀ 与水平方向夹角的正切为 4：逆向平抛 → R1。原卷转述，仅答案"
+    },
+    {
+      "src": "2026 广东高考 第 5 题",
+      "desc": "月球阴影坑：飞行器在 P 点正上方关闭动力，安全到达着陆线的 v₀ 可能是 50 m/s（可行范围 30 ~ 70 m/s）：越过坑沿 ↔ 过网，不撞对面坑壁 ↔ 不出界（C4）→ R2。原卷转述，仅答案（已核原图并复算）"
+    },
+    {
+      "src": "人教版（2019）必修第二册 第五章「复习与提高」A 组第 7 题、B 组第 3 题",
+      "desc": "A 组 7：跳台滑雪落在倾角 30° 的斜坡上，求速度与时间，选做离坡面的最大距离（C5、C6 原型 → V5）；B 组 3：轰炸机水平投弹恰好垂直击中倾角 θ 的山坡，求竖直下落距离与水平距离之比（C7 原型）。教材原题"
+    },
+    {
+      "src": "另见（C2 的直接应用，未单列）",
+      "desc": "2026 届杨浦一模 1-1(1)（牛顿「抛苹果」）、宝山一模 1-3（祝融号越过低洼）、嘉定二模 2-2（泥块从转盘水平飞出）、宝山二模 4-1（滑道水平抛出入水）、嘉定一模 7-2（两棒碰撞后平抛，属 EM-IND-01）、2026 江苏高考第 4 题（同一高度击出三次，飞行时间相同）。2025 届金山二模 3-2(2) 题干与答案不符，存疑未收"
+    }
+  ]
+}
+</script>
+
+<style>
+/* Layout: 实验报告 / 图纸标题栏。题头左标题右标题栏表格；母题独占一行；考点与边界并排；动画区左画布右控制台；结论、变式、换皮题依次向下 */
+:root{
+  --paper:#f2f4f3; --grid:#e4e9e6; --card:#ffffff; --sunk:#f6f8f7;
+  --ink:#142030; --muted:#5b6979; --faint:#8a96a3; --line:#d6dedA; --hair:#e7ece9;
+  --accent:#2443a6; --accent-soft:#e9eefb; --mark:#f7e9b0;
+  --g:#c0502a; --n:#17806a; --v:#2f62b3; --a:#a0661a; --track:#34404f; --fig-ink:#1d232b; --fig-aux:#75808c; --warn:#a85a14; --ok:#18845a;
+  --shadow:0 1px 0 rgba(20,32,48,.04),0 10px 28px -18px rgba(20,32,48,.28);
+  --f-display:"Noto Serif SC","Songti SC","STSong",serif;
+  --f-body:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#10161d; --grid:#18202a; --card:#171f28; --sunk:#131a22;
+  --ink:#e4e9ef; --muted:#9aa7b6; --faint:#6f7d8c; --line:#2a3542; --hair:#212b36;
+  --accent:#93acff; --accent-soft:#1f2a44; --mark:#4a4020;
+  --g:#ef8f6e; --n:#5cc7a0; --v:#8db0ef; --a:#e3ac5c; --track:#c3ccd8; --fig-ink:#dde3ea; --fig-aux:#8794a2; --warn:#f0a35a; --ok:#52d39c;
+  --shadow:0 1px 0 rgba(0,0,0,.25),0 12px 30px -20px rgba(0,0,0,.7); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#10161d; --grid:#18202a; --card:#171f28; --sunk:#131a22;
+  --ink:#e4e9ef; --muted:#9aa7b6; --faint:#6f7d8c; --line:#2a3542; --hair:#212b36;
+  --accent:#93acff; --accent-soft:#1f2a44; --mark:#4a4020;
+  --g:#ef8f6e; --n:#5cc7a0; --v:#8db0ef; --a:#e3ac5c; --track:#c3ccd8; --fig-ink:#dde3ea; --fig-aux:#8794a2; --warn:#f0a35a; --ok:#52d39c;
+  --shadow:0 1px 0 rgba(0,0,0,.25),0 12px 30px -20px rgba(0,0,0,.7); color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.7;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:28px 28px;background-position:-1px -1px}
+.wrap{max-width:1160px;margin:0 auto;padding-inline:16px;padding-block:16px 56px;display:flex;flex-direction:column;gap:16px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;font-weight:800}
+p{margin:0}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 22px;min-width:0;display:flex;flex-direction:column;gap:10px;box-shadow:var(--shadow)}
+@media (max-width:520px){.panel{padding:16px;border-radius:12px}}
+.sh{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.sh h2{font-size:20px;letter-spacing:.02em}
+.sh small{font-size:13px;color:var(--muted)}
+.sh::after{content:"";flex:1 1 40px;height:1px;background:var(--hair);align-self:center}
+.label{font-size:12px;letter-spacing:.12em;color:var(--faint);font-weight:700}
+.note{font-size:13px;color:var(--muted)}
+
+/* 题头：标题 + 图纸标题栏 */
+.top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px 28px;align-items:end;padding-bottom:6px}
+@media (max-width:760px){.top{grid-template-columns:1fr}}
+.brand{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);margin-bottom:6px}
+.seal{font-family:var(--f-display);font-weight:800;font-size:13px;color:var(--card);background:var(--ink);padding:2px 8px;border-radius:3px;letter-spacing:.18em}
+.top h1{font-size:clamp(22px,3vw,30px);line-height:1.2;letter-spacing:.01em}
+.top .sub{margin-top:4px;color:var(--muted);font-size:14px}
+.tb{border-collapse:collapse;font-size:13px;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:var(--shadow);min-width:0}
+.tb th,.tb td{border:1px solid var(--hair);padding:6px 12px;text-align:left;white-space:nowrap}
+.tb th{color:var(--faint);font-weight:500;font-size:12px;letter-spacing:.06em;background:var(--sunk)}
+.tb td{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.tb td.code{color:var(--accent);font-weight:600}
+.tbwrap{overflow-x:auto;max-width:100%}
+
+/* 母题 */
+.problem{display:flex;flex-direction:column;gap:10px;min-width:0}
+.lead{font-family:var(--f-display);font-size:clamp(16px,1.7vw,17px);line-height:1.8;font-weight:600}
+.num{font-family:var(--f-mono);font-weight:600;font-size:.92em;color:var(--ink);white-space:nowrap;
+  background:linear-gradient(transparent 55%,var(--mark) 55%);padding:0 2px;transition:background-color .2s}
+.asks{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 26px}
+.asks li{display:flex;gap:8px;align-items:baseline;min-width:0}
+.asks li b{flex:none}
+.asks li b{display:inline-grid;place-items:center;width:1.6em;height:1.6em;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-family:var(--f-mono);font-size:13px}
+.given{background:var(--sunk);border:1px solid var(--hair);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.given dl{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;font-size:14px}
+.given dt{font-family:var(--f-mono);color:var(--muted)}
+.given dd{margin:0;font-family:var(--f-mono);font-variant-numeric:tabular-nums;text-align:right}
+
+/* 考点 + 边界 */
+.row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:28px;align-items:start}
+@media (max-width:860px){.row2{grid-template-columns:1fr}}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{font-size:14px;border:1px solid var(--line);background:var(--sunk);padding:4px 12px;border-radius:999px}
+.bnd{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+@media (max-width:620px){.bnd{grid-template-columns:1fr}}
+.bnd ul{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.bnd li{display:grid;grid-template-columns:1.2em minmax(0,1fr);gap:6px}
+.bnd .ok li::before{content:"✓";color:var(--ok);font-weight:700}
+.bnd .back li::before{content:"→";color:var(--accent);font-weight:700}
+
+/* 选项卡 */
+.board{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);min-width:0;overflow:hidden}
+.tabs{display:flex;gap:2px;padding:0 10px;border-bottom:1px solid var(--line);background:var(--sunk);overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{border:none;border-radius:0;background:none;padding:13px 14px 11px;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap;font-size:15px}
+.tab:hover{color:var(--ink);border-color:transparent;border-bottom-color:var(--line)}
+.tab[aria-selected="true"]{color:var(--ink);font-weight:700;border-bottom-color:var(--accent)}
+.tab .n{font-family:var(--f-mono);font-size:11px;color:var(--faint);margin-left:5px;font-weight:500}
+.pane{padding:16px 22px 22px;display:flex;flex-direction:column;gap:16px;min-width:0}
+@media (max-width:520px){.pane{padding:16px}}
+.hint{font-size:13px;color:var(--muted)}
+
+/* 动画区 */
+.lab{display:flex;flex-wrap:wrap;gap:22px 28px;align-items:flex-start}
+.stage{flex:0 1 auto;width:min(100%,max(300px,calc(100vh - 430px)),640px);display:flex;flex-direction:column;gap:10px;min-width:0}
+.canvas-box{position:relative;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card)}
+canvas{width:100%;max-width:100%;aspect-ratio:1/1;display:block}
+.status{position:absolute;left:12px;top:12px;max-width:calc(100% - 24px);display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;
+  padding:5px 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow)}
+.status::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--faint);flex:none}
+.status.warn{color:var(--warn)} .status.warn::before{background:var(--warn)}
+.status.ok{color:var(--ok)} .status.ok::before{background:var(--ok)}
+@media (max-width:640px){.status{position:static;margin:8px 10px 10px;max-width:none}}
+.legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--muted)}
+.legend i{display:inline-block;width:16px;height:3px;vertical-align:middle;margin-right:6px;border-radius:2px}
+.readout{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card)}
+.ro{padding:7px 12px;min-width:0;box-shadow:1px 0 0 var(--hair),0 1px 0 var(--hair)}
+.ro span{display:block;font-size:12px;color:var(--faint)}
+.ro b{font-family:var(--f-mono);font-weight:600;font-variant-numeric:tabular-nums;font-size:15px;overflow-wrap:anywhere}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+button{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:7px 16px;border-radius:999px;cursor:pointer;transition:border-color .15s,background-color .15s,color .15s}
+button:hover{border-color:var(--accent)}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.primary{background:var(--accent);color:var(--card);border-color:var(--accent);font-weight:700;padding-inline:22px}
+.ctrl{flex:1 1 300px;display:flex;flex-direction:column;gap:18px;min-width:0}
+.side{display:flex;flex-direction:column;gap:12px;min-width:0}
+.group{display:flex;flex-direction:column;gap:10px}
+.field{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"l o" "r r";gap:2px 10px;align-items:baseline}
+.field label{grid-area:l;font-size:14px}
+.field label .s{font-family:var(--f-mono);font-weight:600;margin-right:6px}
+.field label .note{font-size:12px}
+.numin{grid-area:o;display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:8px;padding:1px 8px 1px 2px;background:var(--sunk)}
+.numin:focus-within{border-color:var(--accent)}
+.numin input{width:6.2em;border:none;background:transparent;color:var(--accent);font:600 14px var(--f-mono);font-variant-numeric:tabular-nums;text-align:right;padding:3px 2px;outline:none;-moz-appearance:textfield}
+.numin input::-webkit-outer-spin-button,.numin input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.numin .u{font:500 12px var(--f-mono);color:var(--muted);min-width:1.5em}
+.presets button[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:700}
+.pnote{font-size:13px;color:var(--muted);border-left:2px solid var(--accent-soft);padding:2px 0 2px 10px}
+.pnote b{color:var(--ink);font-weight:600}
+.field input{grid-area:r}
+input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
+.seg{display:flex;padding:3px;gap:3px;border-radius:999px;background:var(--sunk);border:1px solid var(--line)}
+.seg button{flex:1;border:none;padding:6px 10px;background:transparent;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--card);color:var(--ink);font-weight:700;box-shadow:var(--shadow)}
+.seg button small{display:block;font-size:12px;font-weight:400;color:var(--faint);line-height:1.4}
+.presets{display:flex;flex-wrap:wrap;gap:6px}
+.presets button{font-size:13px;padding:4px 12px;background:var(--sunk)}
+.verdict{background:var(--sunk);border:1px solid var(--hair);border-radius:10px;padding:12px 14px;font-size:14px;line-height:1.8}
+.verdict b{color:var(--accent);font-family:var(--f-mono)}
+
+/* 结论 */
+.cl{display:flex;flex-direction:column}
+.cl details{border-top:1px solid var(--hair)}
+.cl details:last-child{border-bottom:1px solid var(--hair)}
+.cl summary{display:grid;grid-template-columns:2.6em minmax(0,1fr) minmax(0,auto) 1em;gap:6px 14px;align-items:center;padding:12px 4px;cursor:pointer;list-style:none}
+.cl summary::-webkit-details-marker{display:none}
+.cl summary:hover .t{color:var(--accent)}
+.badge{display:inline-grid;place-items:center;min-width:2.3em;height:1.7em;padding:0 6px;border-radius:6px;background:var(--accent-soft);color:var(--accent);font-family:var(--f-mono);font-weight:600;font-size:13px}
+.cl .f{font-family:var(--f-mono);font-size:14px;background:var(--sunk);border:1px solid var(--hair);border-radius:6px;padding:2px 10px;justify-self:end;text-align:right}
+.chev{width:8px;height:8px;border-right:2px solid var(--faint);border-bottom:2px solid var(--faint);transform:rotate(45deg);transition:transform .2s;justify-self:center}
+details[open]>summary .chev{transform:rotate(225deg)}
+@media (max-width:640px){.cl summary{grid-template-columns:2.6em minmax(0,1fr) 1em}.cl .f{grid-column:2;grid-row:2;justify-self:start;text-align:left}.chev{grid-column:3;grid-row:1}}
+.deriv{margin:0 4px 14px calc(2.6em + 18px);padding:4px 0 4px 14px;border-left:2px solid var(--accent-soft);white-space:pre-line;font-size:14px;color:var(--ink)}
+@media (max-width:640px){.deriv{margin-left:4px}}
+
+/* 变式 / 换皮题 */
+.qs{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:14px}
+.q{border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px;background:var(--card);min-width:0}
+.q .head{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+.q h3{font-size:16px;margin-right:auto}
+.chip{font-size:12px;font-family:var(--f-mono);border:1px solid var(--line);border-radius:999px;padding:0 8px;color:var(--muted)}
+.src{font-size:12px;color:var(--faint)}
+.map{font-size:13px;color:var(--muted)}
+.map b{font-weight:500;color:var(--ink)}
+.q details{border-top:1px dashed var(--line);padding-top:8px}
+.q details summary{cursor:pointer;color:var(--accent);font-size:14px;font-weight:500;list-style:none;display:flex;align-items:center;gap:8px;width:fit-content}
+.q details summary::-webkit-details-marker{display:none}
+.ans{margin-top:8px;display:flex;flex-direction:column;gap:6px;font-size:14px;background:var(--sunk);border-radius:8px;padding:10px 12px}
+.ans .a{font-weight:700}
+.q .foot{margin-top:auto;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:space-between}
+.q .foot button{font-size:13px;padding:4px 14px;color:var(--accent);border-color:var(--accent-soft);background:var(--accent-soft)}
+.srcs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.srcs li{display:grid;grid-template-columns:minmax(0,15em) minmax(0,1fr);gap:4px 16px;padding:8px 0;border-top:1px solid var(--hair);font-size:14px}
+.srcs li b{font-family:var(--f-mono);font-weight:500;font-size:13px}
+.srcs li span{color:var(--muted)}
+@media (max-width:620px){.srcs li{grid-template-columns:1fr}}
+footer{font-size:12px;color:var(--faint);text-align:center}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+
+<div class="wrap" id="app">
+  <header class="top">
+    <div>
+      <div class="brand"><span class="seal">格物</span><span>Gewu · 高中物理母题</span></div>
+      <h1 id="hName"></h1>
+      <p class="sub" id="hSub"></p>
+    </div>
+    <div class="tbwrap"><table class="tb" id="hTable"></table></div>
+  </header>
+
+  <section class="panel">
+    <div class="sh"><h2>母题</h2><small>题干数字随动画参数实时变化</small></div>
+    <div class="problem">
+      <p class="lead" id="stem"></p>
+      <ol class="asks" id="asks"></ol>
+      <p class="note" id="stemNote"></p>
+    </div>
+  </section>
+
+  <div class="board">
+    <nav class="tabs" role="tablist" aria-label="母题内容">
+      <button class="tab" role="tab" id="tab-lab" aria-controls="pane-lab" data-pane="pane-lab">动画实验</button>
+      <button class="tab" role="tab" id="tab-scope" aria-controls="pane-scope" data-pane="pane-scope">考点与边界</button>
+      <button class="tab" role="tab" id="tab-concl" aria-controls="pane-concl" data-pane="pane-concl">结论<span class="n" id="nConcl"></span></button>
+      <button class="tab" role="tab" id="tab-var" aria-controls="pane-var" data-pane="pane-var">变式<span class="n" id="nVar"></span></button>
+      <button class="tab" role="tab" id="tab-skin" aria-controls="pane-skin" data-pane="pane-skin">换皮题<span class="n" id="nSkin"></span></button>
+      <button class="tab" role="tab" id="tab-src" aria-controls="pane-src" data-pane="pane-src">题源<span class="n" id="nSrc"></span></button>
+    </nav>
+
+    <section class="pane" role="tabpanel" id="pane-lab" aria-labelledby="tab-lab">
+      <div class="lab">
+        <div class="stage">
+          <div class="legend" id="legend"></div>
+          <div class="canvas-box">
+            <canvas id="cv" aria-label="母题动画画布"></canvas>
+            <div class="status" id="status" role="status">准备就绪</div>
+          </div>
+          <div class="btns">
+            <button class="primary" id="play">▶ 发射</button>
+            <button id="reset">重置</button>
+            <button id="slow">慢放 ×0.25</button>
+          </div>
+        </div>
+        <div class="ctrl">
+          <div class="group"><div class="label">参数</div><div id="params" class="group"></div></div>
+          <div class="group"><div class="label">预设情形 <span id="presetMode"></span></div><div class="presets" id="presets"></div><p class="pnote" id="pnote" hidden></p></div>
+          <div class="group"><div class="label">理论预判</div><div class="verdict" id="verdict"></div></div>
+        </div>
+      </div>
+      <div class="group"><div class="label">实时读数</div><div class="readout" id="readout"></div></div>
+    </section>
+
+    <section class="pane" role="tabpanel" id="pane-scope" aria-labelledby="tab-scope" hidden>
+      <div class="row2">
+        <div class="group"><div class="label">核心考点</div><div class="tags" id="tags"></div></div>
+        <div class="group"><div class="label">适用边界</div>
+          <div class="bnd">
+            <div><div class="hint">结论成立条件</div><ul class="ok" id="bCond"></ul></div>
+            <div><div class="hint">超出边界时回到</div><ul class="back" id="bBack"></ul></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pane" role="tabpanel" id="pane-concl" aria-labelledby="tab-concl" hidden>
+      <p class="hint">点开每条结论看推导。</p>
+      <div class="cl" id="concl"></div>
+    </section>
+
+    <section class="pane" role="tabpanel" id="pane-var" aria-labelledby="tab-var" hidden>
+      <p class="hint">同一骨架，换条件或问法。点「加载到动画」可直接在动画里验证。</p>
+      <div class="qs" id="variants"></div>
+    </section>
+
+    <section class="pane" role="tabpanel" id="pane-skin" aria-labelledby="tab-skin" hidden>
+      <p class="hint">同一骨架，换情境外形。</p>
+      <div class="qs" id="reskins"></div>
+    </section>
+
+    <section class="pane" role="tabpanel" id="pane-src" aria-labelledby="tab-src" hidden>
+      <ul class="srcs" id="sources"></ul>
+    </section>
+  </div>
+
+  <footer id="foot"></footer>
+</div>
+
+<script>
+/* ================= 线稿绘图工具 FIG（所有母题共用，不改） =================
+   画法照试卷插图：装置用墨线，固定面画斜线阴影，辅助线用虚线，物理量和点的字母用斜体衬线；
+   只有矢量带颜色（--g 重力/外力，--n 弹力/约束力，--v 速度，--a 其他矢量）。
+   用法：SIM.draw 里 const F=FIG(ctx,W,tok)；坐标是画布像素，F.u = W/720 是线宽与几何的基准单位，
+   F.ut 是字号单位（窄屏时不再随画布缩小，保证字母不小于约 11 CSS 像素；自写文字函数也要用 F.ut 算字号）。
+   颜色：F.ink 墨线、F.auxColor 辅助线、F.paper 纸色（F.aux 是画辅助线的方法，不是颜色）。 */
+const FIG=(ctx,W,tok)=>{
+  const u=W/720,ink=tok('--fig-ink'),aux=tok('--fig-aux'),paper=tok('--card');
+  const dp=W/(ctx.canvas.clientWidth||W),ut=Math.max(u,dp*11/19);   // dp：每 CSS 像素的画布像素数
+  const SERIF='"Times New Roman","STIX Two Text",Times,serif',SANS=tok('--f-body');
+  const path=(fn,{w=1.6,color=ink,dash=null,fill=null}={})=>{ctx.save();ctx.beginPath();fn();
+    if(fill){ctx.fillStyle=fill;ctx.fill()}
+    if(w>0){ctx.lineWidth=w*u;ctx.strokeStyle=color;ctx.setLineDash(dash?dash.map(d=>d*u):[]);ctx.lineCap='round';ctx.lineJoin='round';ctx.stroke()}
+    ctx.restore()};
+  // 文字先描一圈底色再填色，压在线条上也清楚
+  const text=(t,x,y,font,color,align,base)=>{ctx.save();ctx.font=font;ctx.textAlign=align;ctx.textBaseline=base;
+    ctx.lineJoin="round";ctx.lineWidth=5*ut;ctx.strokeStyle=paper;ctx.strokeText(t,x,y);ctx.fillStyle=color;ctx.fillText(t,x,y);ctx.restore()};
+  const F={u,ut,ink,auxColor:aux,paper,
+    clear(){ctx.save();ctx.setLineDash([]);ctx.fillStyle=paper;ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);ctx.restore()},
+    line(x1,y1,x2,y2,o){path(()=>{ctx.moveTo(x1,y1);ctx.lineTo(x2,y2)},o)},
+    poly(pts,o){path(()=>pts.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y)),o)},
+    circle(x,y,r,o){path(()=>ctx.arc(x,y,r,0,2*Math.PI),o)},
+    arc(x,y,r,a0,a1,o){path(()=>ctx.arc(x,y,r,a0,a1),o)},
+    rect(x,y,w,h,o){path(()=>ctx.rect(x,y,w,h),o)},
+    // 辅助线（中心线、投影线等）
+    aux(x1,y1,x2,y2,o={}){F.line(x1,y1,x2,y2,{w:1,color:aux,dash:[6,5],...o})},
+    // 运动轨迹：细虚线
+    trail(pts,o={}){if(pts.length>1)F.poly(pts,{w:1.3,color:aux,dash:[5,5],...o})},
+    // 固定面斜线：沿 (x1,y1)→(x2,y2) 的直线，画在 side 一侧（屏幕坐标下，1 = 前进方向右手侧）
+    hatch(x1,y1,x2,y2,side=1,{gap=12,len=10}={}){const L=Math.hypot(x2-x1,y2-y1),n=Math.max(1,Math.round(L/(gap*u)));
+      const tx=(x2-x1)/L,ty=(y2-y1)/L,nx=-ty*side,ny=tx*side,ox=(nx-tx)*len*u/Math.SQRT2,oy=(ny-ty)*len*u/Math.SQRT2;
+      path(()=>{for(let i=0;i<=n;i++){const x=x1+(x2-x1)*i/n,y=y1+(y2-y1)*i/n;ctx.moveTo(x,y);ctx.lineTo(x+ox,y+oy)}},{w:1,color:aux})},
+    // 圆弧形固定面的斜线：out = true 画在圆外侧
+    hatchArc(cx,cy,r,a0,a1,out=true,{gap=12,len=10}={}){const n=Math.max(1,Math.round(r*Math.abs(a1-a0)/(gap*u))),s=out?1:-1;
+      path(()=>{for(let i=0;i<=n;i++){const a=a0+(a1-a0)*i/n,c=Math.cos(a),si=Math.sin(a),x=cx+r*c,y=cy+r*si;
+        const nx=c*s,ny=si*s,tx=-si,ty=c;ctx.moveTo(x,y);ctx.lineTo(x+(nx-tx)*len*u/Math.SQRT2,y+(ny-ty)*len*u/Math.SQRT2)}},{w:1,color:aux})},
+    // 矢量：从 (x,y) 画到 (x+dx,y+dy)，细杆 + 窄实心箭头；label 用斜体写在箭头外侧，
+    // 与别的矢量共线时用 off=[dx,dy]（单位 u，相对箭头尖）把标注挪到旁边
+    arrow(x,y,dx,dy,color,label,{w=2,head=12,size=19,off=null}={}){const L=Math.hypot(dx,dy);if(L<2*u)return;
+      const ux=dx/L,uy=dy/L,h=Math.min(head*u,L*.6),hw=h*.34,tx=x+dx,ty=y+dy;
+      F.line(x,y,tx-ux*h*.7,ty-uy*h*.7,{w,color});
+      path(()=>{ctx.moveTo(tx,ty);ctx.lineTo(tx-ux*h-uy*hw,ty-uy*h+ux*hw);ctx.lineTo(tx-ux*h+uy*hw,ty-uy*h-ux*hw);ctx.closePath()},{w:0,fill:color});
+      if(label)F.label(label,off?tx+off[0]*u:tx+ux*14*u,off?ty+off[1]*u:ty+uy*14*u,{color,size})},
+    // 斜体衬线字母（物理量、点名）
+    label(t,x,y,{color=ink,size=19,align='center',base='middle',italic=true}={}){text(t,x,y,`${italic?'italic ':''}${size*ut}px ${SERIF}`,color,align,base)},
+    // 中文小注
+    zh(t,x,y,{color=aux,size=14,align='center',base='middle'}={}){text(t,x,y,`${size*ut}px ${SANS}`,color,align,base)},
+    dot(x,y,r=2.6,color=ink){F.circle(x,y,r*u,{w:0,fill:color})},
+    // 带名字的点：实心小点 + 斜体字母（dx、dy 为字母相对点的偏移，单位 u）
+    point(x,y,name,dx=-13,dy=13){F.dot(x,y);if(name)F.label(name,x+dx*u,y+dy*u)},
+    // 小球：空心圆，球心另用 F.dot 标出（矢量画完后再点，表示力作用在重心）
+    ball(x,y,r){F.circle(x,y,r,{w:1.6,fill:paper})},
+    // 尺寸标注：两端带箭头的细线，文字写在中点外侧 off（单位 u）
+    dim(x1,y1,x2,y2,t,{off=14,color=ink}={}){const L=Math.hypot(x2-x1,y2-y1);if(L<4*u)return;const ux=(x2-x1)/L,uy=(y2-y1)/L,h=Math.min(8*u,L/3),hw=h*.38;
+      F.line(x1,y1,x2,y2,{w:1,color});
+      for(const[px,py,sx]of[[x1,y1,1],[x2,y2,-1]])path(()=>{ctx.moveTo(px,py);ctx.lineTo(px+sx*ux*h-uy*hw,py+sx*uy*h+ux*hw);ctx.lineTo(px+sx*ux*h+uy*hw,py+sx*uy*h-ux*hw);ctx.closePath()},{w:0,fill:color});
+      if(t)F.label(t,(x1+x2)/2-uy*off*u,(y1+y2)/2+ux*off*u,{color})},
+  };
+  return F;
+};
+
+/* ================= SIM 模块：每个母题替换这一段 =================
+   约定接口：
+   SIM.legend            [{label, color(CSS 变量名)}]
+   SIM.init(P)           → 状态 S（含 S.done、S.status={text,cls}）
+   SIM.step(S,P,dt)      推进 dt 秒（引擎保证 dt ≤ 0.5 ms）
+   SIM.readouts(S,P)     → [[标签, 带单位的值]]
+   SIM.draw(ctx,S,P,W,H,tok)  tok(name) 取主题色
+   SIM.verdict(P)        → 理论预判 HTML
+*/
+const SIM=(()=>{
+  /* 平抛运动的临界问题：过网不出界 / 斜面上的平抛 / 垂直打在斜面上。
+     物理：对 (x, y, vx, vy) 做 RK4，a = (0, −g)，积分步长 ≤ 0.5 ms，不用预设轨迹。坐标以抛出点 O 为原点，x 向右、y 向上，单位 m。
+     事件：越过 x = d、落地、碰到斜面、垂直斜面的分速度变号（离斜面最远），都在该步内二分定位；临界容差 1 mm、90° ± 0.5°。
+     时间：飞行时间小于 1 s 时自动 0.25 倍速慢放（引擎给的时间步乘 0.25 再积分），读数显示真实时间。
+     两条临界轨迹、v–t 图中的理论线按公式画，只作对照。
+     d < L：引擎不支持参数之间的约束；引擎每次同步参数都会调用 verdict，发现 d ≥ L 时把 d 改为 L − 0.1 m，
+     并通过 d 输入框的 change 事件交给引擎同步滑块、题干和动画。 */
+  const g=10,RAD=Math.PI/180,DEG=180/Math.PI,TOL=1e-3,PI=Math.PI;
+  const ok=x=>typeof x==='number'&&isFinite(x);
+  const fmt=(x,d=2)=>{if(!ok(x))return'—';return(Math.abs(x)<.5*Math.pow(10,-d)?0:x).toFixed(d).replace('-','−')};
+  const NB='\u00a0';   // 数字与单位之间用不换行空格，窄屏状态条折行时不把单位挤到下一行
+  const m=(x,d=3)=>ok(x)?fmt(x,d)+NB+'m':'—',ms=(x,d=2)=>ok(x)?fmt(x,d)+NB+'m/s':'—',sec=(x,d=3)=>ok(x)?fmt(x,d)+NB+'s':'—',dg=(x,d=2)=>ok(x)?fmt(x,d)+'°':'—';
+  const sgn=(x,d=3)=>ok(x)?(x>=0?'+':'')+fmt(x,d)+NB+'m':'—';
+  const STEPS=[0.02,0.05,0.1,0.2,0.5];
+
+  /* ---------- 几何与理论值（只用于取景、频闪间隔、慢放、理论预判；运动本身由 RK4 积分） ---------- */
+  function geom(P){
+    const sc=P.scene==='slope'||P.scene==='perp'?P.scene:'net',K={sc};
+    if(sc==='net'){
+      const L=+P.L,H=+P.H1,v=+P.v1,d=Math.max(.01,Math.min(+P.d,L-.1)),h=Math.max(0,+P.h);
+      Object.assign(K,{v0:v,H,L,d,h});
+      K.tG=Math.sqrt(2*H/g);K.xL=v*K.tG;K.tN=d/v;K.yN=H-.5*g*K.tN*K.tN;          // yN：到网时离地高度
+      K.hitNet=h>0&&K.tN<K.tG&&K.yN-h<-TOL;
+      K.Tf=K.hitNet?K.tN:K.tG;
+      K.vmin=H>h?d*Math.sqrt(g/(2*(H-h))):Infinity;K.vmax=L*Math.sqrt(g/(2*H));
+      K.Hmin=h*L*L/(L*L-d*d);
+      K.xView=Math.max(L,K.hitNet?d:K.xL)*1.04;
+    }else{
+      const sl=sc==='slope',th=(sl?+P.th2:+P.th3)*RAD,H=sl?+P.H2:+P.H3,v=sl?+P.v2:+P.v3;
+      Object.assign(K,{v0:v,H,th,tn:Math.tan(th),sn:Math.sin(th),cs:Math.cos(th)});
+      if(sl){
+        K.xb=H/K.tn;K.tS=2*v*K.tn/g;K.onSlope=v*K.tS<=K.xb;K.tG=Math.sqrt(2*H/g);
+        K.Tf=K.onSlope?K.tS:K.tG;K.xL=v*K.Tf;K.v0c=Math.sqrt(g*H/2)/K.tn;
+        K.t1=v*K.tn/g;K.dmax=(v*K.sn)**2/(2*g*K.cs);K.sL=K.onSlope?K.xL/K.cs:NaN;
+        K.xView=Math.max(K.xb,K.xL)*1.06;
+      }else{
+        K.Tf=(-v*K.tn+Math.sqrt(v*v*K.tn*K.tn+2*g*H))/g;K.xh=v*K.Tf;K.yh=-.5*g*K.Tf*K.Tf;
+        K.vp=K.tn*Math.sqrt(2*g*H/(1+2*K.tn*K.tn));K.tp=K.vp/(g*K.tn);
+        K.xTop=Math.min(H/K.tn,K.xh*1.35+.08*H/K.tn);K.xView=K.xTop;
+      }
+    }
+    K.dts=STEPS.find(s=>K.Tf/s<=15)||.5;K.slow=K.Tf<1?.25:1;
+    return K;
+  }
+  // 地形：返回小球高出地面 / 斜面的竖直距离（> 0 在空中）
+  const surf=(K,s)=>K.sc==='net'?s[1]+K.H:K.sc==='slope'?s[1]-(s[0]<=0?0:s[0]<=K.xb?-s[0]*K.tn:-K.H):s[1]+K.H-Math.max(0,s[0])*K.tn;
+  const der=q=>[q[2],q[3],0,-g];
+  const add=(a,b,c)=>a.map((x,i)=>x+b[i]*c);
+  const rk4=(s,h)=>{const k1=der(s),k2=der(add(s,k1,h/2)),k3=der(add(s,k2,h/2)),k4=der(add(s,k3,h));return s.map((x,i)=>x+h/6*(k1[i]+2*k2[i]+2*k3[i]+k4[i]))};
+  // 步内二分：f 由正变为 ≤ 0 的时刻（相对步首）
+  const root=(s0,h,f)=>{let lo=0,hi=h;for(let i=0;i<64;i++){const mid=(lo+hi)/2;if(f(rk4(s0,mid))>0)lo=mid;else hi=mid}return hi};
+  const snap=(K,s)=>{const q=s.slice();if(K.sc==='net')q[1]=-K.H;else if(K.sc==='slope')q[1]=q[0]<=K.xb?-q[0]*K.tn:-K.H;else q[1]=-K.H+q[0]*K.tn;return q};
+  // 速度与斜面（向上的方向）的夹角 δ：90° 为垂直，> 90° 偏竖直，< 90° 偏水平
+  const delta=(K,vx,vy)=>K.th*DEG-Math.atan2(vy,vx)*DEG;
+
+  function adv(S,K,h){
+    const s0=[S.x,S.y,S.vx,S.vy],t0=S.t,s1=rk4(s0,h),evs=[];
+    if(K.sc==='net'&&!S.cross&&s0[0]<K.d&&s1[0]>=K.d)evs.push(['net',root(s0,h,s=>K.d-s[0])]);
+    const vn=s=>s[2]*K.sn+s[3]*K.cs;
+    if(K.sc==='slope'&&!S.far&&vn(s0)>0&&vn(s1)<=0)evs.push(['far',root(s0,h,vn)]);
+    const f=s=>surf(K,s);if(f(s0)>0&&f(s1)<=0)evs.push(['land',root(s0,h,f)]);
+    evs.sort((a,b)=>a[1]-b[1]);
+    let tEnd=h,sEnd=s1;
+    for(const[e,tau]of evs){const s=rk4(s0,tau),te=t0+tau;
+      if(e==='net'){S.cross={y:s[1],t:te,dy:K.H+s[1]-K.h};
+        if(K.h>0&&S.cross.dy<-TOL){tEnd=tau;sEnd=[K.d,s[1],s[2],s[3]];S.done=true;S.hitNet=true;break}}
+      else if(e==='far')S.far={x:s[0],y:s[1],t:te,dist:s[0]*K.sn+s[1]*K.cs,foot:s[0]*K.cs-s[1]*K.sn};
+      else{tEnd=tau;sEnd=snap(K,s);S.done=true;S.land={x:sEnd[0],y:sEnd[1],t:te,vx:s[2],vy:s[3]};break}}
+    // 频闪点：每隔 Δt 记录一次位置
+    while(S.nk*K.dts<=t0+tEnd+1e-9){const ts=S.nk*K.dts,q=rk4(s0,ts-t0);S.strobe.push([q[0],q[1],ts]);S.nk++}
+    [S.x,S.y,S.vx,S.vy]=sEnd;S.t=t0+tEnd;
+    if(K.sc==='slope'&&!S.over&&S.x>K.xb&&!S.done)S.over=true;
+    if(S.t-S.lastTr>=K.Tf/600||S.done){S.trail.push([S.x,S.y]);S.lastTr=S.t}
+  }
+
+  /* ---------- 判定文字 ---------- */
+  function judge(S,K){
+    if(K.sc==='net'){
+      if(S.hitNet)return{w:'触网',text:`触网：到网时离地 ${m(K.H+S.cross.y,2)}，低于网高 ${m(K.h,2)}`,cls:'warn'};
+      const xl=S.land.x,net=K.h>0,pre=net&&S.cross&&Math.abs(S.cross.dy)<=TOL?'恰好擦网，':'',dx=xl-K.L;
+      if(Math.abs(xl-K.d)<=TOL)return net?{w:'触网',text:'触网：落在网脚下',cls:'warn'}:{w:'恰到近边',text:`恰好落在 d 处（近边）：落点 ${m(xl)}`,cls:'ok'};
+      if(xl<K.d)return{w:'未过网',text:net?`未过网：落点 ${m(xl,2)}，没到网就落地`:`未越过 d：落点 ${m(xl,2)}，在 d 之前`,cls:'warn'};
+      if(Math.abs(dx)<=TOL)return{w:'恰好压线',text:`${pre?'恰好擦网、':''}恰好压线：落点 ${m(xl)}`,cls:'ok'};
+      if(dx<0)return{w:'界内',text:net?`${pre}界内：落点 ${m(xl,2)}，离底线 ${m(-dx,2)}`:`界内：落点 ${m(xl,2)}，在 d 与 L 之间`,cls:'ok'};
+      return{w:'出界',text:`${pre}出界：落点 ${m(xl,2)}，超出底线 ${m(dx,2)}`,cls:'warn'};
+    }
+    const l=S.land;
+    if(K.sc==='slope'){
+      if(Math.hypot(l.x-K.xb,l.y+K.H)<=TOL)return{w:'恰好落在坡底',text:`恰好落在坡底：t${NB}=${NB}${sec(l.t)}，落点离 O 点 ${m(Math.hypot(l.x,l.y),2)}`,cls:'ok'};
+      if(l.x<K.xb)return{w:'落在斜面上',text:`落在斜面上：离 O 点 ${m(l.x/K.cs,2)}，t${NB}=${NB}${sec(l.t)}`,cls:'ok'};
+      return{w:'越过坡底',text:`越过坡底：落在地面上离坡底 ${m(l.x-K.xb,2)}，t${NB}=${NB}${sec(l.t)}`,cls:'warn'};
+    }
+    const de=delta(K,l.vx,l.vy),ac=Math.min(de,180-de);
+    if(Math.abs(de-90)<=.5)return{w:'垂直',text:`垂直打在斜面上：t${NB}=${NB}${sec(l.t)}，速度与斜面成 ${dg(de)}`,cls:'ok'};
+    return de>90?{w:'偏竖直',text:`速度偏竖直（v₀ 偏小）：与斜面成 ${dg(ac,1)}，t${NB}=${NB}${sec(l.t)}`,cls:'warn'}
+      :{w:'偏水平',text:`速度偏水平（v₀ 偏大）：与斜面成 ${dg(ac,1)}，t${NB}=${NB}${sec(l.t)}`,cls:'warn'};
+  }
+  function flying(S,K){
+    if(K.sc==='net'&&S.cross){const dy=S.cross.dy;
+      if(K.h===0)return{text:`已越过 d：此时离地 ${m(dy,2)}`,cls:''};
+      return Math.abs(dy)<=TOL?{text:'恰好擦网（|Δy| < 1 mm），继续飞行',cls:'ok'}:{text:`已过网：高出网顶 ${m(dy,2)}`,cls:'ok'}}
+    if(K.sc==='slope'){if(S.over)return{text:'越过坡底，飞向地面',cls:''};
+      if(S.far)return{text:`已过离斜面最远点：最远 ${m(S.far.dist,2)}（t₁ = ${sec(S.far.t)}）`,cls:''}}
+    return{text:'飞行中',cls:''};
+  }
+
+  /* ---------- d < L 的联动（见文件头说明） ---------- */
+  let fixing=false;
+  function keepDL(P){
+    if(!(+P.d>+P.L-.1+1e-9))return;
+    const nd=Math.max(.2,Math.round((+P.L-.1)*10)/10);
+    if(typeof document!=='undefined'&&!fixing){const n=document.getElementById('num-d');
+      if(n){fixing=true;try{n.value=String(nd);n.dispatchEvent(new Event('change'))}finally{fixing=false}}}
+    P.d=nd;
+  }
+
+  return{
+    legend:[{label:'速度 v 及其分速度',color:'--v'},{label:'重力 mg',color:'--g'}],
+    init(P){const K=geom(P);
+      return{K,x:0,y:0,vx:K.v0,vy:0,t:0,done:false,trail:[[0,0]],lastTr:0,strobe:[[0,0,0]],nk:1,cross:null,far:null,land:null,over:false,hitNet:false,
+        status:{text:'准备就绪：点「发射」',cls:''}}},
+    step(S,P,dt){if(S.done)return;const K=S.K;let rem=dt*K.slow;
+      while(rem>1e-12&&!S.done){const h=Math.min(rem,5e-4);adv(S,K,h);rem-=h}
+      if(S.done){const j=judge(S,K);S.status={text:j.text,cls:j.cls};S.word=j.w}else S.status=flying(S,K)},
+    readouts(S,P){
+      const K=S.K,t=S.t,x=S.x,dr=-S.y,vx=S.vx,vy=-S.vy,v=Math.hypot(vx,vy);
+      const ta=vy/vx,tp=x>1e-9?dr/x:NaN,q=ta>1e-12?x-dr/ta:NaN;
+      const R=[['时间 t',sec(t)],['水平位移 x',m(x)],['下落高度 y',m(dr)],['水平分速度',ms(vx)],['竖直分速度',ms(vy)],['速度 v',ms(v)],
+        ['速度偏角 α',dg(Math.atan2(vy,vx)*DEG)],['位移偏角 φ',x>1e-9?dg(Math.atan2(dr,x)*DEG):'—'],['tanα',fmt(ta,4)],['tanφ',fmt(tp,4)],
+        ['tanα / tanφ',tp>1e-12?fmt(ta/tp,4):'—'],['反向延长线交点到 O',ok(q)?`${m(q)}（x/2 = ${fmt(x/2,3)}）`:'—'],['Δv = gt（竖直向下）',ms(g*t)],['频闪间隔 Δt',sec(K.dts,2)]];
+      if(K.sc==='net'){const c=S.cross,l=S.land,dx=l?l.x-K.L:NaN,net=K.h>0;
+        R.push([net?'过网时离网顶 Δy':'过 d 时离地',c?(net&&Math.abs(c.dy)<.01?`${c.dy>=0?'+':'−'}${fmt(Math.abs(c.dy)*1000,2)} mm`:sgn(c.dy)):'—'],['落点 x',l?m(l.x):'—'],
+          ['落点到底线',l?(Math.abs(dx)<=TOL?`${fmt(Math.abs(dx)*1000,2)} mm（压线）`:dx<0?`${m(-dx)}（线内）`:`${m(dx)}（线外）`):'—'],
+          ['判定',S.done?S.word:'—'],[net?'理论最小速度（擦网）':'理论最小速度（恰到 d）',ms(K.vmin)],['理论最大速度（压线）',ms(K.vmax)],['理论最低发球高度',net&&K.d<K.L?m(K.Hmin):'—'])}
+      else if(K.sc==='slope'){const l=S.land,foot=x*K.cs-S.y*K.sn,dist=x*K.sn+S.y*K.cs,onS=l&&l.x<K.xb+TOL;
+        R.push(['离斜面的距离',foot>=0&&foot<=K.H/K.sn&&!(l&&!onS)?m(Math.max(0,dist)):'—'],
+          ['离斜面最远距离 实测 / 理论',`${S.far?fmt(S.far.dist,3):'—'} / ${K.t1<K.Tf?fmt(K.dmax,3):'—'} m`],
+          ['t₁ 实测 / 理论',`${S.far?fmt(S.far.t,3):'—'} / ${K.t1<K.Tf?fmt(K.t1,3):'—'} s`],
+          ['落点到 O 的距离 s',l?m(Math.hypot(l.x,l.y)):'—'],
+          ['落到斜面时速度与斜面夹角',l?(onS?dg(Math.atan2(-l.vy,l.vx)*DEG-K.th*DEG):'—（落在地面）'):'—'],
+          ['判定',S.done?S.word:'—'],['理论 v₀c',ms(K.v0c)])}
+      else{const l=S.land,de=l?delta(K,l.vx,l.vy):NaN;
+        R.push(['击中时刻',l?sec(l.t):'—'],['击中点离地高度',l?m(l.y+K.H):'—'],['速度与斜面的夹角',l?dg(Math.min(de,180-de)):'—'],
+          ['判定',S.done?S.word:'—'],['理论 v₀⊥',ms(K.vp)])}
+      return R;
+    },
+    draw(ctx,S,P,W,H,tok){
+      const F=FIG(ctx,W,tok),u=F.u,ut=F.ut,K=S.K,cV=tok('--v'),cG=tok('--g'),INK=F.ink,AUX=F.auxColor;
+      const narrow=typeof matchMedia==='function'&&matchMedia('(max-width:640px)').matches,dp=W/(ctx.canvas.clientWidth||W);
+      const SERIF='"Times New Roman","STIX Two Text",Times,serif',SANS=tok('--f-body');
+      F.clear();
+      // —— 版面：桌面宽度时状态条（约 46 CSS px）浮在左上角，图从它下面开始；窄屏时状态条在画布下方 ——
+      const top=narrow?6*u:46*dp+4*u,pad=14*u;
+      // —— 带下标的文字：sg = [[文字, 类型]]，i 斜体、r 正体、s 斜体下标、n 正体下标、z 中文 ——
+      const fsz=kd=>kd==='s'||kd==='n'?.68:1;
+      const font=(kd,sz)=>kd==='z'?`${sz*ut}px ${SANS}`:`${kd==='r'||kd==='n'?'':'italic '}${fsz(kd)*sz*ut}px ${SERIF}`;
+      const adv_=(t,kd,sz)=>{ctx.save();ctx.font=font(kd,sz);const w=ctx.measureText(t).width;ctx.restore();return w};
+      const wid=(sg,sz)=>sg.reduce((w,[t,kd])=>w+adv_(t,kd,sz),0);
+      const rich=(sg,x,y,{color=INK,size=19}={})=>{let xx=x-wid(sg,size)/2;
+        for(const[t,kd]of sg){const yy=y+(kd==='s'||kd==='n'?.3*size*ut:0);
+          if(kd==='z')F.zh(t,xx,yy,{color,size,align:'left'});else F.label(t,xx,yy,{color,size:fsz(kd)*size,align:'left',italic:!(kd==='r'||kd==='n')});xx+=adv_(t,kd,size)}};
+      // —— 防叠字：每个字给几个候选位置，取第一个不出界、不压已占位置（且尽量不压线）的 ——
+      const obs=[],todo=[],segs=[];
+      const meet=(a,c)=>a.x<c.x+c.w&&c.x<a.x+a.w&&a.y<c.y+c.h&&c.y<a.y+a.h;
+      const segBox=(b,[x1,y1,x2,y2])=>{let t0=0,t1=1;const dx=x2-x1,dy=y2-y1;
+        for(const[p,q]of[[-dx,x1-b.x],[dx,b.x+b.w-x1],[-dy,y1-b.y],[dy,b.y+b.h-y1]]){if(p===0){if(q<0)return false}else{const r=q/p;if(p<0){if(r>t1)return false;if(r>t0)t0=r}else{if(r<t0)return false;if(r<t1)t1=r}}}return true};
+      const hit=q=>q.x<2*u||q.x+q.w>W-2*u||q.y<top+2*u||q.y+q.h>H-2*u||obs.some(c=>meet(q,c));
+      const soft=q=>segs.some(l=>segBox(q,l));
+      const box=(sg,sz,[x,y])=>{const w=wid(sg,sz),h=sz*ut*.95;return{x:x-w/2-2*ut,y:y-h/2-2*ut,w:w+4*ut,h:h+4*ut}};
+      const put=(sg,cands,o={})=>{const sz=o.size||19,c=cands.filter(p=>ok(p[0])&&ok(p[1]));if(!c.length)return null;
+        const p=c.find(q=>!hit(box(sg,sz,q))&&!soft(box(sg,sz,q)))||c.find(q=>!hit(box(sg,sz,q)))||(o.must?c[0]:null);
+        if(!p)return null;obs.push(box(sg,sz,p));todo.push([sg,p[0],p[1],o]);return p};
+      // 在点 (x, y) 周围按方向 dirs 排候选位置（字框边缘离点 gap）
+      const around=(sg,x,y,dirs,gap=4*ut,sz=19)=>{const w=wid(sg,sz)+4*ut,h=sz*ut*.95+4*ut;
+        return dirs.map(([dx,dy])=>{const n=Math.hypot(dx,dy)||1;dx/=n;dy/=n;const e=Math.abs(dx)*w/2+Math.abs(dy)*h/2+gap;return[x+dx*e,y+dy*e]})};
+      const block=(x,y,r)=>obs.push({x:x-r,y:y-r,w:2*r,h:2*r});
+      const blockSeg=(x1,y1,x2,y2,r)=>{const n=Math.max(1,Math.ceil(Math.hypot(x2-x1,y2-y1)/(1.5*r)));for(let i=0;i<=n;i++)block(x1+(x2-x1)*i/n,y1+(y2-y1)*i/n,r)};
+      const line=(x1,y1,x2,y2,o)=>{F.line(x1,y1,x2,y2,o);segs.push([x1,y1,x2,y2])};
+      const D8=[[0,-1],[1,-1],[-1,-1],[1,0],[-1,0],[0,1],[1,1],[-1,1]];
+      const I=s=>[[s,'i']],Z=s=>[[s,'z']],SUB=(a,b,kd='n')=>[[a,'i'],[b,kd]];
+      const zh=(t,cands,o={})=>put(Z(t),cands,{color:AUX,size:14,...o});
+
+      /* ===== 1. 版面：上部情境图（等比例），下部 v–t 图 ===== */
+      const vLab=K.sc==='slope'?[['2','r'],['v','i'],['0','n'],['tan','r'],['θ','i']]:K.sc==='perp'?[['v','i'],['0','n'],['/tan','r'],['θ','i']]:I('O');
+      const gh=Math.max(150*u,(H-top)*.3),gx0=pad+wid(vLab,15)+12*u,tName=[['t','i'],['/s','r']],gx1=W-pad-wid(tName,17)-8*u;
+      const gy0=H-10*u-16*ut,gy1=H-gh+16*ut;
+      const xL=pad,xR=W-pad,yT=top+6*u,yB=gy1-14*ut-12*u;
+      let sc,ox,oy;
+      const fit=(x0,x1,y0,y1,mL,mR,mT,mB)=>{const aw=xR-xL-mL-mR,ah=yB-yT-mT-mB;
+        sc=Math.min(aw/Math.max(x1-x0,1e-9),ah/Math.max(y1-y0,1e-9));ox=xL+mL+(aw-(x1-x0)*sc)/2-x0*sc;oy=yT+mT+(ah-(y1-y0)*sc)/2+y1*sc};
+      const X=x=>ox+x*sc,Y=y=>oy-y*sc;
+      const vmaxF=Math.hypot(K.v0,g*K.Tf),vs=60*u/Math.max(vmaxF,1e-9),Lg=36*u,rb=6*u;
+      if(K.sc==='net')fit(0,K.xView,-K.H,0,40*u+26*ut,12*u+18*ut,34*ut,16*u+36*ut);
+      else if(K.sc==='slope')fit(0,K.xView,-K.H,0,44*u+20*ut,12*u,34*ut,K.onSlope?14*u:52*u);   // 越过坡底时落地速度朝下，地面下方留出矢量的位置
+      else fit(0,K.xView,-K.H,0,16*u+20*ut,24*u,34*ut,14*u);
+      if(K.slow<1){const w=wid(Z('慢放 ×0.25'),14);obs.push({x:W-pad-w-2*ut,y:top,w:w+4*ut,h:18*ut})}
+      // 小球与矢量的位置先算出来，登记为排字障碍，后面所有的字都避开它们
+      const bx=X(S.x),by=Y(S.y),vx=S.vx,vy=-S.vy,Vx=vx*vs,Vy=vy*vs,showG=!S.done;
+      block(bx,by,rb+3*u);blockSeg(bx,by,bx+Vx,by+Vy,3*u);
+      if(Vy>3*u){blockSeg(bx,by,bx,by+Vy,2*u);blockSeg(bx,by,bx+Vx,by,2*u)}
+      if(showG)blockSeg(bx,by,bx,by+Lg,3*u);
+
+      /* ===== 2. 情境几何 ===== */
+      let O,gY,xEdge;   // O 屏幕位置、地面屏幕 y、O 水平辅助线向右画到哪里
+      const notes=[];   // 后排的中文小注
+      if(K.sc==='net'){
+        O=[X(0),Y(0)];gY=Y(-K.H);
+        line(xL,gY,xR,gY,{w:2});F.hatch(xL,gY,xR,gY,1);
+        // 发球机：墨线小矩形，出口为 O；支架落地
+        const mw=26*u,mh=14*u;F.rect(O[0]-mw,O[1]-mh/2,mw,mh,{w:1.6});F.line(O[0]-mw/2,O[1]+mh/2,O[0]-mw/2,gY,{w:1.2});
+        obs.push({x:O[0]-mw-2*u,y:O[1]-mh/2-2*u,w:mw+4*u,h:mh+4*u});
+        put(I('O'),around(I('O'),O[0],O[1]-mh/2,[[1,-1],[0,-1]],2*ut),{must:true});
+        zh('发球机',around(Z('发球机'),O[0]-mw,O[1]-mh/2,[[-1,-1],[0,-1],[-1,0]],2*ut,14),{must:true});
+        // H：O 到地面
+        const hx=O[0]-mw-12*u;F.aux(hx-6*u,O[1],O[0]-mw,O[1]);F.dim(hx,O[1],hx,gY,null);segs.push([hx,O[1],hx,gY]);
+        put(I('H'),[[hx-9*ut,(O[1]+gY)/2],[hx-9*ut,O[1]+8*ut]],{must:true});
+        // 球网 / 近边、底线
+        const nx=X(K.d),nt=Y(-K.H+K.h);
+        if(K.h>0){line(nx,gY,nx,nt,{w:3});F.line(nx-4*u,nt,nx+4*u,nt,{w:1.6});
+          if(gY-nt>10*u){F.dim(nx-8*u,nt,nx-8*u,gY,null);put(I('h'),[[nx-8*u-9*ut,(nt+gY)/2],[nx-8*u-9*ut,nt-6*ut],[nx+12*ut,(nt+gY)/2],[nx-8*u-9*ut,nt-16*ut]],{must:true})}
+          else put(I('h'),around(I('h'),nx,nt,[[-1,-1],[1,-1]],2*ut),{must:true})}
+        else{line(nx,gY-6*u,nx,gY+6*u,{w:1.6});notes.push(['近边',around(Z('近边'),nx,gY-6*u,[[0,-1],[-1,-1],[1,-1]],2*ut,14)])}
+        const lx=X(K.L);line(lx,gY-7*u,lx,gY+7*u,{w:1.6});notes.push(['底线',around(Z('底线'),lx,gY-7*u,[[0,-1],[1,-1],[-1,-1]],2*ut,14)]);
+        // 地面下方尺寸线：d、L（字写在尺寸线中间）
+        const y1=gY+12*u+9*ut,y2=y1+20*ut;
+        F.aux(O[0],gY,O[0],y2+4*u);F.aux(nx,gY,nx,y1+4*u);F.aux(lx,gY,lx,y2+4*u);
+        F.dim(O[0],y1,nx,y1,null);F.dim(O[0],y2,lx,y2,null);
+        put(I('d'),[[(O[0]+nx)/2,y1]],{must:true});put(I('L'),[[(O[0]+lx)/2,y2]],{must:true});
+        // 两条临界轨迹（理论，按公式画，更淡）
+        const crit=(v,x1)=>{const n=60,pts=[];for(let i=0;i<=n;i++){const x=x1*i/n;pts.push([X(x),Y(-g*x*x/(2*v*v))])}return pts};
+        const clipX=X(K.xView);
+        ctx.save();ctx.beginPath();ctx.rect(xL,top,clipX+4*u-xL,H);ctx.clip();ctx.globalAlpha=.6;
+        const cmax=crit(K.vmax,K.L);F.poly(cmax,{w:1,color:AUX,dash:[2,4]});
+        let cmin=null;if(ok(K.vmin)){cmin=crit(K.vmin,Math.min(K.vmin*K.tG,K.xView*1.2));F.poly(cmin,{w:1,color:AUX,dash:[2,4]})}
+        ctx.restore();
+        const nm1=K.h>0?'擦网':'恰到近边',nm2=K.h>0?'压线':'恰到底线';
+        const onC=(v,x)=>[X(x),Y(-g*x*x/(2*v*v))];
+        if(cmin){const xe=Math.min(K.vmin*K.tG,K.xView),c=[];
+          for(const fr of[1,.93,.86])c.push(...around(Z(nm1),...onC(K.vmin,xe*fr),[[1,-1],[0,-1],[-1,-1]],3*ut,14));notes.push([nm1,c])}
+        {const c=[];for(const fr of[.72,.62,.82,.52])c.push(...around(Z(nm2),...onC(K.vmax,K.L*fr),[[0,-1],[1,-1],[-1,-1]],3*ut,14));notes.push([nm2,c])}
+        if(K.h>0&&K.H<=K.h)notes.unshift(['H ≤ h：无论 v₀ 多大都过不了网',[[(xL+xR)/2,yT+8*ut]]]);
+        else if(K.h>0&&K.d<K.L&&K.H<K.Hmin-1e-9)notes.unshift(['H 低于最低发球高度：不触网就出界',[[(xL+xR)/2,yT+8*ut]]]);
+        xEdge=X(K.xView);
+      }else if(K.sc==='slope'){
+        const plat=30*u;
+        O=[X(0),Y(0)];gY=Y(-K.H);const B=[X(K.xb),gY],hl=O[0]-plat;
+        line(hl-12*u,gY,xR,gY,{w:2});F.hatch(hl-12*u,gY,xR,gY,1);
+        F.poly([[hl,gY],[hl,O[1]],O,B],{w:2});segs.push([hl,O[1],O[0],O[1]],[O[0],O[1],B[0],B[1]],[hl,O[1],hl,gY]);
+        F.hatch(hl,O[1],O[0],O[1],1);F.hatch(O[0],O[1],B[0],B[1],1);
+        // θ：坡底处，斜面与水平面的夹角
+        const lb=Math.hypot(B[0]-O[0],B[1]-O[1]),rt=Math.min(30*u,.3*lb);
+        F.arc(B[0],B[1],rt,-PI,-PI+K.th,{w:1.1});const am=-PI+K.th/2,rr=rt+9*ut;
+        put(I('θ'),[[B[0]+Math.cos(am)*rr,B[1]+Math.sin(am)*rr+2*ut],[B[0]+Math.cos(am)*(rr+8*ut),B[1]+Math.sin(am)*(rr+8*ut)]],{must:true});
+        // H：斜面高
+        const hx=hl-12*u;F.aux(hx-6*u,O[1],hl,O[1]);F.dim(hx,O[1],hx,gY,null);segs.push([hx,O[1],hx,gY]);
+        put(I('H'),[[hx-9*ut,(O[1]+gY)/2]],{must:true});
+        // 小注「着陆坡」：斜面中部的下方（坡体内）
+        const onS=f=>[O[0]+(B[0]-O[0])*f-K.sn*28*ut,O[1]+(B[1]-O[1])*f+K.cs*28*ut];
+        notes.push(['着陆坡',[onS(.72),onS(.45),onS(.85),onS(.3)]]);
+        if(S.over||(S.land&&S.land.x>K.xb+TOL))notes.push(['越过坡底',around(Z('越过坡底'),B[0],B[1],[[1,-1],[1,-.4],[0,-1]],8*ut,14)]);
+        xEdge=X(K.xView);
+      }else{
+        O=[X(0),Y(0)];gY=Y(-K.H);const B=[O[0],gY],T=[X(K.xTop),Y(-K.H+K.xTop*K.tn)],C=[T[0],gY];
+        line(xL,gY,xR,gY,{w:2});F.hatch(xL,gY,xR,gY,1);
+        F.poly([B,T,C],{w:2});segs.push([B[0],B[1],T[0],T[1]],[T[0],T[1],C[0],C[1]]);F.hatch(B[0],B[1],T[0],T[1],1);
+        const lb=Math.hypot(T[0]-B[0],T[1]-B[1]),rt=Math.min(30*u,.3*lb);
+        F.arc(B[0],B[1],rt,-K.th,0,{w:1.1});const am=-K.th/2,rr=rt+9*ut;
+        put(I('θ'),[[B[0]+Math.cos(am)*rr,B[1]+Math.sin(am)*rr],[B[0]+Math.cos(am)*(rr+8*ut),B[1]+Math.sin(am)*(rr+8*ut)]],{must:true});
+        const hx=O[0]-14*u;F.aux(hx-6*u,O[1],O[0],O[1]);F.dim(hx,O[1],hx,gY,null);segs.push([hx,O[1],hx,gY]);
+        put(I('H'),[[hx-9*ut,(O[1]+gY)/2]],{must:true});
+        notes.push(['斜面',[[(B[0]+C[0])/2+lb*.12,gY-6*u-8*ut],[(B[0]+C[0])/2+lb*.25,gY-6*u-8*ut]]]);
+        xEdge=X(K.xView);
+      }
+
+      if(K.sc!=='net')put(I('O'),around(I('O'),O[0],O[1],[[-1,-1],[0,-1],[1,-1]],3*ut),{must:true});
+
+      /* ===== 3. 过 O 的水平线、竖直线与频闪点（水平投影等间距，竖直投影 1∶3∶5∶…） ===== */
+      const st=S.strobe;
+      const hEnd=Math.max(bx,...st.map(p=>X(p[0])))+16*u;
+      F.aux(O[0],O[1],Math.min(xR,hEnd),O[1]);
+      F.aux(O[0],O[1],O[0],gY);
+      st.forEach(([x,y],i)=>{if(!i)return;const px=X(x),py=Y(y);
+        F.line(px,py,px,O[1],{w:.8,color:AUX,dash:[1.5,3.5]});F.line(px,py,O[0],py,{w:.8,color:AUX,dash:[1.5,3.5]});
+        F.dot(px,O[1],1.7);F.dot(O[0],py,1.7)});
+      // 轨迹
+      const tr=S.trail.map(([x,y])=>[X(x),Y(y)]);tr.push([bx,by]);F.trail(tr);
+      for(let i=0;i+6<tr.length;i+=6)segs.push([...tr[i],...tr[i+6]]);
+      st.forEach(([x,y],i)=>{if(i)F.dot(X(x),Y(y),2.3)});
+
+      /* ===== 4. 偏角：位移偏角 φ（在 O）、速度偏角 α（在球心）；速度反向延长线交于 x/2 ===== */
+      const dpx=Math.hypot(bx-O[0],by-O[1]),al=Math.atan2(vy,vx),ph=Math.atan2(by-O[1],bx-O[0]);
+      if(dpx>24*u){
+        F.aux(O[0],O[1],bx,by);segs.push([O[0],O[1],bx,by]);
+        if(vy>1e-6&&S.x>1e-9){const qx=X(S.x-(-S.y)/(vy/vx));
+          if(bx-qx>14*u){F.aux(qx,O[1],bx,by);segs.push([qx,O[1],bx,by]);F.dot(qx,O[1],2.4);block(qx,O[1],3*u);
+            const dy_=O[1]-10*u-6*ut;F.dim(O[0],dy_,qx,dy_,null);F.aux(qx,O[1],qx,dy_-4*u);F.aux(O[0],O[1],O[0],dy_-4*u);
+            segs.push([O[0],dy_,qx,dy_]);put([['x','i'],['/2','r']],[[(O[0]+qx)/2,dy_],[(O[0]+qx)/2,dy_-9*ut]],{size:17,must:true})}}
+        if(ph>1.2*RAD){const r=Math.min(42*u,dpx*.45);F.arc(O[0],O[1],r,0,ph,{w:1,color:INK});const a=ph/2;
+          put(I('φ'),[[O[0]+Math.cos(a)*(r+9*ut),O[1]+Math.sin(a)*(r+9*ut)],[O[0]+Math.cos(a)*(r+18*ut),O[1]+Math.sin(a)*(r+18*ut)],[O[0]+Math.cos(a)*(r+28*ut),O[1]+Math.sin(a)*(r+28*ut)]],{size:17,must:true})}
+      }
+
+      /* ===== 5. 情境标注 ===== */
+      if(K.sc==='net'&&S.cross){const nx=X(K.d),nt=Y(-K.H+K.h),cy=Y(S.cross.y);
+        if(K.h>0&&S.cross.dy>0&&nt-cy>8*u){F.dim(nx+7*u,nt,nx+7*u,cy,null);put([['Δ','r'],['y','i']],[[nx+7*u+12*ut,(nt+cy)/2],[nx+7*u+12*ut,cy-6*ut]],{size:17})}
+        if(S.hitNet)notes.unshift(['触网',around(Z('触网'),bx,by,[[1,-1],[-1,-1],[0,-1]],rb+3*ut,14)])}
+      if(K.sc==='net'&&S.land&&S.word&&S.word!=='触网')notes.unshift([S.word,around(Z(S.word),bx,by,[[0,-1],[1,-1],[-1,-1]],rb+16*ut,14)]);
+      if(K.sc==='slope'){
+        const ft=S.x*K.cs-S.y*K.sn,dist=S.x*K.sn+S.y*K.cs,slen=K.H/K.sn;
+        // 离斜面最远点：小点、平行于斜面的短线、d_max
+        if(S.far){const fx=X(S.far.x),fy=Y(S.far.y),fo=[X(S.far.foot*K.cs),Y(-S.far.foot*K.sn)],L2=40*u;
+          F.aux(fx-K.cs*L2,fy-K.sn*L2,fx+K.cs*L2,fy+K.sn*L2);segs.push([fx-K.cs*L2,fy-K.sn*L2,fx+K.cs*L2,fy+K.sn*L2]);
+          if(S.far.foot<=slen&&Math.hypot(fx-fo[0],fy-fo[1])>10*u){F.dim(fo[0],fo[1],fx,fy,null);segs.push([fo[0],fo[1],fx,fy]);
+            const mx=(fo[0]+fx)/2,my=(fo[1]+fy)/2,sg=SUB('d','max');put(sg,around(sg,mx,my,[[-1,0],[1,0],[-1,-1]],5*ut,17),{size:17})}
+          F.dot(fx,fy,2.6);block(fx,fy,4*u);notes.push(['离斜面最远',around(Z('离斜面最远'),fx,fy,[[1,-1],[0,-1],[-1,-1]],8*ut,14)])}
+        // 飞行中：从小球向斜面作垂线
+        if(!S.done&&S.t>0&&ft>=0&&ft<=slen&&dist*sc>6*u){const fx=X(ft*K.cs),fy=Y(-ft*K.sn);F.aux(bx,by,fx,fy);
+          const a=6*u;   // 直角记号：沿斜面向上（屏幕 (−cosθ, −sinθ)），沿法线向外（屏幕 (sinθ, −cosθ)）
+          F.poly([[fx-K.cs*a,fy-K.sn*a],[fx-K.cs*a+K.sn*a,fy-K.sn*a-K.cs*a],[fx+K.sn*a,fy-K.cs*a]],{w:1,color:AUX})}
+        // 落到斜面上：OP = s（斜面下方的尺寸线）、P 点速度与斜面的夹角 α − θ
+        if(S.land&&S.land.x<K.xb+TOL){const P2=[bx,by],nx_=-K.sn,ny_=K.cs,off=20*u;
+          const a1=[O[0]+nx_*off,O[1]+ny_*off],a2=[P2[0]+nx_*off,P2[1]+ny_*off];
+          if(Math.hypot(a2[0]-a1[0],a2[1]-a1[1])>16*u){F.aux(O[0],O[1],a1[0]+nx_*4*u,a1[1]+ny_*4*u);F.aux(P2[0],P2[1],a2[0]+nx_*4*u,a2[1]+ny_*4*u);
+            F.dim(a1[0],a1[1],a2[0],a2[1],null);put(I('s'),[[(a1[0]+a2[0])/2,(a1[1]+a2[1])/2]],{must:true})}
+          const al2=Math.atan2(-S.land.vy,S.land.vx),r=26*u;F.arc(bx,by,r,-PI+K.th,-PI+al2,{w:1.1});const am=-PI+(K.th+al2)/2;
+          F.aux(bx,by,bx-Math.cos(al2)*(r+14*u),by-Math.sin(al2)*(r+14*u));
+          const sg=[['α','i'],[' − ','r'],['θ','i']];put(sg,[[bx+Math.cos(am)*(r+20*ut),by+Math.sin(am)*(r+20*ut)],[bx+Math.cos(am)*(r+30*ut),by+Math.sin(am)*(r+30*ut)]],{size:17})}
+      }
+      if(K.sc==='perp'&&S.land){const de=delta(K,S.land.vx,S.land.vy),Ln=48*u,nX=-K.sn,nY=-K.cs;   // 法线（向外）屏幕方向
+        F.aux(bx-nX*14*u,by-nY*14*u,bx+nX*Ln,by+nY*Ln);segs.push([bx,by,bx+nX*Ln,by+nY*Ln]);
+        const dX=-K.cs,dY=K.sn;   // 沿斜面向下（指向坡底）的屏幕方向
+        if(Math.abs(de-90)<=.5){const a=9*u;F.poly([[bx+dX*a,by+dY*a],[bx+dX*a+nX*a,by+dY*a+nY*a],[bx+nX*a,by+nY*a]],{w:1.2});
+          notes.unshift(['垂直',around(Z('垂直'),bx,by,[[-1,-1],[-1,0],[0,-1]],22*u,14)])}
+        else{const rv=Math.atan2(S.land.vy,-S.land.vx);   // 入射方向反过来（屏幕角）
+          const sA=de>90?-K.th:PI-K.th;   // 夹角是锐角的那一侧：偏竖直时在斜面向上一侧，偏水平时在向下一侧
+          let a0=sA,a1=rv;if(((a1-a0)%(2*PI)+2*PI)%(2*PI)>PI)[a0,a1]=[a1,a0];const r=24*u;F.arc(bx,by,r,a0,a0+((a1-a0)%(2*PI)+2*PI)%(2*PI),{w:1.1});
+          const am=a0+((a1-a0)%(2*PI)+2*PI)%(2*PI)/2,ac=Math.min(de,180-de);
+          put([[fmt(ac,1)+'°','r']],[[bx+Math.cos(am)*(r+18*ut),by+Math.sin(am)*(r+18*ut)],[bx+Math.cos(am)*(r+28*ut),by+Math.sin(am)*(r+28*ut)]],{size:15});
+          notes.unshift([de>90?'速度偏竖直（v₀ 偏小）':'速度偏水平（v₀ 偏大）',around(Z('速度偏竖直（v₀ 偏小）'),bx,by,[[-1,-1],[0,-1],[1,-1],[-1,0]],34*u,14)])}}
+
+      /* ===== 6. 小球与矢量：先 mg，再分速度（细箭头、辅助线补成矩形），最后合速度 v；球心点小实心点 ===== */
+      if(Vy>3*u){F.aux(bx+Vx,by,bx+Vx,by+Vy);F.aux(bx,by+Vy,bx+Vx,by+Vy)}
+      F.ball(bx,by,rb);
+      if(showG)F.arrow(bx,by,0,Lg,cG,null,{w:2});
+      if(Vy>3*u)F.arrow(bx,by,0,Vy,cV,null,{w:1.2,head:9});
+      const v0lab=S.t===0;
+      if(!v0lab)F.arrow(bx,by,Vx,0,cV,null,{w:1.2,head:9});
+      F.arrow(bx,by,Vx,Vy,cV,null,{w:2});
+      // α：v 与过球心的水平线之间
+      if(!v0lab&&al>1.5*RAD){const r=Math.min(22*u,.5*Math.hypot(Vx,Vy));F.aux(bx,by,bx+Math.max(Vx,r)+8*u,by);F.arc(bx,by,r,0,al,{w:1,color:INK});
+        const c=[];for(const k of[8,15,22])c.push([bx+Math.cos(al/2)*(r+k*ut),by+Math.sin(al/2)*(r+k*ut)]);put(I('α'),c,{size:17,must:true})}
+      F.dot(bx,by,2.2);
+      // 矢量标注
+      const tipL=(sg,x,y,dx,dy,sz=19)=>{const n=Math.hypot(dx,dy)||1;dx/=n;dy/=n;return around(sg,x,y,[[dx,dy],[dx-dy,dy+dx],[dx+dy,dy-dx],[-dy,dx],[dy,-dx]],3*ut,sz)};
+      put(v0lab?SUB('v','0'):I('v'),tipL(I('v'),bx+Vx,by+Vy,Vx,Vy),{color:cV,must:true});
+      if(!v0lab)put(SUB('v','x','s'),[...around(SUB('v','x','s'),bx+Vx*.6,by,[[0,-1]],3*ut),...tipL(SUB('v','x','s'),bx+Vx,by,1,0)],{color:cV});
+      const vyS=SUB('v','y','s');
+      if(Vy>3*u)put(vyS,[...around(vyS,bx,by+Vy*.55,[[-1,0]],4*ut),...around(vyS,bx,by+Vy,[[-1,0],[-1,1],[0,1]],4*ut),...around(vyS,bx,by+Vy*.5,[[1,0]],4*ut)],{color:cV,must:true});
+      if(showG)put(I('mg'),[...around(I('mg'),bx,by+Lg,[[-1,0],[-1,1],[0,1],[1,1]],4*ut),...around(I('mg'),bx,by+Lg*.55,[[-1,0],[1,0]],5*ut)],{color:cG,must:true});
+      // 小注
+      notes.forEach(([t,c])=>zh(t,c));
+
+      /* ===== 7. v–t 图 ===== */
+      const Tm=K.Tf*1.1,Vm=Math.max(K.v0,g*K.Tf,K.sc==='perp'?K.v0/K.tn:0)*1.12;
+      const TX=t=>gx0+(gx1-14*u-gx0)*t/Tm,VY=v=>gy0-(gy0-gy1-12*u)*v/Vm;
+      F.arrow(gx0,gy0,gx1-gx0,0,INK,null,{w:1.3,head:11});F.arrow(gx0,gy0,0,gy1-gy0,INK,null,{w:1.3,head:11});
+      F.label('O',gx0-8*ut,gy0+9*ut,{size:17});
+      rich(tName,gx1+6*u+wid(tName,17)/2,gy0,{size:17});
+      const vName=[['v','i'],['/(m·s⁻¹)','r']];rich(vName,gx0+8*u+wid(vName,17)/2,gy1+2*u,{size:17});
+      const tf=K.Tf,vyEnd=g*tf;
+      F.line(TX(0),VY(K.v0),TX(tf),VY(K.v0),{w:1.6});F.line(TX(0),VY(0),TX(tf),VY(vyEnd),{w:1.6,dash:[6,4]});
+      const gl=[];   // v–t 图上的字：[sg, 候选, 选项]
+      const ref=(v,sg,tt)=>{const yy=VY(v),xe=ok(tt)&&tt<=Tm?TX(tt):gx1-14*u;F.aux(gx0,yy,xe,yy);
+        if(ok(tt)&&tt<=Tm){F.aux(xe,yy,xe,gy0);gl.push([tt===K.t1?SUB('t','1'):I('t'),[[xe,gy0+11*ut]],{size:16}])}
+        gl.push([sg,[[gx0-6*u-wid(sg,15)/2,Math.min(yy,gy0-14*ut)]],{size:15}])};   // 太贴近横轴时字往上挪，不压原点 O
+      if(K.sc==='slope'){if(K.t1<=tf+1e-9)ref(K.v0*K.tn,[['v','i'],['0','n'],['tan','r'],['θ','i']],K.t1);
+        if(K.onSlope)ref(2*K.v0*K.tn,[['2','r'],['v','i'],['0','n'],['tan','r'],['θ','i']],K.tS)}
+      if(K.sc==='perp')ref(K.v0/K.tn,[['v','i'],['0','n'],['/tan','r'],['θ','i']],NaN);
+      if(!(K.sc==='slope'&&K.onSlope)){F.aux(TX(tf),VY(Math.max(K.v0,vyEnd)),TX(tf),gy0);gl.push([I('t'),[[TX(tf),gy0+11*ut]],{size:16}])}
+      // 当前时刻
+      const ct=Math.min(S.t,Tm),cx=TX(ct);if(S.t>0)F.aux(cx,gy0,cx,gy1+12*u);
+      F.dot(cx,VY(S.vx),2.6);F.dot(cx,VY(-S.vy),2.6);
+      const ex=TX(tf)+6*u+9*ut,ya=VY(K.v0),yb=VY(vyEnd),up=ya<=yb?-1:1;   // up：v_x 线在 v_y 末端上方时为 −1
+      gl.push([SUB('v','x','s'),[[ex,ya],[ex,ya+up*12*ut],[ex,ya+up*22*ut],[TX(tf*.5),ya-11*ut]],{size:17}]);
+      gl.push([SUB('v','y','s'),[[ex,yb],[ex,yb-up*12*ut],[ex,yb-up*22*ut],[TX(tf)-14*ut,yb-10*ut]],{size:17}]);
+      obs.push({x:gx0-2*u,y:gy0-2*u,w:gx1-gx0,h:4*u});
+      gl.forEach(([sg,c,o])=>put(sg,c,{...o,must:true}));
+      todo.forEach(([sg,x,y,o])=>rich(sg,x,y,o));
+      // 慢放提示
+      if(K.slow<1)F.zh('慢放 ×0.25',W-pad,top+9*ut,{align:'right',color:INK});
+    },
+    verdict(P){
+      keepDL(P);
+      const K=geom(P),b=x=>`<b>${x}</b>`;
+      if(K.sc==='net'){
+        const net=K.h>0;let s=`落地时间 t = √(2H/g) = ${b(sec(K.tG))}，落点 x = v₀t = ${b(m(K.xL,2))}`;
+        if(K.tN<K.tG){s+=`；到网用时 d/v₀ = ${sec(K.tN)}，此时离地 ${m(K.yN)}，${net?`比网顶${K.yN>=K.h?'高':'低'} ${b(m(Math.abs(K.yN-K.h)))}`:'越过 d'}`}
+        else s+=`；到网之前就已落地（d/v₀ = ${sec(K.tN)} > t）`;
+        s+='。<br>';
+        s+=ok(K.vmin)?`${net?'擦网':'恰到 d'}：v<sub>min</sub> = d√(g/(2(H − h))) = ${b(ms(K.vmin))}；`:'H ≤ h：无论 v₀ 多大都过不了网；';
+        s+=`压线：v<sub>max</sub> = L√(g/(2H)) = ${b(ms(K.vmax))}`;
+        if(ok(K.vmin))s+=K.vmin<=K.vmax+1e-9?`，可行范围 ${fmt(K.vmin)} ~ ${fmt(K.vmax)} m/s`:'，v<sub>min</sub> &gt; v<sub>max</sub>，无可行速度';
+        if(net)s+=`。<br>最低发球高度 H<sub>min</sub> = hL²/(L² − d²) = ${b(m(K.Hmin))}${K.H<K.Hmin-1e-9?'（当前 H 低于 H<sub>min</sub>）':''}`;
+        return s+'。';
+      }
+      if(K.sc==='slope'){
+        let s=`落在斜面上的条件 v₀ ≤ v₀c = √(gH/2)/tanθ = ${b(ms(K.v0c))}。<br>`;
+        if(K.onSlope)s+=`v₀ ≤ v₀c，落在斜面上：t = 2v₀tanθ/g = ${b(sec(K.tS))}，s = 2v₀²tanθ/(g cosθ) = ${b(m(K.sL,2))}，tanα = 2tanθ = ${b(fmt(2*K.tn,3))}（与 v₀ 无关，与斜面夹角 ${dg(Math.atan(2*K.tn)*DEG-K.th*DEG)}）`;
+        else s+=`v₀ > v₀c，越过坡底落到地面：t = √(2H/g) = ${b(sec(K.tG))}，落点离坡底 ${b(m(K.xL-K.xb,2))}，tanα = √(2gH)/v₀ = ${b(fmt(g*K.tG/K.v0,3))} &lt; 2tanθ = ${fmt(2*K.tn,3)}`;
+        s+=K.t1<K.Tf?`。<br>t₁ = v₀tanθ/g = ${b(sec(K.t1))} 时速度与斜面平行，离斜面最远 d<sub>max</sub> = (v₀sinθ)²/(2g cosθ) = ${b(m(K.dmax))}。`:'。<br>落地前速度还没转到与斜面平行。';
+        return s;
+      }
+      const t=K.Tf,vxh=K.v0,vyh=g*t,de=Math.atan2(K.tn,1)*DEG+Math.atan2(vyh,vxh)*DEG;
+      let s=`恰好垂直：v₀⊥ = tanθ·√(2gH/(1 + 2tan²θ)) = ${b(ms(K.vp))}，t = v₀⊥/(g tanθ) = ${b(sec(K.tp))}，击中点离地 ${b(m(K.H-.5*g*K.tp*K.tp))}。<br>`;
+      s+=`当前 v₀：t = ${b(sec(t))}，击中点离地 ${m(K.H+K.yh)}，速度与斜面成 ${b(dg(Math.min(de,180-de)))}`;
+      s+=Math.abs(de-90)<=.5?'（垂直）。':de>90?'，偏竖直（v₀ 偏小）。':'，偏水平（v₀ 偏大）。';
+      return s;
+    },
+    _geom:geom
+  };
+})();
+
+/* ================= 通用渲染引擎（所有母题共用，不改） ================= */
+(()=>{
+const D=JSON.parse(document.getElementById('data').textContent);
+const PLAY=D.playLabel||'发射';   // 播放按钮上的动词，数据里可用 playLabel 改写（如「碰撞」「转动」）
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const root=document.documentElement;
+const tok=n=>getComputedStyle(root).getPropertyValue(n).trim();
+const PS=D.problem.params;
+const P={};PS.forEach(p=>P[p.key]=p.def);
+const unitSep=u=>/^[°′″]/.test(u)?'':' ';   // 角度单位紧贴数字：90°
+const fmtP=p=>p.type==='choice'?p.options.find(o=>o.value===P[p.key]).label:(+P[p.key]).toFixed(p.dec??2)+(p.unit?unitSep(p.unit)+p.unit:'');
+
+/* 静态内容 */
+document.title=`格物 ${D.id} ${D.name.replace(/（.*）/,'')}`;
+$('hName').textContent=D.name;
+$('hSub').textContent=`${D.module} · ${D.chapter}　关联：${D.related.join('、')}`;
+$('hTable').innerHTML=`<tr><th>编号</th><th>考查频率</th><th>难度</th><th>版本</th></tr>
+<tr><td class="code">${esc(D.id)}</td><td>${esc(D.freq)}</td><td title="${D.difficulty} / 5">${'●'.repeat(D.difficulty)}${'○'.repeat(5-D.difficulty)}</td><td>${esc(D.version)}</td></tr>`;
+$('foot').textContent=`格物 Gewu · ${D.id} · ${D.version} · ${D.footer??'g 取 10 m/s²'}`;   // 数据里可用 footer 改写页脚常量
+$('tags').innerHTML=D.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('');
+$('stemNote').textContent=D.problem.note||'';
+$('bCond').innerHTML=D.boundary.conditions.map(c=>`<li><span>${esc(c)}</span></li>`).join('');
+$('bBack').innerHTML=D.boundary.fallback.map(c=>`<li><span>${esc(c)}</span></li>`).join('');
+$('legend').innerHTML=SIM.legend.map(l=>`<span><i style="background:var(${l.color})"></i>${esc(l.label)}</span>`).join('');
+$('concl').innerHTML=D.conclusions.map(c=>`<details><summary><span class="badge">${c.id}</span><span class="t">${esc(c.title)}</span><span class="f">${esc(c.formula)}</span><span class="chev" aria-hidden="true"></span></summary><div class="deriv">${esc(c.derivation)}</div></details>`).join('');
+const qCard=(q,isVar)=>`<article class="q">
+  <div class="head"><span class="badge">${q.id}</span><h3>${esc(q.title)}</h3>${isVar?q.cs.map(c=>`<span class="chip">${c}</span>`).join(''):`<span class="chip">${q.anim?'计划做动画':'不做动画'}</span>`}</div>
+  <p>${esc(q.stem)}</p>
+  ${isVar?'':`<p class="map">映射：<b>${esc(q.map)}</b></p>`}
+  <details><summary><span class="chev" aria-hidden="true"></span>答案与解析</summary><div class="ans"><p class="a">答案：${esc(q.answer)}</p><p>${esc(q.analysis)}</p></div></details>
+  <div class="foot"><span class="src">${esc(q.source)}</span>${isVar?`<button data-load="${q.id}">加载到动画 ↑</button>`:''}</div>
+</article>`;
+$('variants').innerHTML=D.variants.map(v=>qCard(v,true)).join('');
+$('reskins').innerHTML=D.reskins.map(r=>qCard(r,false)).join('');
+$('sources').innerHTML=D.sources.map(s=>`<li><b>${esc(s.src)}</b><span>${esc(s.desc)}</span></li>`).join('');
+
+/* 参数控件 */
+const box=$('params');
+PS.forEach(p=>{
+  if(p.type==='choice'){
+    const d=document.createElement('div');d.className='seg';d.id=`f-${p.key}`;d.setAttribute('role','group');d.setAttribute('aria-label',p.label);
+    d.innerHTML=p.options.map(o=>`<button id="opt-${p.key}-${o.value}" data-k="${p.key}" data-v="${o.value}">${esc(o.label)}${o.hint?`<small>${esc(o.hint)}</small>`:""}</button>`).join('');
+    box.appendChild(d);
+  }else{
+    const d=document.createElement('div');d.className='field';d.id=`f-${p.key}`;
+    d.innerHTML=`<label for="num-${p.key}"><span class="s">${esc(p.sym)}</span><span class="note">${esc(p.label)}</span></label><span class="numin"><input type="number" id="num-${p.key}" min="${p.min}" max="${p.max}" step="any" inputmode="decimal" aria-label="${esc(p.label)}"><span class="u">${esc(p.unit||'')}</span></span><input type="range" id="in-${p.key}" min="${p.min}" max="${p.max}" step="${p.step}" value="${p.def}" aria-label="${esc(p.label)} 滑块">`;
+    box.appendChild(d);
+    d.querySelector('input[type=range]').addEventListener('input',e=>{P[p.key]=+e.target.value;active=-1;sync();reset()});
+    const num=d.querySelector('input[type=number]');
+    num.addEventListener('change',()=>{let v=parseFloat(num.value);
+      if(Number.isFinite(v)){v=Math.min(p.max,Math.max(p.min,v));P[p.key]=v;active=-1;reset()}sync()});
+    num.addEventListener('keydown',e=>{if(e.key==='Enter')num.blur()});
+  }
+});
+box.addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(!b)return;P[b.dataset.k]=b.dataset.v;active=-1;sync();reset()});
+let active=-1;
+const shown=w=>!w||Object.entries(w).every(([k,v])=>[].concat(v).includes(P[k]));
+const CH0=PS.find(p=>p.type==='choice');   // 预设只按第一个选项参数（情境 / 模式）分组，其余选项由预设的 load 带过去
+const chosen=o=>!CH0||o[CH0.key]===undefined||o[CH0.key]===P[CH0.key];
+const numTxt=(p,v)=>String(+(+v).toFixed(Math.max(p.dec??2,4)));
+function sync(){
+  PS.forEach(p=>{
+    if(p.type==='choice'){p.options.forEach(o=>$(`opt-${p.key}-${o.value}`).setAttribute('aria-pressed',P[p.key]===o.value));if(p.when)$(`f-${p.key}`).hidden=!shown(p.when)}
+    else{$(`in-${p.key}`).value=P[p.key];const n=$(`num-${p.key}`);if(document.activeElement!==n)n.value=numTxt(p,P[p.key]);$(`f-${p.key}`).hidden=!shown(p.when)}
+  });
+  const fill=s=>esc(s).replace(/\{(\w+)\}/g,(m,k)=>{
+    if(k==='constraint'){const p=PS.find(x=>x.type==='choice');return esc(p.options.find(o=>o.value===P[p.key]).text)}
+    const p=PS.find(x=>x.key===k);return p?`<span class="num">${esc(fmtP(p))}</span>`:m});
+  const [lead,ask='']=D.problem.stem.split(/问[:：]/);
+  $('stem').innerHTML=fill(lead.trim());
+  const qs=ask.split(/[①②③④⑤⑥]/).map(s=>s.trim()).filter(Boolean);
+  $('asks').innerHTML=qs.map((q,i)=>`<li><b>${i+1}</b><span>${fill(q)}</span></li>`).join('');
+  $('asks').hidden=!qs.length;
+  $('verdict').innerHTML=SIM.verdict(P);
+  const ch=PS.find(p=>p.type==='choice');
+  $('presetMode').textContent=ch?`· ${ch.options.find(o=>o.value===P[ch.key]).label}`:'';
+  $('presets').innerHTML=D.presets.map((p,i)=>chosen(p.load)?`<button data-preset="${i}" aria-pressed="${i===active}" title="${esc(p.note||'')}">${esc(p.label)}</button>`:'').join('');
+  const pn=$('pnote'),ap=D.presets[active];pn.hidden=!(ap&&ap.note);if(ap&&ap.note)pn.innerHTML=`<b>${esc(ap.label)}</b>：${esc(ap.note)}`;
+}
+function load(o,i=-1){Object.assign(P,o);active=i;sync();reset()}
+$('presets').addEventListener('click',e=>{const b=e.target.closest('[data-preset]');if(b)load(D.presets[+b.dataset.preset].load,+b.dataset.preset)});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-load]');if(!b)return;
+  load(D.variants.find(v=>v.id===b.dataset.load).load);
+  show('pane-lab');document.querySelector('.board').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})});
+
+/* 画布与循环 */
+const cv=$('cv'),ctx=cv.getContext('2d');let S,running=false,speed=1,lastT=0;
+function size(){const r=cv.getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);const w=Math.max(200,Math.round(r.width*dpr));if(cv.width!==w){cv.width=w;cv.height=w}}
+function render(){size();SIM.draw(ctx,S,P,cv.width,cv.height,tok);
+  $('readout').innerHTML=SIM.readouts(S,P).map(([k,v])=>`<div class="ro"><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('');
+  const st=$('status');st.textContent=S.status.text;st.className='status '+S.status.cls}
+function reset(){running=false;S=SIM.init(P);$('play').textContent=`▶ ${PLAY}`;render()}
+function loop(t){if(!running)return;const real=Math.min(.05,(t-lastT)/1000);lastT=t;
+  const sim=real*speed,n=Math.max(1,Math.ceil(sim/5e-4));for(let i=0;i<n;i++)SIM.step(S,P,sim/n);
+  render();if(S.done){running=false;$('play').textContent=`▶ 再${PLAY}`;return}requestAnimationFrame(loop)}
+$('play').onclick=()=>{if(running){running=false;$('play').textContent='▶ 继续';return}
+  if(S.done)S=SIM.init(P);running=true;$('play').textContent='❚❚ 暂停';lastT=performance.now();requestAnimationFrame(loop)};
+$('reset').onclick=reset;
+$('slow').onclick=()=>{speed=speed===1?.25:1;$('slow').textContent=speed===1?'慢放 ×0.25':'正常速度'};
+new ResizeObserver(render).observe(cv);
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',render);
+new MutationObserver(render).observe(root,{attributes:true,attributeFilter:['data-theme']});
+/* 选项卡 */
+const tabs=[...document.querySelectorAll('[role=tab]')];
+function show(id){tabs.forEach(t=>{const on=t.dataset.pane===id;t.setAttribute('aria-selected',on);t.tabIndex=on?0:-1;$(t.dataset.pane).hidden=!on});
+  if(id==='pane-lab')requestAnimationFrame(render)}
+tabs.forEach((t,i)=>{t.addEventListener('click',()=>show(t.dataset.pane));
+  t.addEventListener('keydown',e=>{const d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(!d)return;e.preventDefault();
+    const n=tabs[(i+d+tabs.length)%tabs.length];n.focus();show(n.dataset.pane)})});
+$('nConcl').textContent=D.conclusions.length;$('nVar').textContent=D.variants.length;$('nSkin').textContent=D.reskins.length;$('nSrc').textContent=D.sources.length;
+show('pane-lab');
+sync();reset();
+})();
+</script>

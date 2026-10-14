@@ -10,6 +10,7 @@
 <!-- ================= 母题数据（由 {编号}.md 转换，页面只改这里和 SIM 模块） ================= -->
 <script type="application/json" id="data">
 {
+  "playLabel": "转动",
   "footer": "电表为理想交流电表",
   "id": "EM-ACG-01",
   "name": "交变电流的产生（线圈在匀强磁场中转动）",
@@ -1299,6 +1300,7 @@ const SIM=(()=>{
 /* ================= 通用渲染引擎（所有母题共用，不改） ================= */
 (()=>{
 const D=JSON.parse(document.getElementById('data').textContent);
+const PLAY=D.playLabel||'发射';   // 播放按钮上的动词，数据里可用 playLabel 改写（如「碰撞」「转动」）
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const root=document.documentElement;
@@ -1387,10 +1389,10 @@ function size(){const r=cv.getBoundingClientRect(),dpr=Math.min(2,window.deviceP
 function render(){size();SIM.draw(ctx,S,P,cv.width,cv.height,tok);
   $('readout').innerHTML=SIM.readouts(S,P).map(([k,v])=>`<div class="ro"><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('');
   const st=$('status');st.textContent=S.status.text;st.className='status '+S.status.cls}
-function reset(){running=false;S=SIM.init(P);$('play').textContent='▶ 发射';render()}
+function reset(){running=false;S=SIM.init(P);$('play').textContent=`▶ ${PLAY}`;render()}
 function loop(t){if(!running)return;const real=Math.min(.05,(t-lastT)/1000);lastT=t;
   const sim=real*speed,n=Math.max(1,Math.ceil(sim/5e-4));for(let i=0;i<n;i++)SIM.step(S,P,sim/n);
-  render();if(S.done){running=false;$('play').textContent='▶ 再发射';return}requestAnimationFrame(loop)}
+  render();if(S.done){running=false;$('play').textContent=`▶ 再${PLAY}`;return}requestAnimationFrame(loop)}
 $('play').onclick=()=>{if(running){running=false;$('play').textContent='▶ 继续';return}
   if(S.done)S=SIM.init(P);running=true;$('play').textContent='❚❚ 暂停';lastT=performance.now();requestAnimationFrame(loop)};
 $('reset').onclick=reset;

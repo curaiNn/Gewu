@@ -1,0 +1,1689 @@
+<!doctype html>
+<html lang="zh-CN">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>格物 MEC-MOM-02 动量定理的应用：流体类问题</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;800&family=Noto+Sans+SC:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" media="print" onload="this.media='all'">
+
+<!-- ================= 母题数据（由 {编号}.md 转换，页面只改这里和 SIM 模块） ================= -->
+<script type="application/json" id="data">
+{
+  "playLabel": "开始",
+  "id": "MEC-MOM-02",
+  "name": "动量定理的应用：流体类问题（柱体模型；含撞击、缓冲的平均作用力）",
+  "module": "力学",
+  "chapter": "选择性必修一 · 动量守恒定律",
+  "freq": "中",
+  "difficulty": 3,
+  "version": "v0.1",
+  "related": [
+    "MEC-MOM-01 碰撞模型（同样用到「作用时间极短、内力远大于外力」）",
+    "MEC-CIR-01 轻绳模型与轻杆模型（2025 等级考 4.2：变力的冲量用矢量式）",
+    "THM-GAS-01 气缸活塞类问题（气体压强的微观解释：大量分子对器壁的平均冲力）",
+    "MEC-ENG-01 机车启动（功率与 v³、推进效率）",
+    "EM-IND-01 单杆模型（安培力的冲量 BLq = Δp，电磁缓冲）"
+  ],
+  "tags": [
+    "动量定理 F合Δt = Δp（矢量式）",
+    "平均作用力与缓冲（重力是否计入）",
+    "柱体模型（微元法）Δm = ρSvΔt",
+    "流体冲击力 F = ρSv²（停住）/ 2ρSv²（反弹）",
+    "反冲推力与功率 P = ½ρSv³"
+  ],
+  "problem": {
+    "stem": "用动量定理求平均作用力，按研究对象分三种情境，动画当前演示{constraint}。流体冲击（柱体模型）：水枪喷口的横截面积 S = {S}，水以速度 v = {v} 水平射出，垂直冲击竖直挡板，水的密度 ρ = {rho}；e = {e}，e = 0 为平板挡板（水冲击后沿板面向四周流开），e > 0 为凹形挡板（水沿槽面以 ev 折回）。反冲推力（喷水 / 喷气悬停）：质量 M = {M} 的飞行器竖直向下喷水，喷口总横截面积为 S，水相对喷口的喷出速度为 v。物体撞击（缓冲）：质量 m = {m} 的物体以速度 v = {v} 竖直落到缓冲垫上，经 Δt = {dt} 速度减为零，或以速率 ev 竖直弹起。问：① 流体冲击中，取一小段时间 τ = {tau}，这段时间内打到挡板上的水的质量 Δm 多大？挡板受到的平均冲击力 F 多大？F 与所取的 τ 有关吗？水枪受到的反冲力、水枪的输出功率各多大？② 反冲推力中，喷出速度 v 多大时飞行器恰好悬停？此时喷出的水每秒获得的动能多大？③ 物体撞击中，缓冲垫对物体的平均作用力 F̄ 多大？若不计重力，结果偏差多少？什么情况下可以不计重力？",
+    "note": "g 取 10 m/s²。v 由三种情境共用：流体冲击、反冲推力中是水相对喷口的速度，物体撞击中是撞击前瞬间的速度（物体从 H = v²/(2g) 处由静止落下）。τ 是柱体模型中假想的一小段时间（取柱时间），与撞击的作用时间 Δt 区分；Δt 指从接触到停住（e = 0）或离开（e > 0）。e 为拓展参数（恢复系数）：返回速率与 v 之比，课本只讨论 e = 0（停住 / 沿板面流开）与 e = 1（原速反弹 / 原路折回）。流体冲击与物体撞击的接触段画面慢放，读数均为真实时间；ρ、m 的输入框可填科学计数（如 1.3、2.7e-3）。",
+    "params": [
+      {
+        "key": "mode",
+        "sym": "情境",
+        "label": "研究对象的类型",
+        "type": "choice",
+        "def": "jet",
+        "options": [
+          {
+            "value": "jet",
+            "label": "流体冲击",
+            "hint": "柱体模型",
+            "text": "流体冲击（水柱冲击挡板）"
+          },
+          {
+            "value": "thrust",
+            "label": "反冲推力",
+            "hint": "喷⁠水 /​喷⁠气⁠悬⁠停",
+            "text": "反冲推力（飞行器喷水悬停）"
+          },
+          {
+            "value": "impact",
+            "label": "物体撞击",
+            "hint": "缓冲",
+            "text": "物体撞击（落到缓冲垫上）"
+          }
+        ]
+      },
+      {
+        "key": "rho",
+        "sym": "ρ",
+        "label": "流体密度",
+        "unit": "kg/m³",
+        "def": 1000,
+        "min": 0.1,
+        "max": 2000,
+        "step": 0.1,
+        "dec": 1,
+        "when": {
+          "mode": [
+            "jet",
+            "thrust"
+          ]
+        }
+      },
+      {
+        "key": "S",
+        "sym": "S",
+        "label": "喷口（水柱）的横截面积；多个喷口时为总面积",
+        "unit": "cm²",
+        "def": 2,
+        "min": 0.1,
+        "max": 100,
+        "step": 0.1,
+        "dec": 1,
+        "when": {
+          "mode": [
+            "jet",
+            "thrust"
+          ]
+        }
+      },
+      {
+        "key": "v",
+        "sym": "v",
+        "label": "流速（相对喷口）/ 撞击速度",
+        "unit": "m/s",
+        "def": 10,
+        "min": 0.5,
+        "max": 100,
+        "step": 0.1,
+        "dec": 1
+      },
+      {
+        "key": "e",
+        "sym": "e",
+        "label": "反弹系数（拓展）：返回速率 ÷ v；0 停住 / 沿板面流开，1 原速返回",
+        "unit": "",
+        "def": 0,
+        "min": 0,
+        "max": 1,
+        "step": 0.01,
+        "dec": 2,
+        "when": {
+          "mode": [
+            "jet",
+            "impact"
+          ]
+        }
+      },
+      {
+        "key": "tau",
+        "sym": "τ",
+        "label": "取柱时间（柱体模型中假想的一小段时间）",
+        "unit": "ms",
+        "def": 10,
+        "min": 1,
+        "max": 50,
+        "step": 1,
+        "dec": 0,
+        "when": {
+          "mode": [
+            "jet",
+            "thrust"
+          ]
+        }
+      },
+      {
+        "key": "M",
+        "sym": "M",
+        "label": "飞行器质量",
+        "unit": "kg",
+        "def": 2,
+        "min": 0.1,
+        "max": 200,
+        "step": 0.1,
+        "dec": 1,
+        "when": {
+          "mode": "thrust"
+        }
+      },
+      {
+        "key": "m",
+        "sym": "m",
+        "label": "物体质量",
+        "unit": "kg",
+        "def": 0.3,
+        "min": 0.001,
+        "max": 100,
+        "step": 0.0001,
+        "dec": 3,
+        "when": {
+          "mode": "impact"
+        }
+      },
+      {
+        "key": "dt",
+        "sym": "Δt",
+        "label": "作用时间：从接触到停住（e = 0）或离开（e > 0）",
+        "unit": "s",
+        "def": 0.1,
+        "min": 0.001,
+        "max": 1,
+        "step": 0.001,
+        "dec": 3,
+        "when": {
+          "mode": "impact"
+        }
+      }
+    ]
+  },
+  "boundary": {
+    "conditions": [
+      "平均作用力 F̄ 指对时间的平均：F̄ = I/Δt，等于 F–t 图面积除以时间，不是峰值；它也不同于用动能定理求出的「对位移的平均力」ΔEk/x",
+      "撞击在一条直线上（正碰），反弹速度与入射速度共线反向；物体撞击情境为竖直方向",
+      "流体：密度 ρ 不变（不可压缩），同一截面上速度均匀，流动稳定（单位时间流量不随时间变）；冲击方向与挡板垂直，挡板静止；冲击后水沿板面流开（垂直板面的速度变为零），或沿原路折回",
+      "柱体中流体本身的重力冲量 Δm·gΔt = ρSvgΔt² 是 Δt 的二阶小量，可略；但流体到达挡板之前因重力减速（V2）、挡板上积水的重量，要另外计算",
+      "反冲推力：喷出前流体相对喷口静止（无来流）；v 是相对喷口的速度；飞行器质量的变化可忽略（外接水管供水，或时间很短）；不计喷口处的压强差",
+      "物体撞击时重力是否计入，看重力占平均力的比例 mg/F̄ = gΔt/[(1 + e)v + gΔt]：作用时间很短（如 0.01 s 以内）、冲击力远大于重力时可略；作用时间达到 0.1 s 量级时必须计入；水平方向的撞击，重力不在冲击方向上；斜面上要计重力沿斜面的分力",
+      "C7 的光子动量 p = E/c = h/λ 由题目给出或作为拓展，不要求推导"
+    ],
+    "fallback": [
+      "动量定理的矢量式：I合 = Σ(FΔt) = mv′ − mv，可分方向列分量式。变力的冲量直接用 Δp 求：2025 等级考 4.2，I_N = Δp − I_G，Δp = mv₀ 水平、I_G = mgt 竖直，|I_N| = m√(v₀² + g²t²)（2026 届奉贤二模 3-1(2) 同型）；匀速圆周一周 Δp = 0，空气作用力的冲量与重力的冲量等大反向，为 mgT（2026 届普陀二模 2-3(2)）",
+      "F–t 图与 t 轴所围面积 = 冲量（2026 届虹口一模 5-3：三角形面积 ½ × 4000 N × 0.8 s = 1600 N·s）",
+      "流体的一般式：F = qΔv（q 为单位时间流过的质量，Δv 为流体相对施力物体的速度变化，按矢量合成）。斜冲击平板并沿板面流开时只有法向速度改变，F法 = ρSv²cos θ（θ 为水流与板面法线的夹角）；挡板以 u 顺着水流运动时用相对速度，F = ρS(v − u)²；有来流时 F = q(v出 − v进)（2026 届徐汇一模 6.4）",
+      "质量明显变化的物体（火箭长时间加速）：以 Δt 内喷出的 Δm 为对象，推力仍为 (Δm/Δt)·u（u 为相对喷出速度），但加速度随质量变化，要分段处理",
+      "粒子流：F = n·Δp₁（n 为单位时间打到面上的粒子数，Δp₁ 为每个粒子的动量变化）；大量气体分子对器壁的平均冲力即气体压强（THM-GAS-01）",
+      "能量：流体获得动能的功率 P = ½qv²；动能定理求的是对位移的平均力，与 F̄ 不同"
+    ]
+  },
+  "presets": [
+    {
+      "label": "母题：平板挡板（沿板面流开）",
+      "note": "q = ρSv = 2.0 kg/s，τ = 10 ms 内打到挡板的水 Δm = 0.020 kg；F = ρSv² = 20 N，冲击压强 p = ρv² = 1.0×10⁵ Pa；水枪反冲力也是 20 N，输出功率 P = ½ρSv³ = 100 W。",
+      "load": {
+        "mode": "jet",
+        "rho": 1000,
+        "S": 2,
+        "v": 10,
+        "e": 0,
+        "tau": 10,
+        "M": 2,
+        "m": 0.3,
+        "dt": 0.1
+      }
+    },
+    {
+      "label": "凹形挡板（原速折回）",
+      "note": "e = 1：F = 2ρSv² = 40 N，是平板的 2 倍；水枪反冲力仍为 20 N。",
+      "load": {
+        "mode": "jet",
+        "rho": 1000,
+        "S": 2,
+        "v": 10,
+        "e": 1,
+        "tau": 10,
+        "M": 2,
+        "m": 0.3,
+        "dt": 0.1
+      }
+    },
+    {
+      "label": "取柱时间加长，F 不变",
+      "note": "τ = 40 ms：柱体长 0.40 m、Δm = 0.080 kg，F 仍为 20 N。τ 只是假想的一段时间。",
+      "load": {
+        "mode": "jet",
+        "rho": 1000,
+        "S": 2,
+        "v": 10,
+        "e": 0,
+        "tau": 40,
+        "M": 2,
+        "m": 0.3,
+        "dt": 0.1
+      }
+    },
+    {
+      "label": "流速加倍",
+      "note": "v = 20 m/s：q 变为 4.0 kg/s，F = 80 N（4 倍），P = 800 W（8 倍）。",
+      "load": {
+        "mode": "jet",
+        "rho": 1000,
+        "S": 2,
+        "v": 20,
+        "e": 0,
+        "tau": 10,
+        "M": 2,
+        "m": 0.3,
+        "dt": 0.1
+      }
+    },
+    {
+      "label": "细水柱高压",
+      "note": "S = 0.10 cm²、v = 100 m/s：F = 100 N，压强 p = ρv² = 1.0×10⁷ Pa，可以切割材料。",
+      "load": {
+        "mode": "jet",
+        "rho": 1000,
+        "S": 0.1,
+        "v": 100,
+        "e": 0,
+        "tau": 10,
+        "M": 2,
+        "m": 0.3,
+        "dt": 0.1
+      }
+    },
+    {
+      "label": "风吹挡板（空气）",
+      "note": "ρ = 1.3 kg/m³、S = 100 cm²、v = 20 m/s：F = 5.2 N；密度小三个数量级，冲击力也小得多。",
+      "load": {
+        "mode": "jet",
+        "rho": 1.3,
+        "S": 100,
+        "v": 20,
+        "e": 0,
+        "tau": 10,
+        "M": 2,
+        "m": 0.3,
+        "dt": 0.1
+      }
+    },
+    {
+      "label": "消防水枪击墙（V1）",
+      "note": "S = 16.5 cm²（P 处水柱的横截面积）、v = 5.0 m/s：q = 8.25 kg/s，F = 41 N。",
+      "load": {
+        "mode": "jet",
+        "rho": 1000,
+        "S": 16.5,
+        "v": 5,
+        "e": 0,
+        "tau": 10,
+        "M": 2,
+        "m": 0.3,
+        "dt": 0.1
+      }
+    },
+    {
+      "label": "母题：恰好悬停",
+      "note": "M = 2.0 kg、ρ = 1.0×10³ kg/m³、S = 2.0 cm²、v = 10 m/s：F = ρSv² = 20 N = Mg，P = ½ρSv³ = 100 W。",
+      "load": {
+        "mode": "thrust",
+        "rho": 1000,
+        "S": 2,
+        "v": 10,
+        "e": 0,
+        "tau": 10,
+        "M": 2,
+        "m": 0.3,
+        "dt": 0.1
+      }
+    },
+    {
+      "label": "喷速偏小，下落",
+      "note": "v = 9.0 m/s：F = 16.2 N < Mg，a = 1.9 m/s² 向下。",
+      "load": {
+        "mode": "thrust",
+        "rho": 1000,
+        "S": 2,
+        "v": 9,
+        "e": 0,
+        "tau": 10,
+        "M": 2,
+        "m": 0.3,
+        "dt": 0.1
+      }
+    },
+    {
+      "label": "喷速偏大，加速上升",
+      "note": "v = 11 m/s：F = 24.2 N > Mg，a = 2.1 m/s² 向上。",
+      "load": {
+        "mode": "thrust",
+        "rho": 1000,
+        "S": 2,
+        "v": 11,
+        "e": 0,
+        "tau": 10,
+        "M": 2,
+        "m": 0.3,
+        "dt": 0.1
+      }
+    },
+    {
+      "label": "喷口面积加倍",
+      "note": "S = 4.0 cm²：悬停所需喷速降为 v₀ = 7.07 m/s，功率降为 70.7 W；喷口越大越省功率。",
+      "load": {
+        "mode": "thrust",
+        "rho": 1000,
+        "S": 4,
+        "v": 7.0711,
+        "e": 0,
+        "tau": 10,
+        "M": 2,
+        "m": 0.3,
+        "dt": 0.1
+      }
+    },
+    {
+      "label": "喷气悬停（空气）",
+      "note": "ρ = 1.3 kg/m³、S = 100 cm²：同样 2.0 kg 要 39.2 m/s 的喷速、392 W 的功率，气体密度小，喷速和功率都大得多。",
+      "load": {
+        "mode": "thrust",
+        "rho": 1.3,
+        "S": 100,
+        "v": 39.223,
+        "e": 0,
+        "tau": 10,
+        "M": 2,
+        "m": 0.3,
+        "dt": 0.1
+      }
+    },
+    {
+      "label": "喷水飞行器（V3）",
+      "note": "M = 100 kg、S = 77.0 cm²、v = 11.4 m/s：恰好悬停（推力与 Mg 相差不到 0.1%），P = 5.7 kW。",
+      "load": {
+        "mode": "thrust",
+        "rho": 1000,
+        "S": 77,
+        "v": 11.4,
+        "e": 0,
+        "tau": 10,
+        "M": 100,
+        "m": 0.3,
+        "dt": 0.1
+      }
+    },
+    {
+      "label": "母题：落地停住（计重力）",
+      "note": "m = 0.30 kg、v = 10 m/s、e = 0、Δt = 0.10 s：F̄ = 33 N = 11mg；不计重力得 30 N，偏小 9.1%。",
+      "load": {
+        "mode": "impact",
+        "rho": 1000,
+        "S": 2,
+        "v": 10,
+        "e": 0,
+        "tau": 10,
+        "M": 2,
+        "m": 0.3,
+        "dt": 0.1
+      }
+    },
+    {
+      "label": "硬地面，作用时间短",
+      "note": "Δt = 0.010 s：F̄ = 303 N ≈ 101mg，重力只占 1%，可略。",
+      "load": {
+        "mode": "impact",
+        "rho": 1000,
+        "S": 2,
+        "v": 10,
+        "e": 0,
+        "tau": 10,
+        "M": 2,
+        "m": 0.3,
+        "dt": 0.01
+      }
+    },
+    {
+      "label": "缓冲时间加倍",
+      "note": "Δt = 0.20 s：F̄ = 18 N，F̄ − mg 由 30 N 减半为 15 N。",
+      "load": {
+        "mode": "impact",
+        "rho": 1000,
+        "S": 2,
+        "v": 10,
+        "e": 0,
+        "tau": 10,
+        "M": 2,
+        "m": 0.3,
+        "dt": 0.2
+      }
+    },
+    {
+      "label": "原速反弹",
+      "note": "e = 1、Δt = 0.10 s：Δp = 2mv，F̄ = 63 N。",
+      "load": {
+        "mode": "impact",
+        "rho": 1000,
+        "S": 2,
+        "v": 10,
+        "e": 1,
+        "tau": 10,
+        "M": 2,
+        "m": 0.3,
+        "dt": 0.1
+      }
+    },
+    {
+      "label": "乒乓球落到球拍上弹起",
+      "note": "m = 2.7 g、v = 4.0 m/s（h₁ = 0.80 m）、e = 0.75（h₂ = 0.45 m）、Δt = 1.0 ms：F̄ ≈ 18.9 N，约为重力的 700 倍。（2026 届浦东一模 3-3）",
+      "load": {
+        "mode": "impact",
+        "rho": 1000,
+        "S": 2,
+        "v": 4,
+        "e": 0.75,
+        "tau": 10,
+        "M": 2,
+        "m": 0.0027,
+        "dt": 0.001
+      }
+    },
+    {
+      "label": "安全气囊（V5）",
+      "note": "m = 50 kg、v = 8.0 m/s、e = 0.25、Δt = 0.20 s：F̄ = 3.0×10³ N；不计重力得 2.5×10³ N，偏小 17%。",
+      "load": {
+        "mode": "impact",
+        "rho": 1000,
+        "S": 2,
+        "v": 8,
+        "e": 0.25,
+        "tau": 10,
+        "M": 2,
+        "m": 50,
+        "dt": 0.2
+      }
+    }
+  ],
+  "conclusions": [
+    {
+      "id": "C1",
+      "title": "动量定理求平均作用力：选对象、定正方向、由 Δp 求力，再用牛顿第三定律",
+      "formula": "F合Δt = mv′ − mv（矢量式）；F̄ = Δp/Δt；F–t 图面积 = 冲量",
+      "derivation": "牛顿第二定律 F合 = ma = m(v′ − v)/Δt，移项得 F合Δt = mv′ − mv，这就是动量定理。力随时间变化时，把过程分成许多小段，每段 FᵢΔtᵢ = Δpᵢ，相加得 ΣFᵢΔtᵢ = Δp，左边就是 F–t 图与 t 轴所围的面积。定义平均作用力 F̄ = ΣFᵢΔtᵢ/Δt = Δp/Δt：一个恒力在同样时间内产生同样的冲量，F–t 图上就是与曲线面积相等的矩形。\n解题步骤：① 选研究对象（物体，或 Δt 内的一段流体）；② 规定正方向；③ 写出初、末动量（带正负号）；④ 受力分析，列 F合Δt = Δp，求出研究对象受到的力；⑤ 题目问的是另一物体受的力（冲击力、推力）时，用牛顿第三定律。\n例：2026 届松江一模 3-2(1)，空天母舰中失重，乙对器材 A 的作用力就是合力，F = mΔv/Δt = 30 kg × (5.2 − 2) m/s ÷ 0.5 s = 192 N；2025 届闵行一模 二-1(2)「雪龙 2 号」水平撞冰，竖直方向重力与浮力平衡，水平方向 F = mv/t = 1.2×10⁷ kg × 4 m/s ÷ 2.5 s = 1.92×10⁷ N。"
+    },
+    {
+      "id": "C2",
+      "title": "停住与反弹：同样的作用时间，反弹的平均力是停住的 (1 + e) 倍",
+      "formula": "|Δp| = m(1 + e)v；停住 mv，原速反弹 2mv；乒乓球 e = √(h₂/h₁)",
+      "derivation": "以入射速度方向为正，v′ = −ev，Δp = m(−ev) − mv = −m(1 + e)v，大小 m(1 + e)v。停住 e = 0，|Δp| = mv；原速反弹 e = 1，|Δp| = 2mv。由 C1，作用时间相同时平均力与 |Δp| 成正比，反弹是停住的 (1 + e) 倍；这正是凹形挡板（C5）、反射光（C7）的力加倍的原因。\n由离开时的上升高度求 e：2026 届浦东一模 3-3 中 v₁ = √(2gh₁)，v₂ = √(2gh₂)，e = √(h₂/h₁)。"
+    },
+    {
+      "id": "C3",
+      "title": "竖直撞击要不要计重力：平均作用力 = 重力 + 动量变化率；作用时间越长，平均力越小（缓冲）",
+      "formula": "N̄ = mg + m(1 + e)v/Δt；重力占比 mg/N̄ = gΔt/[(1 + e)v + gΔt]",
+      "derivation": "物体竖直向下以 v 撞到缓冲面，取向上为正，受缓冲面支持力 N（向上）和重力 mg（向下）。由 C1：(N̄ − mg)Δt = m(ev) − m(−v) = m(1 + e)v，得 N̄ = mg + m(1 + e)v/Δt。\n重力占比 mg/N̄ = mgΔt/[m(1 + e)v + mgΔt] = gΔt/[(1 + e)v + gΔt]：\n· 2026 等级考 5.3 松鼠：gΔt = 9.8 m/s² × 0.090 s = 0.88 m/s，v = 9 m/s，重力约占 9%，原卷保留了 mg（109.8m）\n· 2026 届浦东一模 3-3 乒乓球：接触时间极短，但原卷答案仍写 mg + …，保留重力总是对的\n· 2026 届虹口一模 5-3 安全气囊：作用 0.8 s，重力冲量 640 N·s，占 F–t 图面积 1600 N·s 的 40%，必须计入\n· 2026 届奉贤一模 2-2(2)② 斜面上的小车：沿斜面方向重力分力 mg sin 5° ≈ 0.171 N，其冲量 0.171 N × 0.12 s ≈ 0.020 N·s，阻力冲量 I = mv + mg sin θ·Δt = 0.240 N·s + 0.020 N·s = 0.26 N·s，重力分力约占 8%，保留 2 位有效数字就不能略\n· 水平撞击（2025 届闵行一模「雪龙 2 号」）：重力与支持力（浮力）在竖直方向平衡，不进入水平方向的方程\n缓冲原理：Δp 由撞击前后的速度决定，Δt 越长，N̄ − mg = m(1 + e)v/Δt 越小。2026 等级考 5.3 的「松软草地」、气囊、跳远沙坑、屈膝落地都是延长 Δt。"
+    },
+    {
+      "id": "C4",
+      "title": "柱体模型（微元法）：取 Δt 内打到挡板（或从喷口喷出）的一段流体柱为研究对象；同一股稳定流体，各截面的流量相同",
+      "formula": "Δm = ρSvΔt；q = Δm/Δt = ρSv；ρS₁v₁ = ρS₂v₂",
+      "derivation": "流体以速度 v 流过横截面 S，Δt 内流过的流体排成一段长 vΔt 的柱体，体积 SvΔt，质量 Δm = ρSvΔt，单位时间的质量（流量）q = Δm/Δt = ρSv（2026 届崇明二模 6-2：水枪每秒喷出水的质量 ρSv）。\n稳定流动时，各截面在同一时间内流过的质量相同（否则中间会积累或亏空流体），所以 ρS₁v₁ = ρS₂v₂：水柱减速的地方会变粗。斜抛的水柱到达最高点时流速变小、截面变大（V1）；竖直喷泉越往上越粗（V2）。用 ρSv² 计算时，S 与 v 必须是同一截面上的值。\nΔt 是为了「取一段研究对象」假想出来的，可以任意取，最后会约掉。"
+    },
+    {
+      "id": "C5",
+      "title": "流体的冲击力：沿板面流开时为 ρSv²，原路折回时为 2ρSv²；与所取的 Δt 无关；流体柱本身的重力可略",
+      "formula": "F = q(1 + e)v = (1 + e)ρSv²；冲击压强 p = F/S = (1 + e)ρv²",
+      "derivation": "取 Δt 内打到挡板上的水 Δm = ρSvΔt 为研究对象，以水流方向为正。打到平板后水沿板面流开，垂直板面方向的速度由 v 变为 0；挡板对这段水的平均力为 F′（向后），F′Δt = 0 − Δm·v（取大小），F′ = Δm·v/Δt = ρSv²。凹形挡板使水以 ev 折回：F′Δt = Δm(1 + e)v，F′ = (1 + e)ρSv²。由牛顿第三定律，水对挡板的冲击力 F = F′，方向沿水流方向。\nΔt 约掉了：取的柱体越长，Δm 越大，但打完它用的时间也越长，两者成正比。\n这段水自身的重力冲量 Δm·gΔt = ρSvgΔt²，与 Δm·v = ρSv²Δt 相比为 gΔt/v，Δt → 0 时趋于零，所以流体柱的重力总可以略去（与 C3 中有限质量的物体不同）。\n压强：p = F/S = (1 + e)ρv²，与流量无关，只与流速有关。细水柱以很大流速射出（高压水射流）时压强极大，可以切割材料。"
+    },
+    {
+      "id": "C6",
+      "title": "反冲推力与功率：喷口把流体由静止加速到 v，自身受到等大反向的推力；悬停时推力等于重力；喷出流体获得动能的功率与 v³ 成正比",
+      "formula": "F = ρSv²；悬停 v₀ = √(Mg/(ρS))；P = ½ρSv³ = ½Fv；有来流 F = q(v出 − v进)",
+      "derivation": "取 Δt 内从喷口喷出的流体 Δm = ρSvΔt。它在喷口内相对喷口静止，喷出时速度为 v，喷口对它的力 F′ = Δm·v/Δt = ρSv²，方向与喷出方向相同；由牛顿第三定律，流体对喷口（飞行器）的推力 F = ρSv²，方向与喷出方向相反，这就是反冲。水枪喷水时受到向后的反冲力，大小也是 ρSv²，与平板挡板受到的冲击力相等。\n悬停：F = Mg，ρSv² = Mg，v₀ = √(Mg/(ρS))。2026 届黄浦二模 3-5 中 3 个喷口总面积 3πd²/4，3ρ(πd²/4)v² = F，得 v = 2√(F/(3πρd²))。\n功率：Δt 内流体获得动能 ½Δm·v² = ½ρSv³Δt，所以 P = ½ρSv³ = ½qv² = ½Fv（2026 届宝山二模 4-2(3)：喷泉单位时间输出的动能 ½ρSv₀³）。流量 q ∝ v、每千克的动能 ∝ v²，所以 P ∝ v³：风速加倍，穿过叶片的空气功率变为 8 倍（2026 届松江一模 4-1(1)）；量纲分析 P = kρᵃrᵇvᶜ 得 a = 1、b = 2、c = 3（2026 届杨浦一模 3-1）。\n悬停所需功率 P = ½Mg·v₀ = ½Mg√(Mg/(ρS)) ∝ 1/√S：同样的重力，喷口（或旋翼扫过的面积）越大，所需喷速越小，越省功率。\n有来流：空气以 v进 进入、以 v出 离开（都相对发动机），Δt 内流过的空气 qΔt 速度改变 v出 − v进，F = q(v出 − v进)（2026 届徐汇一模 6.4：F = q(vt − v)）。"
+    },
+    {
+      "id": "C7",
+      "title": "粒子流（拓展）：单位时间打到面上的粒子数 × 每个粒子的动量变化；光子被吸收与被反射相当于停住与反弹",
+      "formula": "F = n·Δp₁；光子 p = E₀/c = h/λ；吸收 F = P光/c，全反射 F = 2P光/c",
+      "derivation": "把流体柱换成粒子柱：粒子数密度为 n₀、速度为 v 时，Δt 内打到面积 S 上的粒子数 N = n₀SvΔt，单位时间 n = n₀Sv 个，每个粒子的动量变化为 Δp₁，F = n·Δp₁。\n光子：能量 E₀ = hν = hc/λ，动量 p = E₀/c = h/λ。单位时间照到面上的光能 P光 = nE₀。被完全吸收时每个光子动量变化 p，F = np = P光/c；被等速率反射时变化 2p，F = 2P光/c（2026 届嘉定二模 1-2：Δt 内 N 个光子，吸收时冲量 NE/c，反射时平均冲力 2NE/(cΔt)；2026 届青浦二模 5-3：时间 t 内照到帆上的光能 ES，F = 2ES/(ct)，a = 2ES/(mct)）。吸收与反射正是「停住」与「反弹」（C2）。\n大量气体分子不断撞击器壁，单位面积上的平均冲力就是气体压强，分子越多、越快，压强越大（另见：2026 届虹口二模 2-4 的钢珠模拟实验）。"
+    }
+  ],
+  "variants": [
+    {
+      "id": "V1",
+      "title": "消防水枪：水柱垂直击中墙面的冲击力",
+      "cs": [
+        "C4",
+        "C5",
+        "C1"
+      ],
+      "source": "改编自 2026 届崇明区二模 6-2（原题：水枪出水口横截面积 S、流速 v，求每秒喷出水的质量 ρSv；水柱恰好垂直击中离地 H = 20 m 的 P 点，vP = 5 m/s，求 v₀ = 5√17 m/s 与 tan θ = 4）。代入数值，增加第 (3)(4) 问求水对墙的冲击力",
+      "stem": "消防员在水平地面上的 A 点用水枪向高楼着火点喷水，水枪出水口横截面积 S = 4.0 cm²。水柱恰好垂直击中竖直墙面上离地 H = 20 m 的 P 点，击中时速度 vP = 5.0 m/s。水的密度 ρ = 1.0×10³ kg/m³，不计空气阻力和出水口离地的高度。(1) 求水从出水口喷出的速度 v₀ 的大小，以及 v₀ 与水平方向夹角 θ 的正切值；(2) 求水枪每秒喷出水的质量；(3) 水击中墙面后沿墙面流下（垂直墙面方向的速度变为零），求墙面受到的水平冲击力；(4) 某同学用 F = ρSv₀² 计算墙面受力，得多少？错在哪里？",
+      "answer": "(1) v₀ = 5√17 m/s ≈ 20.6 m/s，tan θ = 4；(2) 约 8.2 kg（8.25 kg/s）；(3) 约 41 N，垂直墙面向里；(4) 170 N，错把出水口的流速和截面积当成了 P 处的",
+      "analysis": "(1) 把从 A 到 P 的运动倒过来看成从 P 平抛：竖直方向 v₀y = √(2gH) = √(2 × 10 m/s² × 20 m) = 20 m/s，水平方向 v₀x = vP = 5.0 m/s，v₀ = √(20² + 5.0²) m/s = 5√17 m/s ≈ 20.6 m/s，tan θ = v₀y/v₀x = 4。(2) 由 C4，q = ρSv₀ = 1.0×10³ kg/m³ × 4.0×10⁻⁴ m² × 20.6 m/s ≈ 8.25 kg/s。(3) 水柱稳定后，每秒到达 P 处的水也是 q（C4；水柱在 P 处变粗，截面积 S_P = Sv₀/vP ≈ 16.5 cm²）。取 Δt 内到达墙面的水 Δm = qΔt，水平速度由 vP 变为 0，由 C1、C5，墙对水的力 F′ = Δm·vP/Δt = q·vP = 8.25 kg/s × 5.0 m/s ≈ 41 N；由牛顿第三定律，墙面受到的水平冲击力约 41 N，方向垂直墙面向里。(4) ρSv₀² = 1.0×10³ kg/m³ × 4.0×10⁻⁴ m² × 425 m²/s² = 170 N。ρSv² 中的 S、v 必须取同一截面：在 P 处冲击墙面的水平速度是 vP，不是 v₀；若改用 ρSvP² = 10 N 也错，因为水柱在 P 处已变粗，S 不再是出水口面积。正确的写法是 F = qvP = ρSv₀vP。加载后：S 取 P 处水柱的横截面积 16.5 cm²、v = 5.0 m/s，读数 q ≈ 8.25 kg/s、F ≈ 41 N（画面中水柱水平，只演示到达墙面前的最后一段）。",
+      "load": {
+        "mode": "jet",
+        "rho": 1000,
+        "S": 16.5,
+        "v": 5,
+        "e": 0,
+        "tau": 10,
+        "M": 2,
+        "m": 0.3,
+        "dt": 0.1
+      }
+    },
+    {
+      "id": "V2",
+      "title": "喷泉：输出功率、空中水量与顶起玩具",
+      "cs": [
+        "C4",
+        "C5",
+        "C6"
+      ],
+      "source": "改编自 2026 届宝山区二模 4-2(3)（原题：出水口与地面齐平、面积 S，水以 v₀ 竖直向上喷出，求单位时间输出的动能 ½ρSv₀³ 与空中水的体积 2Sv₀²/g）；第 (3) 问改编自 2016 全国卷 Ⅰ 第 35(2) 题（游乐园喷泉的水柱把卡通玩具稳定地悬停在空中）",
+      "stem": "喷泉的出水口与地面齐平，面积 S = 2.0 cm²，水以 v₀ = 10 m/s 竖直向上喷出，水的密度 ρ = 1.0×10³ kg/m³，不计空气阻力。(1) 喷泉单位时间输出的动能多大？(2) 持续喷出的水在空中的体积多大？(3) 把一个质量 M = 1.0 kg、底部为平板的玩具放到水柱上，水冲击底板后沿水平方向向四周散开（竖直速度变为零），玩具稳定地悬停在空中。求水到达底板时的速度，以及玩具底板离出水口的高度。",
+      "answer": "(1) 100 W；(2) 4.0×10⁻³ m³（4.0 L）；(3) 5.0 m/s，3.75 m",
+      "analysis": "(1) 单位时间喷出的水 q = ρSv₀ = 2.0 kg/s，由 C6，单位时间输出的动能 P = ½qv₀² = ½ρSv₀³ = 0.5 × 1.0×10³ kg/m³ × 2.0×10⁻⁴ m² × 1000 m³/s³ = 100 W。(2) 每一小段水在空中上升再落回，用时 t = 2v₀/g = 2.0 s，空中的水就是最近 2.0 s 内喷出的水：V = Sv₀·t = 2Sv₀²/g = 2 × 2.0×10⁻⁴ m² × 100 m²/s² ÷ 10 m/s² = 4.0×10⁻³ m³。(3) 稳定时，单位时间打到底板上的水仍是 q = ρSv₀ = 2.0 kg/s（C4：水柱上升变慢，同时变粗）。设水到达底板时速度为 v，由 C5，水对底板的力 F = qv，悬停 F = Mg：v = Mg/(ρSv₀) = 10 N ÷ 2.0 kg/s = 5.0 m/s。由 v₀² − v² = 2gh，h = (100 − 25) m²/s² ÷ 20 m/s² = 3.75 m。底板处这一小段水自身的重力冲量是 Δt 的二阶小量，可略（C5）。常见错误：用 F = ρSv² 得 v = √(Mg/(ρS)) ≈ 7.1 m/s、h = 2.5 m，错在底板处水柱已变粗，S 不再是出水口面积。加载后：S 取底板处水柱的横截面积 Sv₀/v = 4.0 cm²、v = 5.0 m/s，读数 q = 2.0 kg/s、F = 10 N = Mg（画面中水柱水平，相当于把原图转过 90°）。",
+      "load": {
+        "mode": "jet",
+        "rho": 1000,
+        "S": 4,
+        "v": 5,
+        "e": 0,
+        "tau": 10,
+        "M": 2,
+        "m": 0.3,
+        "dt": 0.1
+      }
+    },
+    {
+      "id": "V3",
+      "title": "喷水飞行器悬停",
+      "cs": [
+        "C6",
+        "C4",
+        "C1"
+      ],
+      "source": "改编自 2026 届黄浦区二模 3-5（原题：火箭回收的悬停阶段，3 台圆形反推发动机，喷口直径 d，喷出气体密度 ρ，总推力 F，忽略喷出气体的重力，求喷气速度 2√(F/(3πρd²))）。喷气改为喷水，代入数值，增加功率与加速度两问",
+      "stem": "喷水飞行器（水上飞行背包）的人和装置总质量 M = 1.0×10² kg，脚下有 2 个竖直向下的圆形喷口，直径均为 d = 7.0 cm，水的密度 ρ = 1.0×10³ kg/m³。不计输水软管对装置的作用和空气阻力，水喷出前相对喷口静止。(1) 求悬停时水相对喷口的喷出速度 v（先用 M、g、ρ、d 表示，再求数值）；(2) 悬停时，喷出的水每秒获得多少动能？(3) 若喷出速度增大到 12 m/s，飞行器的加速度多大？",
+      "answer": "(1) v = (2/d)√(Mg/(2πρ)) ≈ 11.4 m/s；(2) 约 5.7×10³ J（功率 5.7 kW）；(3) 约 1.1 m/s²，竖直向上",
+      "analysis": "(1) 取 Δt 内两个喷口喷出的水为研究对象，由 C4，Δm = 2ρ(πd²/4)vΔt。水由相对喷口静止被加速到 v，由 C1，喷口对水的力 F′ = Δm·v/Δt = (πρd²/2)v²；由牛顿第三定律，水对飞行器的推力 F = F′（C6）。悬停 F = Mg：v = √(2Mg/(πρd²)) = (2/d)√(Mg/(2πρ))。数值：S = 2 × π × (0.035 m)² ≈ 7.70×10⁻³ m²，v = √(1.0×10³ N ÷ (1.0×10³ kg/m³ × 7.70×10⁻³ m²)) ≈ 11.4 m/s。(2) 由 C6，P = ½ρSv³ = ½Fv = ½ × 1.0×10³ N × 11.4 m/s ≈ 5.7×10³ W，即每秒 5.7×10³ J。(3) F = ρSv² = 1.0×10³ kg/m³ × 7.70×10⁻³ m² × 144 m²/s² ≈ 1.11×10³ N，a = (F − Mg)/M = (1108 N − 1000 N) ÷ 100 kg ≈ 1.1 m/s²，竖直向上。推力 ∝ v²：喷速只增大 5%，推力增大约 11%。加载后：S = 77.0 cm²、M = 100 kg、v = 11.4 m/s，推力读数约 1.00×10³ N = Mg；把 v 改为 12 m/s 看第 (3) 问，a ≈ 1.1 m/s² 向上。",
+      "load": {
+        "mode": "thrust",
+        "rho": 1000,
+        "S": 77,
+        "v": 11.4,
+        "e": 0,
+        "tau": 10,
+        "M": 100,
+        "m": 0.3,
+        "dt": 0.1
+      }
+    },
+    {
+      "id": "V4",
+      "title": "落地缓冲：松鼠能否安全落地",
+      "cs": [
+        "C1",
+        "C3"
+      ],
+      "source": "改编自 2026 上海等级考 5.3（原题：m = 0.30 kg 的松鼠从 10 m 高处由静止下落，由 v–h 图读得落地速度 9 m/s，求空气阻力做功 −17 J；接触松软草地后经 90 ms 速度减为零，可承受 15 倍重力的平均冲击力，论证能安全落地）。换数字，增加「不计重力的偏差」「最短缓冲时间」两问",
+      "stem": "质量 m = 0.40 kg 的松鼠从 h = 8.0 m 高处由静止下落，在空中伸开四肢和大尾巴，落地前瞬间的速度 v = 8.0 m/s。它接触松软草地后，经 Δt = 0.080 s 速度减为零。已知它能承受的平均冲击力不超过自身重力的 15 倍。(1) 求下落过程中空气阻力对松鼠做的功；(2) 求草地对松鼠的平均作用力，并论证它能安全落地；(3) 若计算时不计重力，结果偏小百分之几？(4) 落地速度不变，草地越硬缓冲时间越短，缓冲时间至少多长，松鼠才能安全落地？",
+      "answer": "(1) −19.2 J；(2) 44 N，是重力的 11 倍，小于 15 倍，能安全落地；(3) 得 40 N，偏小约 9.1%；(4) 约 0.057 s",
+      "analysis": "(1) 由动能定理 mgh + W_f = ½mv²，W_f = ½ × 0.40 kg × (8.0 m/s)² − 0.40 kg × 10 m/s² × 8.0 m = 12.8 J − 32 J = −19.2 J。(2) 取向上为正，由 C1、C3，(F − mg)Δt = 0 − (−mv)，F = mg + mv/Δt = 4.0 N + 0.40 kg × 8.0 m/s ÷ 0.080 s = 4.0 N + 40 N = 44 N = 11mg < 15mg，能安全落地。(3) 不计重力得 mv/Δt = 40 N，偏小 4.0 N ÷ 44 N ≈ 9.1%；由 C3，重力占比 gΔt/(v + gΔt) = 0.80/8.8 ≈ 9.1%，作用时间 80 ms 不算短，重力不能略。(4) F ≤ 15mg，即 mv/Δt ≤ 14mg，Δt ≥ v/(14g) = 8.0 m/s ÷ 140 m/s² ≈ 0.057 s。加载后读数 F̄ = 44 N、F̄/mg = 11；把 Δt 改为 0.057 s，F̄/mg 约为 15（动画中物体从 H = v²/(2g) = 3.2 m 处无阻力落下，只演示接触段）。",
+      "load": {
+        "mode": "impact",
+        "rho": 1000,
+        "S": 2,
+        "v": 8,
+        "e": 0,
+        "tau": 10,
+        "M": 2,
+        "m": 0.4,
+        "dt": 0.08
+      }
+    },
+    {
+      "id": "V5",
+      "title": "安全气囊测试：由 F–t 图求冲量，作用时间长时重力不能略",
+      "cs": [
+        "C1",
+        "C2",
+        "C3"
+      ],
+      "source": "改编自 2026 届虹口区一模 5-3（原题：m = 80 kg 的头锤从 H = 5.0 m 自由下落，气囊作用力的 F–t 图为三角形，峰值 4000 N、持续 0.8 s，答案「气囊吸收头锤动量」1600 kg·m/s、吸收动能 3840 J）。改为已知弹起速度、反求 F–t 图峰值，并把「头锤的动量变化」与「气囊的冲量」分开问；弹起的写法参照 2026 届浦东新区一模 3-3",
+      "stem": "质量 m = 50 kg 的头锤从气囊上方 H = 3.2 m 处由静止下落，与气囊作用 Δt = 0.20 s 后以 2.0 m/s 的速度竖直弹起。这段时间内气囊对头锤的作用力 F 随时间 t 的变化图像为三角形，峰值为 Fm。不计空气阻力。(1) 求头锤与气囊作用过程中动量的变化量；(2) 求气囊对头锤的冲量 I 和平均作用力 F̄；(3) 求 F–t 图的峰值 Fm；(4) 求头锤动能的减少量（气囊吸收的动能）；(5) 若不计重力，求得的平均作用力是多少？为什么本题不能忽略重力？",
+      "answer": "(1) 500 kg·m/s，竖直向上；(2) I = 600 N·s，竖直向上，F̄ = 3.0×10³ N；(3) 6.0×10³ N；(4) 1.5×10³ J；(5) 2.5×10³ N，偏小约 17%；重力的冲量 mgΔt = 100 N·s，是动量变化的 20%，作用时间不算短",
+      "analysis": "(1) 落到气囊时 v = √(2gH) = √(2 × 10 m/s² × 3.2 m) = 8.0 m/s，向下。取向上为正，由 C2，Δp = mv′ − m(−v) = 50 kg × (2.0 + 8.0) m/s = 500 kg·m/s（相当于 e = 0.25）。(2) 由 C1，(F̄ − mg)Δt = Δp，气囊的冲量 I = F̄Δt = Δp + mgΔt = 500 N·s + 50 kg × 10 m/s² × 0.20 s = 600 N·s，F̄ = 600 N·s ÷ 0.20 s = 3.0×10³ N（= 6mg）。(3) F–t 图面积等于冲量：½FmΔt = 600 N·s，Fm = 6.0×10³ N。(4) ΔEk = ½ × 50 kg × (8.0 m/s)² − ½ × 50 kg × (2.0 m/s)² = 1600 J − 100 J = 1.5×10³ J。(5) Δp/Δt = 2.5×10³ N，比 3.0×10³ N 偏小约 17%；由 C3，重力占比 gΔt/[(1 + e)v + gΔt] = 2.0/(10 + 2.0) ≈ 17%。原题第一空「气囊吸收头锤的动量」1600 kg·m/s 指的是 F–t 图面积（第 (2) 问的 I），头锤自身的动量变化只有 960 kg·m/s，两者相差重力的冲量。加载后：读数 Δp = 500 kg·m/s、I = 600 N·s、F̄ = 3.0×10³ N；页面的 F–t 曲线由缓冲模型算出，不是三角形，但面积、F̄ 相同。",
+      "load": {
+        "mode": "impact",
+        "rho": 1000,
+        "S": 2,
+        "v": 8,
+        "e": 0.25,
+        "tau": 10,
+        "M": 2,
+        "m": 50,
+        "dt": 0.2
+      }
+    }
+  ],
+  "reskins": [
+    {
+      "id": "R1",
+      "title": "太阳帆与光风车：光子流的冲击力",
+      "map": "光子流 = 流体柱；单位时间打到帆上的光子数 n = P光/E₀ 对应流量 q；每个光子的动量 p = E₀/c；被吸收 = 停住（e = 0），被等速率反射 = 原速反弹（e = 1）；F = (1 + e)P光/c，对应 C5 的 (1 + e)qv",
+      "anim": false,
+      "source": "改编自 2026 届青浦区二模 5-3（原题：面积 S 的太阳帆与阳光垂直，时间 t 内照到单位面积的光能 E，光子全部等速率反射，求光子动量 E₀/c 与航天器加速度 2ES/(mct)）和 2026 届嘉定区二模 1-2（Δt 内 N 个光子打到叶片：黑面吸收时冲量 NE/c，银面反射时平均冲力 2NE/(cΔt)）",
+      "stem": "太阳帆航天器总质量 m = 500 kg，帆面积 S = 1.0×10⁴ m²，始终与阳光垂直。帆所在处，每秒照到每平方米帆面上的光能 I₀ = 1.4×10³ J/(m²·s)。光速 c = 3.0×10⁸ m/s，阳光的平均波长取 λ = 500 nm，普朗克常量 h = 6.63×10⁻³⁴ J·s。(1) 一个光子的动量多大？每秒有多少个光子打到帆上？(2) 光子全部以原速率反射，求光对帆的作用力和航天器的加速度；(3) 若帆面换成黑色，光子全部被吸收，作用力变为多少？",
+      "answer": "(1) p ≈ 1.3×10⁻²⁷ kg·m/s，约 3.5×10²⁵ 个；(2) F ≈ 9.3×10⁻² N，a ≈ 1.9×10⁻⁴ m/s²；(3) 约 4.7×10⁻² N",
+      "analysis": "(1) E₀ = hc/λ = 6.63×10⁻³⁴ J·s × 3.0×10⁸ m/s ÷ 5.0×10⁻⁷ m ≈ 3.98×10⁻¹⁹ J，p = E₀/c = h/λ ≈ 1.33×10⁻²⁷ kg·m/s。每秒照到帆上的光能 P光 = I₀S = 1.4×10⁷ W，光子数 n = P光/E₀ ≈ 3.5×10²⁵ 个/s。(2) 由 C7，反射时每个光子动量变化 2p，F = n·2p = 2I₀S/c = 2 × 1.4×10⁷ W ÷ 3.0×10⁸ m/s ≈ 9.3×10⁻² N（与原题 2ES/(ct) 相同，E 对应 I₀t），a = F/m ≈ 1.9×10⁻⁴ m/s²，一天速度可增加约 16 m/s。(3) 吸收时每个光子动量变化 p，F = I₀S/c ≈ 4.7×10⁻² N，是反射时的一半，与流体的「停住」和「反弹」相同（C2、C5）。光压很小：每平方米只有约 9.3×10⁻⁶ N，比页面中水流的冲击压强（10⁵ Pa 量级）小约 10 个数量级，无法同屏演示。嘉定二模中光风车的实际转向与「光压」观点的预言相反，说明那里起主要作用的是叶片两面气体的温度差。"
+    },
+    {
+      "id": "R2",
+      "title": "风力发电机：空气柱的动能",
+      "map": "风 = 流体柱；叶片扫过的圆面 S = πr² 为截面；Δt 内穿过圆面的空气柱 Δm = ρπr²vΔt，动能 ½Δm·v²，风的功率 P风 = ½ρπr²v³，与 C6 的 P = ½ρSv³ 是同一个式子；发电功率 = η·P风",
+      "anim": false,
+      "source": "改编自 2026 届松江区一模 4-1(1)（原题：叶片圆面内 40% 的空气动能转化为电能，风速 v 时功率 P，风速 2v 时为 8P）和 2026 届杨浦区一模 3-1（P = kρᵃrᵇvᶜ，求 a = 1、b = 2、c = 3）",
+      "stem": "某风力发电机的叶片长 r = 40 m，叶片转动时扫过一个与风向垂直的圆面，发电机能把通过圆面的空气动能的 40% 转化为电能。空气密度 ρ = 1.3 kg/m³。(1) 风速 v = 10 m/s 时，每秒有多少千克空气通过叶片圆面？发电功率多大？(2) 发电功率可写成 P = kρᵃrᵇvᶜ（k 为无单位的常数），用单位分析求 a、b、c；(3) 风速变为 12 m/s，发电功率变为多少？",
+      "answer": "(1) 约 6.5×10⁴ kg；约 1.3×10⁶ W；(2) a = 1，b = 2，c = 3；(3) 约 2.3×10⁶ W（原来的 1.728 倍）",
+      "analysis": "(1) 由 C4，q = ρπr²v = 1.3 kg/m³ × π × (40 m)² × 10 m/s ≈ 6.5×10⁴ kg/s。由 C6，P风 = ½qv² = ½ρπr²v³ ≈ 3.27×10⁶ W，P电 = 40% × P风 ≈ 1.3×10⁶ W。(2) 两边单位相同：(kg·m⁻³)ᵃ·mᵇ·(m·s⁻¹)ᶜ = kg·m²·s⁻³，比较 kg 得 a = 1，比较 s 得 c = 3，比较 m 得 −3a + b + c = 2，b = 2。这与 (1) 的 P ∝ ρr²v³ 一致：流量 ∝ v，每千克空气的动能 ∝ v²。(3) P ∝ v³，(12/10)³ = 1.728，P ≈ 1.3×10⁶ W × 1.728 ≈ 2.3×10⁶ W（精确计算为 2.26×10⁶ W）。可在「流体冲击」情境中取 ρ = 1.3 kg/m³，改变 v 观察输出功率 P = ½ρSv³ 随 v 三次方变化。"
+    },
+    {
+      "id": "R3",
+      "title": "涡扇发动机的推力与推进效率",
+      "map": "发动机 = 喷口，但空气不是从静止开始加速，而是以飞行速度 v 进入、以 vt 离开（相对发动机），F = q(vt − v)，是 C6 有来流的一般式；推进效率 = 推动飞机的功率 ÷（推动飞机的功率 + 尾流空气获得动能的功率）",
+      "anim": false,
+      "source": "改编自 2026 届徐汇区一模 6.4（原题：单位时间进入发动机的空气质量 q，以 v 进入、vt 离开，求推力 q(vt − v) 与推进效率；页面答案 η = 1/(1 + vt/v) 有误，按页面自己的推导应为 2/(1 + vt/v)）",
+      "stem": "飞机以 v = 250 m/s 水平匀速飞行，空气近似以同样大小的速度进入涡扇发动机，经加速后以 vt = 400 m/s（相对发动机）喷出，每秒进入发动机的空气质量 q = 500 kg，燃料的质量及传动、摩擦损失都不计。(1) 求发动机的推力；(2) 在地面参考系中，发动机每秒对飞机做的功和使空气增加的动能各多少？推进效率多大？(3) 保持推力不变，增大 q、同时减小 vt，推进效率怎样变化？",
+      "answer": "(1) 7.5×10⁴ N；(2) 1.875×10⁷ J，5.625×10⁶ J，η = 2v/(v + vt) ≈ 77%；(3) 增大",
+      "analysis": "(1) 以 Δt 内流过发动机的空气 Δm = qΔt 为研究对象（在发动机参考系中），速度由 v 变为 vt，发动机对空气的力 F′ = Δm(vt − v)/Δt = q(vt − v)；由牛顿第三定律，推力 F = q(vt − v) = 500 kg/s × 150 m/s = 7.5×10⁴ N（C6）。(2) 地面系中飞机每秒前进 v，发动机每秒对飞机做功 W₁ = Fv = 7.5×10⁴ N × 250 m/s = 1.875×10⁷ J；空气原来静止，离开时相对地面的速度为 vt − v = 150 m/s，每秒增加的动能 W₂ = ½q(vt − v)² = ½ × 500 kg × (150 m/s)² = 5.625×10⁶ J。η = W₁/(W₁ + W₂) = v/[v + (vt − v)/2] = 2v/(v + vt) = 500/650 ≈ 77%。(3) 推力 q(vt − v) 不变时，vt 越接近 v，η = 2/(1 + vt/v) 越接近 1：用更多的空气、更小的速度增量获得同样的推力，浪费在尾流中的动能更少，这就是大涵道比涡扇发动机省油的原因。页面「反冲推力」情境没有来流参数，不做动画。"
+    }
+  ],
+  "sources": [
+    {
+      "src": "2026 上海等级考 第 5 大题 5.3",
+      "desc": "松鼠 m = 0.30 kg 从 10 m 高处下落，由 v–h 图读得落地速度 9 m/s；空气阻力做功 −17 J；草地 90 ms 内使它停下，F = mg + mv/t = 109.8m < 147m（原卷 g 取 9.8 m/s²），能安全落地（母题原型：物体撞击、停住、计重力 → 母题 ③、V4）"
+    },
+    {
+      "src": "2025 上海等级考 第 4 大题 4.2",
+      "desc": "光滑竖直圆轨道，滑块恰好到达与圆心等高处，用时 t，轨道弹力的冲量 m√(v₀² + g²t²)（关联：变力的冲量用矢量式，见适用边界）"
+    },
+    {
+      "src": "2026 届黄浦区二模 第 3 大题 3-5",
+      "desc": "火箭回收悬停：3 台圆形反推发动机，喷口直径 d，气体密度 ρ，总推力 F，求喷气速度 v = 2√(F/(3πρd²))（反冲推力原型 → V3）"
+    },
+    {
+      "src": "2026 届徐汇区一模 第 6 大题 6.4",
+      "desc": "涡扇发动机：推力 q(vt − v)、推进效率（→ R3；原页面效率答案 1/(1 + vt/v) 有误，按其自身推导应为 2/(1 + vt/v)，已复算）"
+    },
+    {
+      "src": "2026 届浦东新区一模 第 3 大题 3-3",
+      "desc": "乒乓球从 h₁ 高处落到固定球拍上，弹起 h₂，接触时间 t：平均作用力 mg + m(√(2gh₁) + √(2gh₂))/t（物体撞击、反弹、计重力 → 预设「乒乓球」，V5 参照；仅答案）"
+    },
+    {
+      "src": "2025 届闵行区一模 第二大题 二-1(2)",
+      "desc": "「雪龙 2 号」1.2×10⁷ kg 以 4 m/s 撞冰，2.5 s 后撞停，冲击力 1.92×10⁷ N（水平撞击，重力不在冲击方向上；OCR 文本 + 预览图，质量从预览图读出）"
+    },
+    {
+      "src": "2026 届虹口区一模 第 5 大题 5-3",
+      "desc": "安全气囊：80 kg 头锤从 5.0 m 落下，F–t 图为三角形（峰值 4000 N、0.8 s），「吸收动量」1600 kg·m/s、吸收动能 3840 J（→ V5；1600 N·s 是气囊的冲量，头锤自身的动量变化为 960 kg·m/s，已打开原图复算）"
+    },
+    {
+      "src": "2026 届奉贤区一模 第 2 大题 2-2(2)②",
+      "desc": "倾角 5° 导轨上 0.2 kg 小车被减速装置由 1.20 m/s 减为零，阻力的冲量 0.26 N·s（斜面上要计重力分力的冲量，C3；已读 v–t 原图复算）"
+    },
+    {
+      "src": "2026 届松江区一模 第 3 大题 3-2(1)",
+      "desc": "空天母舰内把 30 kg 器材由 2 m/s 推到 5.2 m/s，作用 0.5 s，平均作用力 192 N（失重环境，C1；已复算）"
+    },
+    {
+      "src": "2026 届崇明区二模 第 6 大题 6-2",
+      "desc": "消防水枪：每秒喷出水的质量 ρSv；水柱垂直击中 20 m 高处，vP = 5 m/s，求 v₀ = 5√17 m/s、tan θ = 4（柱体模型的流量 → V1；仅答案）"
+    },
+    {
+      "src": "2026 届宝山区二模 第 4 大题 4-2(3)",
+      "desc": "喷泉：单位时间输出的动能 ½ρSv₀³，空中水的体积 2Sv₀²/g（柱体模型的功率 → V2；仅答案）"
+    },
+    {
+      "src": "2026 届松江区一模 第 4 大题 4-1(1)",
+      "desc": "风力发电机把叶片圆面内 40% 的空气动能转化为电能，风速加倍功率变为 8 倍（换皮 → R2；仅答案）"
+    },
+    {
+      "src": "2026 届杨浦区一模 第 3 大题 3-1",
+      "desc": "风力发电机功率 P = kρᵃrᵇvᶜ，量纲分析得 a = 1、b = 2、c = 3（换皮 → R2；仅答案）"
+    },
+    {
+      "src": "2026 届嘉定区二模 第 1 大题 1-2",
+      "desc": "光风车：Δt 内 N 个光子打到叶片，吸收时冲量 NE/c，反射时平均冲力 2NE/(cΔt)（换皮 → R1；仅答案）"
+    },
+    {
+      "src": "2026 届青浦区二模 第 5 大题 5-3",
+      "desc": "太阳帆：光子全部反射，光子动量 E₀/c，航天器加速度 2ES/(mct)（换皮 → R1；仅答案）"
+    },
+    {
+      "src": "2026 届奉贤区二模 第 3 大题 3-1(2)",
+      "desc": "单摆从水平处释放，经 t 到最低点，绳拉力的冲量 m√(g²t² + 2gl)（关联：变力冲量用矢量式）"
+    },
+    {
+      "src": "2026 届普陀区二模 第 2 大题 2-3(2)",
+      "desc": "3.0 kg 无人机水平匀速圆周飞行一周，空气作用力的冲量 126 N·s（关联：一周 Δp = 0，I空气 = −I_G；已复算）"
+    },
+    {
+      "src": "2026 届杨浦区二模 第 3 大题 3-2(1)",
+      "desc": "网球速度由 v 变为与之垂直的 2v，重力的冲量 √5mv（关联：恒力冲量 = Δp）"
+    },
+    {
+      "src": "2025 届杨浦区二模 第五大题 五-3(2)（来源待核）",
+      "desc": "摩天轮轿厢从最低点到与圆心等高处的动量变化与重力的冲量（关联；OCR 文本公式缺失，按题意复算 Δp = 2√2πmR/T、I_G = mgT/4）"
+    }
+  ]
+}
+</script>
+
+<style>
+/* Layout: 实验报告 / 图纸标题栏。题头左标题右标题栏表格；母题独占一行；考点与边界并排；动画区左画布右控制台；结论、变式、换皮题依次向下 */
+:root{
+  --paper:#f2f4f3; --grid:#e4e9e6; --card:#ffffff; --sunk:#f6f8f7;
+  --ink:#142030; --muted:#5b6979; --faint:#8a96a3; --line:#d6dedA; --hair:#e7ece9;
+  --accent:#2443a6; --accent-soft:#e9eefb; --mark:#f7e9b0;
+  --g:#c0502a; --n:#17806a; --v:#2f62b3; --a:#a0661a; --track:#34404f; --fig-ink:#1d232b; --fig-aux:#75808c; --warn:#a85a14; --ok:#18845a;
+  --shadow:0 1px 0 rgba(20,32,48,.04),0 10px 28px -18px rgba(20,32,48,.28);
+  --f-display:"Noto Serif SC","Songti SC","STSong",serif;
+  --f-body:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#10161d; --grid:#18202a; --card:#171f28; --sunk:#131a22;
+  --ink:#e4e9ef; --muted:#9aa7b6; --faint:#6f7d8c; --line:#2a3542; --hair:#212b36;
+  --accent:#93acff; --accent-soft:#1f2a44; --mark:#4a4020;
+  --g:#ef8f6e; --n:#5cc7a0; --v:#8db0ef; --a:#e3ac5c; --track:#c3ccd8; --fig-ink:#dde3ea; --fig-aux:#8794a2; --warn:#f0a35a; --ok:#52d39c;
+  --shadow:0 1px 0 rgba(0,0,0,.25),0 12px 30px -20px rgba(0,0,0,.7); color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#10161d; --grid:#18202a; --card:#171f28; --sunk:#131a22;
+  --ink:#e4e9ef; --muted:#9aa7b6; --faint:#6f7d8c; --line:#2a3542; --hair:#212b36;
+  --accent:#93acff; --accent-soft:#1f2a44; --mark:#4a4020;
+  --g:#ef8f6e; --n:#5cc7a0; --v:#8db0ef; --a:#e3ac5c; --track:#c3ccd8; --fig-ink:#dde3ea; --fig-aux:#8794a2; --warn:#f0a35a; --ok:#52d39c;
+  --shadow:0 1px 0 rgba(0,0,0,.25),0 12px 30px -20px rgba(0,0,0,.7); color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.7;
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:28px 28px;background-position:-1px -1px}
+.wrap{max-width:1160px;margin:0 auto;padding-inline:16px;padding-block:16px 56px;display:flex;flex-direction:column;gap:16px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;font-weight:800}
+p{margin:0}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 22px;min-width:0;display:flex;flex-direction:column;gap:10px;box-shadow:var(--shadow)}
+@media (max-width:520px){.panel{padding:16px;border-radius:12px}}
+.sh{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.sh h2{font-size:20px;letter-spacing:.02em}
+.sh small{font-size:13px;color:var(--muted)}
+.sh::after{content:"";flex:1 1 40px;height:1px;background:var(--hair);align-self:center}
+.label{font-size:12px;letter-spacing:.12em;color:var(--faint);font-weight:700}
+.note{font-size:13px;color:var(--muted)}
+
+/* 题头：标题 + 图纸标题栏 */
+.top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px 28px;align-items:end;padding-bottom:6px}
+@media (max-width:760px){.top{grid-template-columns:1fr}}
+.brand{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);margin-bottom:6px}
+.seal{font-family:var(--f-display);font-weight:800;font-size:13px;color:var(--card);background:var(--ink);padding:2px 8px;border-radius:3px;letter-spacing:.18em}
+.top h1{font-size:clamp(22px,3vw,30px);line-height:1.2;letter-spacing:.01em}
+.top .sub{margin-top:4px;color:var(--muted);font-size:14px}
+.tb{border-collapse:collapse;font-size:13px;background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:var(--shadow);min-width:0}
+.tb th,.tb td{border:1px solid var(--hair);padding:6px 12px;text-align:left;white-space:nowrap}
+.tb th{color:var(--faint);font-weight:500;font-size:12px;letter-spacing:.06em;background:var(--sunk)}
+.tb td{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.tb td.code{color:var(--accent);font-weight:600}
+.tbwrap{overflow-x:auto;max-width:100%}
+
+/* 母题 */
+.problem{display:flex;flex-direction:column;gap:10px;min-width:0}
+.lead{font-family:var(--f-display);font-size:clamp(16px,1.7vw,17px);line-height:1.8;font-weight:600}
+.num{font-family:var(--f-mono);font-weight:600;font-size:.92em;color:var(--ink);white-space:nowrap;
+  background:linear-gradient(transparent 55%,var(--mark) 55%);padding:0 2px;transition:background-color .2s}
+.asks{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 26px}
+.asks li{display:flex;gap:8px;align-items:baseline;min-width:0}
+.asks li b{flex:none}
+.asks li b{display:inline-grid;place-items:center;width:1.6em;height:1.6em;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-family:var(--f-mono);font-size:13px}
+.given{background:var(--sunk);border:1px solid var(--hair);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.given dl{margin:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;font-size:14px}
+.given dt{font-family:var(--f-mono);color:var(--muted)}
+.given dd{margin:0;font-family:var(--f-mono);font-variant-numeric:tabular-nums;text-align:right}
+
+/* 考点 + 边界 */
+.row2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,2fr);gap:28px;align-items:start}
+@media (max-width:860px){.row2{grid-template-columns:1fr}}
+.tags{display:flex;flex-wrap:wrap;gap:8px}
+.tag{font-size:14px;border:1px solid var(--line);background:var(--sunk);padding:4px 12px;border-radius:999px}
+.bnd{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+@media (max-width:620px){.bnd{grid-template-columns:1fr}}
+.bnd ul{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.bnd li{display:grid;grid-template-columns:1.2em minmax(0,1fr);gap:6px}
+.bnd .ok li::before{content:"✓";color:var(--ok);font-weight:700}
+.bnd .back li::before{content:"→";color:var(--accent);font-weight:700}
+
+/* 选项卡 */
+.board{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);min-width:0;overflow:hidden}
+.tabs{display:flex;gap:2px;padding:0 10px;border-bottom:1px solid var(--line);background:var(--sunk);overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{border:none;border-radius:0;background:none;padding:13px 14px 11px;color:var(--muted);border-bottom:2px solid transparent;white-space:nowrap;font-size:15px}
+.tab:hover{color:var(--ink);border-color:transparent;border-bottom-color:var(--line)}
+.tab[aria-selected="true"]{color:var(--ink);font-weight:700;border-bottom-color:var(--accent)}
+.tab .n{font-family:var(--f-mono);font-size:11px;color:var(--faint);margin-left:5px;font-weight:500}
+.pane{padding:16px 22px 22px;display:flex;flex-direction:column;gap:16px;min-width:0}
+@media (max-width:520px){.pane{padding:16px}}
+.hint{font-size:13px;color:var(--muted)}
+
+/* 动画区 */
+.lab{display:flex;flex-wrap:wrap;gap:22px 28px;align-items:flex-start}
+.stage{flex:0 1 auto;width:min(100%,max(300px,calc(100vh - 430px)),640px);display:flex;flex-direction:column;gap:10px;min-width:0}
+.canvas-box{position:relative;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--card)}
+canvas{width:100%;max-width:100%;aspect-ratio:1/1;display:block}
+.status{position:absolute;left:12px;top:12px;max-width:calc(100% - 24px);display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:700;
+  padding:5px 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow)}
+.status::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--faint);flex:none}
+.status.warn{color:var(--warn)} .status.warn::before{background:var(--warn)}
+.status.ok{color:var(--ok)} .status.ok::before{background:var(--ok)}
+@media (max-width:640px){.status{position:static;margin:8px 10px 10px;max-width:none}}
+.legend{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--muted)}
+.legend i{display:inline-block;width:16px;height:3px;vertical-align:middle;margin-right:6px;border-radius:2px}
+.readout{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));border:1px solid var(--line);border-radius:10px;overflow:hidden;background:var(--card)}
+.ro{padding:7px 12px;min-width:0;box-shadow:1px 0 0 var(--hair),0 1px 0 var(--hair)}
+.ro span{display:block;font-size:12px;color:var(--faint)}
+.ro b{font-family:var(--f-mono);font-weight:600;font-variant-numeric:tabular-nums;font-size:15px;overflow-wrap:anywhere}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+button{font:inherit;font-size:14px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:7px 16px;border-radius:999px;cursor:pointer;transition:border-color .15s,background-color .15s,color .15s}
+button:hover{border-color:var(--accent)}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+button.primary{background:var(--accent);color:var(--card);border-color:var(--accent);font-weight:700;padding-inline:22px}
+.ctrl{flex:1 1 300px;display:flex;flex-direction:column;gap:18px;min-width:0}
+.side{display:flex;flex-direction:column;gap:12px;min-width:0}
+.group{display:flex;flex-direction:column;gap:10px}
+.field{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"l o" "r r";gap:2px 10px;align-items:baseline}
+.field label{grid-area:l;font-size:14px}
+.field label .s{font-family:var(--f-mono);font-weight:600;margin-right:6px}
+.field label .note{font-size:12px}
+.numin{grid-area:o;display:inline-flex;align-items:center;gap:4px;border:1px solid var(--line);border-radius:8px;padding:1px 8px 1px 2px;background:var(--sunk)}
+.numin:focus-within{border-color:var(--accent)}
+.numin input{width:6.2em;border:none;background:transparent;color:var(--accent);font:600 14px var(--f-mono);font-variant-numeric:tabular-nums;text-align:right;padding:3px 2px;outline:none;-moz-appearance:textfield}
+.numin input::-webkit-outer-spin-button,.numin input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.numin .u{font:500 12px var(--f-mono);color:var(--muted);min-width:1.5em}
+.presets button[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:700}
+.pnote{font-size:13px;color:var(--muted);border-left:2px solid var(--accent-soft);padding:2px 0 2px 10px}
+.pnote b{color:var(--ink);font-weight:600}
+.field input{grid-area:r}
+input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
+.seg{display:flex;padding:3px;gap:3px;border-radius:999px;background:var(--sunk);border:1px solid var(--line)}
+.seg button{flex:1;border:none;padding:6px 10px;background:transparent;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--card);color:var(--ink);font-weight:700;box-shadow:var(--shadow)}
+.seg button small{display:block;font-size:12px;font-weight:400;color:var(--faint);line-height:1.4}
+.presets{display:flex;flex-wrap:wrap;gap:6px}
+.presets button{font-size:13px;padding:4px 12px;background:var(--sunk)}
+.verdict{background:var(--sunk);border:1px solid var(--hair);border-radius:10px;padding:12px 14px;font-size:14px;line-height:1.8}
+.verdict b{color:var(--accent);font-family:var(--f-mono)}
+
+/* 结论 */
+.cl{display:flex;flex-direction:column}
+.cl details{border-top:1px solid var(--hair)}
+.cl details:last-child{border-bottom:1px solid var(--hair)}
+.cl summary{display:grid;grid-template-columns:2.6em minmax(0,1fr) minmax(0,auto) 1em;gap:6px 14px;align-items:center;padding:12px 4px;cursor:pointer;list-style:none}
+.cl summary::-webkit-details-marker{display:none}
+.cl summary:hover .t{color:var(--accent)}
+.badge{display:inline-grid;place-items:center;min-width:2.3em;height:1.7em;padding:0 6px;border-radius:6px;background:var(--accent-soft);color:var(--accent);font-family:var(--f-mono);font-weight:600;font-size:13px}
+.cl .f{font-family:var(--f-mono);font-size:14px;background:var(--sunk);border:1px solid var(--hair);border-radius:6px;padding:2px 10px;justify-self:end;text-align:right}
+.chev{width:8px;height:8px;border-right:2px solid var(--faint);border-bottom:2px solid var(--faint);transform:rotate(45deg);transition:transform .2s;justify-self:center}
+details[open]>summary .chev{transform:rotate(225deg)}
+@media (max-width:640px){.cl summary{grid-template-columns:2.6em minmax(0,1fr) 1em}.cl .f{grid-column:2;grid-row:2;justify-self:start;text-align:left}.chev{grid-column:3;grid-row:1}}
+.deriv{margin:0 4px 14px calc(2.6em + 18px);padding:4px 0 4px 14px;border-left:2px solid var(--accent-soft);white-space:pre-line;font-size:14px;color:var(--ink)}
+@media (max-width:640px){.deriv{margin-left:4px}}
+
+/* 变式 / 换皮题 */
+.qs{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,320px),1fr));gap:14px}
+.q{border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px;background:var(--card);min-width:0}
+.q .head{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px}
+.q h3{font-size:16px;margin-right:auto}
+.chip{font-size:12px;font-family:var(--f-mono);border:1px solid var(--line);border-radius:999px;padding:0 8px;color:var(--muted)}
+.src{font-size:12px;color:var(--faint)}
+.map{font-size:13px;color:var(--muted)}
+.map b{font-weight:500;color:var(--ink)}
+.q details{border-top:1px dashed var(--line);padding-top:8px}
+.q details summary{cursor:pointer;color:var(--accent);font-size:14px;font-weight:500;list-style:none;display:flex;align-items:center;gap:8px;width:fit-content}
+.q details summary::-webkit-details-marker{display:none}
+.ans{margin-top:8px;display:flex;flex-direction:column;gap:6px;font-size:14px;background:var(--sunk);border-radius:8px;padding:10px 12px}
+.ans .a{font-weight:700}
+.q .foot{margin-top:auto;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:space-between}
+.q .foot button{font-size:13px;padding:4px 14px;color:var(--accent);border-color:var(--accent-soft);background:var(--accent-soft)}
+.srcs{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.srcs li{display:grid;grid-template-columns:minmax(0,15em) minmax(0,1fr);gap:4px 16px;padding:8px 0;border-top:1px solid var(--hair);font-size:14px}
+.srcs li b{font-family:var(--f-mono);font-weight:500;font-size:13px}
+.srcs li span{color:var(--muted)}
+@media (max-width:620px){.srcs li{grid-template-columns:1fr}}
+footer{font-size:12px;color:var(--faint);text-align:center}
+@media (prefers-reduced-motion: reduce){*{scroll-behavior:auto!important;transition:none!important}}
+</style>
+
+<div class="wrap" id="app">
+  <header class="top">
+    <div>
+      <div class="brand"><span class="seal">格物</span><span>Gewu · 高中物理母题</span></div>
+      <h1 id="hName"></h1>
+      <p class="sub" id="hSub"></p>
+    </div>
+    <div class="tbwrap"><table class="tb" id="hTable"></table></div>
+  </header>
+
+  <section class="panel">
+    <div class="sh"><h2>母题</h2><small>题干数字随动画参数实时变化</small></div>
+    <div class="problem">
+      <p class="lead" id="stem"></p>
+      <ol class="asks" id="asks"></ol>
+      <p class="note" id="stemNote"></p>
+    </div>
+  </section>
+
+  <div class="board">
+    <nav class="tabs" role="tablist" aria-label="母题内容">
+      <button class="tab" role="tab" id="tab-lab" aria-controls="pane-lab" data-pane="pane-lab">动画实验</button>
+      <button class="tab" role="tab" id="tab-scope" aria-controls="pane-scope" data-pane="pane-scope">考点与边界</button>
+      <button class="tab" role="tab" id="tab-concl" aria-controls="pane-concl" data-pane="pane-concl">结论<span class="n" id="nConcl"></span></button>
+      <button class="tab" role="tab" id="tab-var" aria-controls="pane-var" data-pane="pane-var">变式<span class="n" id="nVar"></span></button>
+      <button class="tab" role="tab" id="tab-skin" aria-controls="pane-skin" data-pane="pane-skin">换皮题<span class="n" id="nSkin"></span></button>
+      <button class="tab" role="tab" id="tab-src" aria-controls="pane-src" data-pane="pane-src">题源<span class="n" id="nSrc"></span></button>
+    </nav>
+
+    <section class="pane" role="tabpanel" id="pane-lab" aria-labelledby="tab-lab">
+      <div class="lab">
+        <div class="stage">
+          <div class="legend" id="legend"></div>
+          <div class="canvas-box">
+            <canvas id="cv" aria-label="母题动画画布"></canvas>
+            <div class="status" id="status" role="status">准备就绪</div>
+          </div>
+          <div class="btns">
+            <button class="primary" id="play">▶ 发射</button>
+            <button id="reset">重置</button>
+            <button id="slow">慢放 ×0.25</button>
+          </div>
+        </div>
+        <div class="ctrl">
+          <div class="group"><div class="label">参数</div><div id="params" class="group"></div></div>
+          <div class="group"><div class="label">预设情形 <span id="presetMode"></span></div><div class="presets" id="presets"></div><p class="pnote" id="pnote" hidden></p></div>
+          <div class="group"><div class="label">理论预判</div><div class="verdict" id="verdict"></div></div>
+        </div>
+      </div>
+      <div class="group"><div class="label">实时读数</div><div class="readout" id="readout"></div></div>
+    </section>
+
+    <section class="pane" role="tabpanel" id="pane-scope" aria-labelledby="tab-scope" hidden>
+      <div class="row2">
+        <div class="group"><div class="label">核心考点</div><div class="tags" id="tags"></div></div>
+        <div class="group"><div class="label">适用边界</div>
+          <div class="bnd">
+            <div><div class="hint">结论成立条件</div><ul class="ok" id="bCond"></ul></div>
+            <div><div class="hint">超出边界时回到</div><ul class="back" id="bBack"></ul></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pane" role="tabpanel" id="pane-concl" aria-labelledby="tab-concl" hidden>
+      <p class="hint">点开每条结论看推导。</p>
+      <div class="cl" id="concl"></div>
+    </section>
+
+    <section class="pane" role="tabpanel" id="pane-var" aria-labelledby="tab-var" hidden>
+      <p class="hint">同一骨架，换条件或问法。点「加载到动画」可直接在动画里验证。</p>
+      <div class="qs" id="variants"></div>
+    </section>
+
+    <section class="pane" role="tabpanel" id="pane-skin" aria-labelledby="tab-skin" hidden>
+      <p class="hint">同一骨架，换情境外形。</p>
+      <div class="qs" id="reskins"></div>
+    </section>
+
+    <section class="pane" role="tabpanel" id="pane-src" aria-labelledby="tab-src" hidden>
+      <ul class="srcs" id="sources"></ul>
+    </section>
+  </div>
+
+  <footer id="foot"></footer>
+</div>
+
+<script>
+/* ================= 线稿绘图工具 FIG（所有母题共用，不改） =================
+   画法照试卷插图：装置用墨线，固定面画斜线阴影，辅助线用虚线，物理量和点的字母用斜体衬线；
+   只有矢量带颜色（--g 重力/外力，--n 弹力/约束力，--v 速度，--a 其他矢量）。
+   用法：SIM.draw 里 const F=FIG(ctx,W,tok)；坐标是画布像素，F.u = W/720 是线宽与几何的基准单位，
+   F.ut 是字号单位（窄屏时不再随画布缩小，保证字母不小于约 11 CSS 像素；自写文字函数也要用 F.ut 算字号）。
+   颜色：F.ink 墨线、F.auxColor 辅助线、F.paper 纸色（F.aux 是画辅助线的方法，不是颜色）。 */
+const FIG=(ctx,W,tok)=>{
+  const u=W/720,ink=tok('--fig-ink'),aux=tok('--fig-aux'),paper=tok('--card');
+  const dp=W/(ctx.canvas.clientWidth||W),ut=Math.max(u,dp*11/19);   // dp：每 CSS 像素的画布像素数
+  const SERIF='"Times New Roman","STIX Two Text",Times,serif',SANS=tok('--f-body');
+  const path=(fn,{w=1.6,color=ink,dash=null,fill=null}={})=>{ctx.save();ctx.beginPath();fn();
+    if(fill){ctx.fillStyle=fill;ctx.fill()}
+    if(w>0){ctx.lineWidth=w*u;ctx.strokeStyle=color;ctx.setLineDash(dash?dash.map(d=>d*u):[]);ctx.lineCap='round';ctx.lineJoin='round';ctx.stroke()}
+    ctx.restore()};
+  // 文字先描一圈底色再填色，压在线条上也清楚
+  const text=(t,x,y,font,color,align,base)=>{ctx.save();ctx.font=font;ctx.textAlign=align;ctx.textBaseline=base;
+    ctx.lineJoin="round";ctx.lineWidth=5*ut;ctx.strokeStyle=paper;ctx.strokeText(t,x,y);ctx.fillStyle=color;ctx.fillText(t,x,y);ctx.restore()};
+  const F={u,ut,ink,auxColor:aux,paper,
+    clear(){ctx.save();ctx.setLineDash([]);ctx.fillStyle=paper;ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);ctx.restore()},
+    line(x1,y1,x2,y2,o){path(()=>{ctx.moveTo(x1,y1);ctx.lineTo(x2,y2)},o)},
+    poly(pts,o){path(()=>pts.forEach(([x,y],i)=>i?ctx.lineTo(x,y):ctx.moveTo(x,y)),o)},
+    circle(x,y,r,o){path(()=>ctx.arc(x,y,r,0,2*Math.PI),o)},
+    arc(x,y,r,a0,a1,o){path(()=>ctx.arc(x,y,r,a0,a1),o)},
+    rect(x,y,w,h,o){path(()=>ctx.rect(x,y,w,h),o)},
+    // 辅助线（中心线、投影线等）
+    aux(x1,y1,x2,y2,o={}){F.line(x1,y1,x2,y2,{w:1,color:aux,dash:[6,5],...o})},
+    // 运动轨迹：细虚线
+    trail(pts,o={}){if(pts.length>1)F.poly(pts,{w:1.3,color:aux,dash:[5,5],...o})},
+    // 固定面斜线：沿 (x1,y1)→(x2,y2) 的直线，画在 side 一侧（屏幕坐标下，1 = 前进方向右手侧）
+    hatch(x1,y1,x2,y2,side=1,{gap=12,len=10}={}){const L=Math.hypot(x2-x1,y2-y1),n=Math.max(1,Math.round(L/(gap*u)));
+      const tx=(x2-x1)/L,ty=(y2-y1)/L,nx=-ty*side,ny=tx*side,ox=(nx-tx)*len*u/Math.SQRT2,oy=(ny-ty)*len*u/Math.SQRT2;
+      path(()=>{for(let i=0;i<=n;i++){const x=x1+(x2-x1)*i/n,y=y1+(y2-y1)*i/n;ctx.moveTo(x,y);ctx.lineTo(x+ox,y+oy)}},{w:1,color:aux})},
+    // 圆弧形固定面的斜线：out = true 画在圆外侧
+    hatchArc(cx,cy,r,a0,a1,out=true,{gap=12,len=10}={}){const n=Math.max(1,Math.round(r*Math.abs(a1-a0)/(gap*u))),s=out?1:-1;
+      path(()=>{for(let i=0;i<=n;i++){const a=a0+(a1-a0)*i/n,c=Math.cos(a),si=Math.sin(a),x=cx+r*c,y=cy+r*si;
+        const nx=c*s,ny=si*s,tx=-si,ty=c;ctx.moveTo(x,y);ctx.lineTo(x+(nx-tx)*len*u/Math.SQRT2,y+(ny-ty)*len*u/Math.SQRT2)}},{w:1,color:aux})},
+    // 矢量：从 (x,y) 画到 (x+dx,y+dy)，细杆 + 窄实心箭头；label 用斜体写在箭头外侧，
+    // 与别的矢量共线时用 off=[dx,dy]（单位 u，相对箭头尖）把标注挪到旁边
+    arrow(x,y,dx,dy,color,label,{w=2,head=12,size=19,off=null}={}){const L=Math.hypot(dx,dy);if(L<2*u)return;
+      const ux=dx/L,uy=dy/L,h=Math.min(head*u,L*.6),hw=h*.34,tx=x+dx,ty=y+dy;
+      F.line(x,y,tx-ux*h*.7,ty-uy*h*.7,{w,color});
+      path(()=>{ctx.moveTo(tx,ty);ctx.lineTo(tx-ux*h-uy*hw,ty-uy*h+ux*hw);ctx.lineTo(tx-ux*h+uy*hw,ty-uy*h-ux*hw);ctx.closePath()},{w:0,fill:color});
+      if(label)F.label(label,off?tx+off[0]*u:tx+ux*14*u,off?ty+off[1]*u:ty+uy*14*u,{color,size})},
+    // 斜体衬线字母（物理量、点名）
+    label(t,x,y,{color=ink,size=19,align='center',base='middle',italic=true}={}){text(t,x,y,`${italic?'italic ':''}${size*ut}px ${SERIF}`,color,align,base)},
+    // 中文小注
+    zh(t,x,y,{color=aux,size=14,align='center',base='middle'}={}){text(t,x,y,`${size*ut}px ${SANS}`,color,align,base)},
+    dot(x,y,r=2.6,color=ink){F.circle(x,y,r*u,{w:0,fill:color})},
+    // 带名字的点：实心小点 + 斜体字母（dx、dy 为字母相对点的偏移，单位 u）
+    point(x,y,name,dx=-13,dy=13){F.dot(x,y);if(name)F.label(name,x+dx*u,y+dy*u)},
+    // 小球：空心圆，球心另用 F.dot 标出（矢量画完后再点，表示力作用在重心）
+    ball(x,y,r){F.circle(x,y,r,{w:1.6,fill:paper})},
+    // 尺寸标注：两端带箭头的细线，文字写在中点外侧 off（单位 u）
+    dim(x1,y1,x2,y2,t,{off=14,color=ink}={}){const L=Math.hypot(x2-x1,y2-y1);if(L<4*u)return;const ux=(x2-x1)/L,uy=(y2-y1)/L,h=Math.min(8*u,L/3),hw=h*.38;
+      F.line(x1,y1,x2,y2,{w:1,color});
+      for(const[px,py,sx]of[[x1,y1,1],[x2,y2,-1]])path(()=>{ctx.moveTo(px,py);ctx.lineTo(px+sx*ux*h-uy*hw,py+sx*uy*h+ux*hw);ctx.lineTo(px+sx*ux*h+uy*hw,py+sx*uy*h-ux*hw);ctx.closePath()},{w:0,fill:color});
+      if(t)F.label(t,(x1+x2)/2-uy*off*u,(y1+y2)/2+ux*off*u,{color})},
+  };
+  return F;
+};
+
+/* ================= SIM 模块：每个母题替换这一段 =================
+   约定接口：
+   SIM.legend            [{label, color(CSS 变量名)}]
+   SIM.init(P)           → 状态 S（含 S.done、S.status={text,cls}）
+   SIM.step(S,P,dt)      推进 dt 秒（引擎保证 dt ≤ 0.5 ms）
+   SIM.readouts(S,P)     → [[标签, 带单位的值]]
+   SIM.draw(ctx,S,P,W,H,tok)  tok(name) 取主题色
+   SIM.verdict(P)        → 理论预判 HTML
+*/
+const SIM=(()=>{
+  const g=10,PI=Math.PI;
+  const SUP={'-':'⁻','0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹'};
+  // n 位有效数字；负号用 −，很大（≥10⁴）或很小（<10⁻³）的数写成 a×10ⁿ
+  const sf=(x,n=3)=>{if(!isFinite(x))return'—';const a=Math.abs(x),sg=x<0?'−':'';if(a<1e-12)return'0';
+    const r=+a.toPrecision(n),p=Math.floor(Math.log10(r));
+    if(r<1e-3||p>=4)return sg+(r/Math.pow(10,p)).toFixed(n-1)+'×10'+String(p).replace(/./g,c=>SUP[c]);
+    return sg+r.toFixed(Math.max(0,n-1-p))};
+  const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+  const pc=x=>sf(100*x,3)+'%';
+  const nice=x=>{const p=Math.pow(10,Math.floor(Math.log10(x))),n=x/p;return(n<1.5?1:n<3.5?2:n<7.5?5:10)*p};
+  const tnum=x=>String(+x.toPrecision(3));
+  const rk4=(f,y,h)=>{const ad=(a,b,c)=>a.map((v,i)=>v+b[i]*c),k1=f(y),k2=f(ad(y,k1,h/2)),k3=f(ad(y,k2,h/2)),k4=f(ad(y,k3,h));
+    return y.map((v,i)=>v+h/6*(k1[i]+2*k2[i]+2*k3[i]+k4[i]))};
+
+  /* 参数换算与理论值（理论值只用于预判、画图比例、慢放节奏和对照，不参与积分） */
+  function cfg(P){
+    const S=P.S*1e-4,v=P.v,rho=P.rho,e=P.e,tau=P.tau*1e-3,q=rho*S*v,F0=q*v;
+    const K={mode:P.mode,S,v,rho,e,tau,q,F0,Pw:.5*q*v*v,dm:q*tau};
+    if(P.mode==='jet'){
+      K.L=Math.max(.5,1.4*v*tau);K.tA=K.L/v;                       // 喷口到挡板的距离，保证虚线框画得下
+      K.dtp=Math.max(Math.min(1e-3,tau/10,K.tA/40),K.tA/3000);K.dmp=q*K.dtp;            // 流体微元：每 δt 从喷口放出一段，δm = ρSv·δt
+      K.rA=K.tA/1.5;K.rB=Math.min(K.rA,tau/1.2);                   // 慢放：水柱走到挡板约 1.5 s，一段柱体打完约 1.2 s（画面时间）
+      K.pre=.4*tau;K.boxes=[K.tA+.6*tau,K.tA+2.8*tau];K.tEnd=K.tA+4.6*tau;
+      K.ev=[K.tA,K.boxes[0],K.boxes[0]+tau,K.boxes[1],K.boxes[1]+tau,K.tEnd];
+      K.Fp=(1+e)*F0;
+    }else if(P.mode==='thrust'){
+      K.M=P.M;K.W=P.M*g;K.a=F0/K.M-g;K.h0=1;K.T=3;K.v0=Math.sqrt(K.W/(rho*S));
+      const hT=K.a>0?K.h0+.5*K.a*K.T*K.T:K.h0;K.Hv=Math.min(30,Math.max(2,hT*1.15));   // 画面高度（m）
+      K.hover=Math.abs(F0-K.W)<=2e-3*K.W;
+    }else{
+      const m=P.m,dt=P.dt;Object.assign(K,{m,dt,mg:m*g,H:v*v/(2*g),tF:v/g});
+      // 缓冲垫：压缩时 N = k₁x，回弹时劲度 k₂ = k₁/e²（离开速度恰为 ev）。k₁ 用二分法反算，使计入重力时接触时间 = Δt
+      // 压缩段用时 t₁ = [π/2 + arcsin(g/√(g² + v²ω²))]/ω（ω² = k₁/m），回弹段用时 e·t₁，共 (1 + e)t₁
+      const t1=dt/(1+e),tl=w=>(PI/2+Math.asin(g/Math.sqrt(g*g+v*v*w*w)))/w;
+      let lo=1e-6,hi=1e9;for(let i=0;i<120;i++){const mid=Math.sqrt(lo*hi);if(tl(mid)>t1)lo=mid;else hi=mid}
+      const w1=Math.sqrt(lo*hi);K.w1=w1;K.k1=m*w1*w1;K.k2=e>0?K.k1/(e*e):Infinity;
+      const xe=g/(w1*w1),A=Math.sqrt(xe*xe+v*v/(w1*w1));K.zm=xe+A;K.Nm=K.k1*K.zm;
+      K.dp=m*(1+e)*v;K.Fng=K.dp/dt;K.Fbar=K.mg+K.Fng;K.I=K.Fbar*dt;
+      K.rF=Math.max(1,K.tF/1.5);K.rC=dt/2;K.rR=Math.max(1,e*v/g/1.5);    // 下落实时（超过 1.5 s 按比例加快），接触段慢放到约 2 s
+      K.hL=Math.min(1e-3,dt/2000);K.hU=e>0?Math.min(K.hL,.05*e/w1):K.hL;
+    }
+    return K;
+  }
+
+  /* ---------- 流体冲击：水柱离散为等质量的微元，逐段打到挡板上，统计动量变化 ---------- */
+  function initJet(K){return{K,t:0,par:[],nk:0,xf:0,I:0,Pg:0,Ek:0,mOut:0,Fp:0,Fg:0,tArr:null,
+    bx:K.boxes.map(()=>({I0:null,I:0,dm:null,done:false})),hist:[[0,0]],lastH:0,done:false,status:{text:'准备就绪：水柱将射向挡板',cls:''}}}
+  function advJet(S,K,h){
+    const t1=S.t+h,c=K.v*K.dtp;
+    while(S.nk*K.dtp<t1-1e-15){S.par.push({k:S.nk,x:0,fe:0,fh:0});S.nk++}
+    let dI=0,dP=0,dE=0,dM=0;
+    for(const p of S.par){
+      const ts=Math.max(S.t,p.k*K.dtp);if(t1<=ts)continue;
+      // 微元前端 x：水平射流不计重力，dx/dt = v，四阶龙格–库塔的四个斜率都等于 v，一步给出 x += v·h（精确）
+      p.x+=K.v*(t1-ts);
+      const fe=clamp(p.x/c,0,1),fh=clamp((p.x-K.L)/c,0,1);          // 已离开喷口的比例、已打到挡板的比例
+      dM+=(fe-p.fe)*K.dmp;dP+=(fe-p.fe)*K.dmp*K.v;dE+=(fe-p.fe)*.5*K.dmp*K.v*K.v;
+      dI+=(fh-p.fh)*K.dmp*(1+K.e)*K.v;                                 // 打到挡板的部分：法向速度 v → −ev
+      if(S.tArr===null&&fh>0)S.tArr=t1-(p.x-K.L)/K.v;
+      p.fe=fe;p.fh=fh;
+    }
+    S.par=S.par.filter(p=>p.fh<1);
+    S.xf=Math.min(K.L,S.xf+K.v*h);
+    S.I+=dI;S.Pg+=dP;S.Ek+=dE;S.mOut+=dM;S.Fp=dI/h;S.Fg=dP/h;S.t=t1;
+  }
+  // 时刻 tb 虚线框 [L − vτ, L] 内水的质量（由微元实际位置统计）
+  function boxMass(S,K){const a=K.L-K.v*K.tau,b=K.L,c=K.v*K.dtp;let m=0;
+    for(const p of S.par){const lo=Math.max(p.x-c,0,a),hi=Math.min(p.x,K.L,b);if(hi>lo)m+=(hi-lo)/c*K.dmp}return m}
+  function stepJet(S,K,dt){
+    let rem=dt;
+    while(rem>1e-15&&!S.done){
+      const r=S.t<K.tA-1e-12?K.rA:K.rB;
+      let tn=S.t+rem*r;const ev=K.ev.find(x=>x>S.t+1e-13);if(ev!==undefined&&tn>ev)tn=ev;
+      const h=tn-S.t;if(h<=0)break;
+      advJet(S,K,h);rem-=h/r;
+      K.boxes.forEach((tb,b)=>{const B=S.bx[b];
+        if(B.I0===null&&S.t>=tb-1e-12){B.I0=S.I;B.dm=boxMass(S,K)}
+        if(B.I0!==null&&!B.done){B.I=S.I-B.I0;if(S.t>=tb+K.tau-1e-12)B.done=true}});
+      if(S.t-S.lastH>=K.tEnd/600||Math.abs(S.Fp-S.hist[S.hist.length-1][1])>.02*K.Fp){S.hist.push([S.t,S.Fp]);S.lastH=S.t}
+      if(S.t>=K.tEnd-1e-12){S.done=true;S.hist.push([S.t,S.Fp])}
+    }
+    const t=S.t,T=K.tau;let st={text:'水柱射向挡板',cls:''};
+    if(S.done)st={text:`结束：F = ${sf(S.Fp)} N，与所取的 τ 无关`,cls:'ok'};
+    else if(S.I>0){st={text:'水柱打到挡板：受力立即稳定',cls:''};
+      K.boxes.forEach(tb=>{if(t>=tb-K.pre&&t<tb)st={text:'取柱：框内是 τ 内将打到挡板的水',cls:''};
+        else if(t>=tb&&t<tb+T)st={text:'这段水柱正打到挡板上',cls:''};
+        else if(t>=tb+T&&t<tb+1.8*T)st={text:'τ 内这段水全部打到挡板上',cls:'ok'}})}
+    S.status=st;
+  }
+
+  /* ---------- 反冲推力：喷口每步放出 δm = ρSv·h，统计相对喷口的动量得推力；飞行器 (h, u) 用 RK4 ---------- */
+  function initThrust(K){return{K,t:0,h:K.h0,u:0,a:0,Fm:0,mOut:0,Prel:0,Ek:0,hist:[],lastH:0,end:'',done:false,
+    status:{text:'准备就绪：支架托住，t = 0 撤去并开始喷水',cls:''}}}
+  function stepThrust(S,K,dt){
+    let rem=dt;
+    while(rem>1e-15&&!S.done){
+      const h=Math.min(rem,1e-3,K.T-S.t);if(h<=1e-15){S.done=true;break}
+      // 这一步喷出的水 δm = ρSv·h 由相对喷口静止加速到 v：喷口对水的力 F′ = δm·v/h，由牛顿第三定律推力 F = F′
+      const Fm=K.q*h*K.v/h,f=y=>[y[1],Fm/K.M-g],y0=[S.h,S.u];let y=rk4(f,y0,h),hh=h;
+      if(y[0]<=0){let lo=0,hi=h;for(let i=0;i<60;i++){const mid=(lo+hi)/2;if(rk4(f,y0,mid)[0]>0)lo=mid;else hi=mid}
+        hh=hi;y=rk4(f,y0,hh);y[0]=0;S.end='land'}
+      const dm=K.q*hh;S.mOut+=dm;S.Prel+=dm*K.v;S.Ek+=.5*dm*K.v*K.v;S.Fm=Fm;
+      S.a=(y[1]-S.u)/hh;[S.h,S.u]=y;S.t+=hh;rem-=hh;
+      if(S.t-S.lastH>=.01||!S.hist.length){S.hist.push([S.t,S.Fm]);S.lastH=S.t}
+      if(S.end==='land'){S.done=true;S.u=0}
+      else if(S.h>=K.Hv){S.done=true;S.end='out'}
+      else if(S.t>=K.T-1e-12){S.done=true;S.end='time'}
+    }
+    if(S.done&&S.hist.length)S.hist.push([S.t,S.Fm]);
+    const F=S.Fm,W=K.W,hov=Math.abs(F-W)<=2e-3*W;
+    if(S.done)S.status=S.end==='land'?{text:`落回地面：t = ${sf(S.t)} s`,cls:'warn'}:S.end==='out'?{text:`升出画面：t = ${sf(S.t)} s`,cls:'ok'}:
+      {text:hov?'满 3 s：始终悬停，F = Mg':`满 3 s：h = ${sf(S.h)} m`,cls:'ok'};
+    else S.status=hov?{text:'悬停：推力 F = Mg',cls:'ok'}:F>W?{text:'加速上升：F > Mg',cls:''}:{text:'下落：F < Mg',cls:'warn'};
+  }
+
+  /* ---------- 物体撞击：自由下落 → 压缩（k₁）→ 回弹（k₂ = k₁/e²）或停住 → 弹起；(z, w, I) 用 RK4，事件用二分法定位 ---------- */
+  // z：物体底部低于缓冲垫原上表面的深度（向下为正）；w = dz/dt；I = ∫N dt
+  function initImpact(K){return{K,t:0,ph:'fall',z:-K.H,w:0,I:0,N:0,tc:null,vin:null,vout:null,zm:null,zr:0,Nmax:0,dtm:null,Ic:null,
+    tStop:null,hN:[],lastH:-1,done:false,status:{text:`准备就绪：从 H = ${sf(K.H)} m 处由静止释放`,cls:''}}}
+  function Nof(S,K,ph,z){return ph==='load'?Math.max(0,K.k1*z):ph==='unload'?Math.max(0,K.k2*(z-S.zr)):ph==='rest'?K.mg:0}
+  function stepImpact(S,K,dt){
+    let rem=dt;
+    while(rem>1e-15&&!S.done){
+      const ph=S.ph,r=ph==='fall'?K.rF:ph==='rise'?K.rR:K.rC;
+      if(ph==='rest'){const h=Math.min(rem*r,S.tStop-S.t);S.t+=h;rem-=h/r;S.N=K.mg;
+        if(S.t-S.lastH>=K.dt/300){S.hN.push([S.t-S.tc,S.N,0]);S.lastH=S.t}
+        if(S.t>=S.tStop-1e-15){S.done=true;S.hN.push([S.t-S.tc,S.N,0])}continue}
+      const hmax=ph==='load'?K.hL:ph==='unload'?K.hU:1e-3,h=Math.min(rem*r,hmax);
+      const f=y=>{const N=Nof(S,K,ph,y[0]);return[y[1],g-N/K.m,N]};
+      const ef=y=>ph==='fall'?-y[0]:ph==='load'?y[1]:ph==='unload'?y[0]-S.zr:-y[1];   // 由正变为 ≤ 0 时发生事件
+      const y0=[S.z,S.w,S.I];let y=rk4(f,y0,h),hh=h,hit=false;
+      if(ef(y)<=0){let lo=0,hi=h;for(let i=0;i<60;i++){const mid=(lo+hi)/2;if(ef(rk4(f,y0,mid))>0)lo=mid;else hi=mid}
+        hh=hi;y=rk4(f,y0,hh);hit=true}
+      [S.z,S.w,S.I]=y;S.t+=hh;rem-=hh/r;S.N=Nof(S,K,ph,S.z);S.Nmax=Math.max(S.Nmax,S.N);
+      if(hit){
+        if(ph==='fall'){S.z=0;S.ph='load';S.tc=S.t;S.vin=S.w;S.I=0;S.lastH=-1}
+        else if(ph==='load'){S.w=0;S.zm=S.z;S.N=K.k1*S.zm;S.Nmax=Math.max(S.Nmax,S.N);
+          if(K.e>0){S.ph='unload';S.zr=S.zm*(1-K.e*K.e)}
+          else{S.ph='rest';S.dtm=S.t-S.tc;S.Ic=S.I;S.vout=0;S.tStop=S.t+.4*K.dt;S.hN.push([S.t-S.tc,S.N,0]);S.N=K.mg}}
+        else if(ph==='unload'){S.z=S.zr;S.N=0;S.ph='rise';S.dtm=S.t-S.tc;S.Ic=S.I;S.vout=-S.w;S.hN.push([S.t-S.tc,0,-K.m*S.w])}
+        else{S.w=0;S.done=true}
+      }
+      if((S.ph==='load'||S.ph==='unload')&&S.t-S.lastH>=K.dt/300){S.hN.push([S.t-S.tc,S.N,-K.m*S.w]);S.lastH=S.t}
+      if(S.ph==='rise'&&S.t-S.tc<=1.3*K.dt&&S.t-S.lastH>=K.dt/300){S.hN.push([S.t-S.tc,0,-K.m*S.w]);S.lastH=S.t}
+    }
+    const ph=S.ph;
+    S.status=S.done?(K.e>0?{text:`弹起到最高点：e²H = ${sf(K.e*K.e*K.H)} m`,cls:'ok'}:{text:`停住：作用时间 Δt = ${sf(S.dtm,4)} s`,cls:'ok'}):
+      ph==='fall'?(S.t>0?{text:'自由下落',cls:''}:S.status):ph==='load'?{text:'接触：缓冲垫压缩，N 增大',cls:''}:ph==='unload'?{text:'回弹：N 减小，物体向上加速',cls:''}:
+      ph==='rest'?{text:'速度减为零，停住：此后 N = mg',cls:'ok'}:{text:`离开缓冲垫：v′ = ${sf(S.vout)} m/s`,cls:'ok'};
+  }
+
+  /* ---------- 画图工具 ---------- */
+  function mk(ctx,W,H,tok){
+    const F=FIG(ctx,W,tok),u=F.u,ut=F.ut;
+    const SERIF='"Times New Roman","STIX Two Text",Times,serif',SANS=tok('--f-body');
+    // 字号、测宽和跟文字大小有关的偏移都用 F.ut（窄屏时字不随画布缩小），几何仍用 u
+    const wid=(str,s,o={})=>{ctx.save();ctx.font=o.zh?`${s*ut}px ${SANS}`:`${o.i===false?'':'italic '}${s*ut}px ${SERIF}`;const w=ctx.measureText(str).width;ctx.restore();return w};
+    const pw=parts=>parts.reduce((a,[str,o={}])=>a+wid(str,(o.s||19)*(o.sub?.66:1),o),0);
+    // 一行混排：parts = [[文字, {i:false 正体, s 字号, sub 下标, zh 中文}]]，按 align 对齐到 (x,y)
+    const run=(parts,x,y,{color=F.ink,align='left'}={})=>{let cx=x-(align==='center'?.5:align==='right'?1:0)*pw(parts);
+      for(const[str,o={}]of parts){const s=(o.s||19)*(o.sub?.66:1),w=wid(str,s,o),y1=y+(o.sub?6*ut:0);
+        if(o.zh)F.zh(str,cx,y1,{color,size:s,align:'left'});else F.label(str,cx,y1,{color,size:s,align:'left',italic:o.i!==false});cx+=w}};
+    // 桌面宽度时状态条（一行，底边约 46 CSS px）浮在画布左上角，图从它下面开始；窄屏（≤ 640px）时状态条排在画布下方
+    const narrow=typeof matchMedia==='function'&&matchMedia('(max-width:640px)').matches,cw=ctx.canvas.clientWidth||640;
+    const y0=narrow?10*u+8*ut:(46*720/cw+8)*u;
+    const gTop=H-218*u-44*ut;                     // 下部坐标图区域的顶边
+    return{F,u,ut,k:ut/u,W,H,ctx,tok,run,wid,pw,y0,gTop,narrow,ink:F.ink,cX:F.auxColor,paper:F.paper,
+      cG:tok('--g'),cN:tok('--n'),cV:tok('--v'),cW:tok('--warn')};
+  }
+  const ellipse=(G,x,y,rx,ry,o)=>{const pts=[];for(let i=0;i<=40;i++){const a=2*PI*i/40;pts.push([x+rx*Math.cos(a),y+ry*Math.sin(a)])}G.F.poly(pts,o)};
+  // 坐标轴：原点 (x0, yO)，y 轴从 yB 画到 yT，x 轴画到 xR；轴名斜体带单位
+  function axes(G,{x0,yO,yB=yO,yT,xR,ylab,xlab}){
+    const{F,u,ut,run,ink}=G;
+    F.arrow(x0,yB,0,yT-yB,ink,null,{w:1.3,head:10});F.arrow(x0,yO,xR-x0,0,ink,null,{w:1.3,head:10});
+    F.label('O',x0-10*ut,yO+12*ut);
+    run(ylab,x0+9*u,yT+6*u);run(xlab,xR,yO+17*ut,{align:'right'});
+  }
+  // 横轴刻度：tMax 为数据区右端对应的时间，scale 为显示倍数（ms 时为 1000）；skip 为要避开的 [x1, x2]
+  function tticks(G,{x0,x1,xR,yO,tMax,TX,scale,skip=[],ulab}){
+    const{F,u,ut,wid}=G,st=nice(tMax*scale/4)/scale,lw=wid(ulab,15,{i:false})+wid('t',19);
+    const tk=[];for(let i=1;i*st<=tMax*1.0001;i++)tk.push(i);
+    const wmax=Math.max(0,...tk.map(i=>wid(tnum(i*st*scale),14,{i:false})));
+    const ev=[1,2,5,10].find(m=>(TX(st)-x0)*m>=wmax+10*ut)||20;
+    for(const i of tk){const x=TX(i*st),s=tnum(i*st*scale),w=wid(s,14,{i:false});F.line(x,yO,x,yO-5*u,{w:1});
+      if(i%ev===0&&x+w/2<xR-lw-8*ut&&!skip.some(([a,b])=>x+w/2>a-4*ut&&x-w/2<b+4*ut))F.label(s,x,yO+15*ut,{italic:false,size:14})}
+  }
+  const fLab=(e,val)=>{const p=e>0?[['(1 + ',{i:false}],['e'],[')',{i:false}]]:[];return[...p,['ρ'],['S'],['v'],['²',{i:false}],[` = ${val} N`,{i:false,s:15}]]};
+
+  /* ---------- 流体冲击的画面 ---------- */
+  function drawJet(G,S,P){
+    const{F,u,ut,run,wid,pw,y0,gTop,ink,cX,cN,cV,cW,W,H,paper}=G,K=S.K,t=S.t,e=K.e;
+    const yAb=gTop-12*u,Hp=Math.min(125*u,(yAb-y0)/2-10*u),yj=(y0+yAb)/2+4*u;
+    const xn=150*u,xp=600*u,sx=(xp-xn)/K.L,X=x=>xn+x*sx;
+    const rj=Math.max(3.5*u,Math.min(24*u,7.5*u*Math.sqrt(P.S))),ws=Math.max(2.5*u,rj*.5);
+    const Rg=Math.max(60*u,rj+ws+24*u+42*ut),xg=xp-Rg;          // 凹形挡板（半圆槽）半径与圆心
+    const arr=S.I>0,ta=S.tArr===null?K.tA:S.tArr,since=Math.max(0,t-ta);
+    const bh=Math.max(rj+9*u,15*u),xb0=62*u,xb1=xn-24*u;
+    // 水枪：枪管、收窄的枪口、握把；喷口截面画成竖直小椭圆
+    F.poly([[76*u,yj+bh],[100*u,yj+bh],[90*u,yj+bh+54*u],[64*u,yj+bh+54*u],[76*u,yj+bh]],{w:1.8,fill:paper});
+    F.rect(xb0,yj-bh,xb1-xb0,2*bh,{w:1.8,fill:paper});
+    F.poly([[xb1,yj-bh],[xn,yj-rj-1.5*u],[xn,yj+rj+1.5*u],[xb1,yj+bh]],{w:1.8,fill:paper});
+    ellipse(G,xn,yj,3.5*u,rj+1.5*u,{w:1.4,fill:paper});
+    F.label('S',xn+2*u,yj-rj-1.5*u-13*ut);
+    // 挡板：e = 0 竖直平板，e > 0 开口向左的凹形挡板；背面斜线
+    if(e<=0){F.line(xp,yj-Hp,xp,yj+Hp,{w:2.4});F.hatch(xp,yj+Hp,xp,yj-Hp,1)}
+    else{F.arc(xg,yj,Rg,-PI/2,PI/2,{w:2.4});F.hatchArc(xg,yj,Rg,-PI/2,PI/2,true)}
+    // 水柱：两条墨线作边界；稀疏的辅助色短线随水流移动（取实际微元的位置）
+    const tick=(x1,y1,x2,y2)=>F.line(x1,y1,x2,y2,{w:1.2,color:cX});
+    const ri=Rg-ws,thi=Math.asin(Math.min(.95,rj/ri)),rc=Math.min(10*u,rj*.8+3*u),xs=xp-ws;
+    const xEnd=!arr?X(S.xf):e<=0?xs-rc:xg+ri*Math.cos(thi);
+    if(t>0||arr){F.line(xn,yj-rj,xEnd,yj-rj,{w:1.6});F.line(xn,yj+rj,xEnd,yj+rj,{w:1.6});if(!arr&&S.xf>0)F.line(xEnd,yj-rj,xEnd,yj+rj,{w:1.6})}
+    const n=Math.max(1,Math.ceil(30*u/(K.v*K.dtp*sx)));
+    for(const p of S.par)if(p.k%n===0&&p.x>0&&p.x<K.L){const x=X(p.x);if(x<xEnd-2*u)tick(x,yj-rj*.6,x,yj+rj*.6)}
+    const sig=30*u;
+    if(arr&&e<=0){
+      // 沿板面向上、向下流开（速度大小仍为 v），流到板端后离开
+      const lu=Math.min(Hp-rj,rc+K.v*since*sx);
+      for(const s of[-1,1]){
+        F.arc(xs-rc,yj+s*(rj+rc),rc,s<0?0:-PI/2,s<0?PI/2:0,{w:1.6});
+        if(lu>rc){F.line(xs,yj+s*(rj+rc),xs,yj+s*(rj+lu),{w:1.6});if(lu<Hp-rj-1*u)F.line(xs,yj+s*(rj+lu),xp,yj+s*(rj+lu),{w:1.6})}
+        const ph=(K.v*since*sx)%sig;for(let d=rc+ph;d<lu-2*u;d+=sig)tick(xs+1.2*u,yj+s*(rj+d),xp-1.2*u,yj+s*(rj+d));
+      }
+      if(lu>=rc+40*u+12*ut){const y1=yj-rj-rc-16*ut-6*u;F.arrow(xs-12*u,y1,0,-44*u,cV,null);F.label('v',xs-12*u-12*ut,y1-44*u+4*u,{color:cV})}
+    }else if(arr){
+      // 沿槽面折回，以 ev 从上、下两侧向左流出，流出一段后渐隐
+      const lr=Math.min(170*u,K.e*K.v*since*sx),fade=Math.min(30*u,lr);
+      for(const s of[-1,1]){
+        F.arc(xg,yj,ri,s<0?-PI/2:thi,s<0?-thi:PI/2,{w:1.6});
+        const ya=yj+s*Rg,yb=yj+s*ri;
+        if(lr>0){for(const yy of[ya,yb]){F.line(xg,yy,xg-lr+fade,yy,{w:1.6});F.line(xg-lr+fade,yy,xg-lr,yy,{w:1.2,color:cX,dash:[4,4]})}
+          const ph=(K.e*K.v*since*sx)%sig;for(let d=ph+4*u;d<lr-fade;d+=sig)tick(xg-d,ya-s*1.2*u,xg-d,yb+s*1.2*u)}
+      }
+      if(lr>=60*u){const y1=yj-Rg-16*u;F.arrow(xg-24*u,y1,-Math.max(16*u,56*u*K.e),0,cV,null);run([['e'],['v']],xg-24*u-Math.max(16*u,56*u*K.e)-6*u,y1,{color:cV,align:'right'})}
+    }
+    // 入射水流的速度 v
+    if(t>0)F.arrow(xn+28*u,yj-rj-22*u,64*u,0,cV,'v',{off:[4,-14*G.k]});
+    // 取柱：虚线框随水流前进，前端到达挡板后逐段打到挡板上，框逐渐缩短，经 τ 全部消失
+    const vt=K.v*K.tau,yd=yj+rj+6*u+12*u;
+    const dimTxt=(a,b)=>{F.dim(X(a),yd,X(b),yd,null);const parts=[['v'],['τ'],[` = ${sf(vt)} m`,{i:false,s:15}]],w=pw(parts),dy=yd+24*ut-yj;
+      const xr=(e>0?xg+Math.sqrt(Math.max(0,ri*ri-dy*dy)):xs)-5*u;run(parts,Math.max(xn+w/2,Math.min((X(a)+X(b))/2,xr-w/2)),yd+15*ut,{align:'center'})};
+    K.boxes.forEach((tb,b)=>{
+      let a=null,c=null;
+      if(t>=tb-K.pre-1e-12&&t<tb){c=K.L-K.v*(tb-t);a=c-vt}else if(t>=tb&&t<tb+K.tau){a=K.L-vt+K.v*(t-tb);c=K.L}
+      if(a!==null){const xa=X(a),xc=X(c),w=Math.max(1.5*u,xc-xa);
+        F.rect(xa,yj-rj-6*u,w,2*rj+12*u,{w:1.3,color:cX,dash:[5,4]});
+        if(xc-xa>=wid('Δm',19)+6*u)F.label('Δm',(xa+xc)/2,yj);
+        if(t<tb)dimTxt(a,c);else dimTxt(K.L-vt,K.L)}
+      else if(t>=tb+K.tau&&t<tb+1.8*K.tau){dimTxt(K.L-vt,K.L);{const dy=yd+34*ut-yj,xr=e>0?xg+Math.sqrt(Math.max(0,ri*ri-(dy+9*ut)**2))-8*u:xs-6*u;F.zh('τ 内这段水全部打到挡板上',xr,yd+34*ut,{align:'right',color:ink})}}
+    });
+    // 作用力：挡板对框内水的力 F′（向左）、水对挡板的冲击力 F（向右）、水对水枪的反冲力 F反（向左）
+    const LF=40*u*(1+e);
+    if(arr){const yF=yj-rj-14*u,xF=e>0?xg+Math.sqrt(Math.max(0,ri*ri-(rj+14*u)**2))-4*u:xs-4*u;
+      F.arrow(xF,yF,-LF,0,cN,null);run([['F′']],xF-LF-12*ut,yF,{color:cN,align:'center'});
+      F.arrow(xp+2*u,yj,LF,0,cN,null);F.label('F',xp+LF-4*u,yj-15*ut,{color:cN})}
+    if(t>0){F.arrow(xb0,yj,-40*u,0,cN,null);run([['F'],['反',{zh:1,sub:1}]],xb0-40*u+4*u,yj-17*ut,{color:cN,align:'center'})}
+    // 比例尺（右下角）与示意说明
+    const sb=nice(K.L/4),sw=sb*sx,ysb=yAb-4*u;
+    F.line(xp-sw,ysb,xp,ysb,{w:1.4});F.line(xp-sw,ysb-4*u,xp-sw,ysb+1*u,{w:1.4});F.line(xp,ysb-4*u,xp,ysb+1*u,{w:1.4});
+    F.label(`${tnum(sb)} m`,xp-sw/2,ysb-12*ut,{italic:false,size:14});
+    F.zh('示意图，水柱已放大',16*u,ysb-6*ut,{align:'left',size:13});
+    /* ---------- F–t 图：墨线为实测的挡板受力 ---------- */
+    const gx0=66*u,gxR=W-20*u,gx1=W-46*u,gyO=H-14*u-16*ut,gyT=gTop+24*ut+6*u,ms=K.tEnd<.5,sc=ms?1e3:1;
+    const TX=tt=>gx0+tt/K.tEnd*(gx1-gx0),Fax=1.32*K.Fp,FY=f=>gyO-f/Fax*(gyO-gyT-6*u);
+    {const y=gTop+8*ut,sl=`慢放 1/${Math.round(1/(t<K.tA-1e-12?K.rA:K.rB))}`;
+      F.zh('挡板受到的冲击力（实测）',gx0-30*u,y,{align:'left',color:ink});F.zh(sl,gxR,y,{align:'right',color:cW})}
+    const yT=FY(K.Fp);F.aux(gx0,yT,gx1+8*u,yT);
+    const thL=fLab(e,sf(K.Fp)),thW=pw(thL);run(thL,gx0+8*u,yT-14*ut);
+    // 每段柱体：高为平均力、宽为 τ 的虚线矩形，面积 = Δm(1 + e)v
+    let lastB=-1;K.boxes.forEach((tb,b)=>{if(t<tb)return;lastB=b;const t2=Math.min(t,tb+K.tau),B=S.bx[b];if(t2-tb<1e-12)return;
+      const hgt=B.I/(t2-tb),x1=TX(tb),x2=TX(t2);F.rect(x1,FY(hgt),x2-x1,gyO-FY(hgt),{w:1.2,color:cX,dash:[5,4]});
+      if(B.done&&x2-x1>=18*u)F.dim(x1,(FY(hgt)+gyO)/2,x2,(FY(hgt)+gyO)/2,'τ',{off:-12*G.k})});
+    if(lastB>=0){const tb=K.boxes[lastB],xm=(TX(tb)+TX(tb+K.tau))/2,parts=[['面积 = ',{zh:1,s:14}],['Δm'],...(e>0?[['(1 + ',{i:false}],['e'],[')',{i:false}]]:[]),['v']],w=pw(parts);
+      const xl=Math.min(gx1-w/2,Math.max(xm,gx0+8*u+thW+12*u+w/2));run(parts,xl,yT-14*ut,{align:'center'})}
+    const pts=S.hist.map(([tt,f])=>[TX(tt),FY(f)]);pts.push([TX(t),FY(S.Fp)]);F.poly(pts,{w:2});
+    axes(G,{x0:gx0,yO:gyO,yT:gyT,xR:gxR,ylab:[['F'],['/N',{i:false,s:15}]],xlab:[['t'],[ms?'/ms':'/s',{i:false,s:15}]]});
+    tticks(G,{x0:gx0,x1:gx1,xR:gxR,yO:gyO,tMax:K.tEnd,TX,scale:sc,ulab:ms?'/ms':'/s'});
+    if(t>0){F.aux(TX(t),gyT+10*u,TX(t),gyO,{dash:[3,4]});F.dot(TX(t),FY(S.Fp),3)}
+  }
+
+  /* ---------- 反冲推力的画面 ---------- */
+  function drawThrust(G,S,P){
+    const{F,u,ut,k,run,wid,y0,gTop,ink,cX,cG,cN,cV,W,H,paper}=G,K=S.K,t=S.t;
+    const rj=Math.max(3*u,Math.min(18*u,3.2*u*Math.sqrt(P.S))),nz=20*u,bw=56*u,bH=92*u;
+    const yG=gTop-28*u,top=y0+14*u,sc=(yG-top-bH-nz-8*u)/K.Hv,cx=270*u;
+    const ym=yG-S.h*sc,yb=ym-nz,ytop=yb-bH,ycm=(yb+ytop)/2;
+    // 地面
+    F.line(24*u,yG,W-24*u,yG,{w:2});F.hatch(24*u,yG,W-24*u,yG,1);
+    // 输水软管（外接水管供水，飞行器质量不变）
+    {const p0=[cx+bw,yb-14*u],p2=[W-118*u,yG],c1=[W-118*u,p0[1]],pts=[];
+      for(let i=0;i<=30;i++){const s=i/30,a=(1-s)*(1-s),b=2*s*(1-s),c=s*s;pts.push([a*p0[0]+b*c1[0]+c*p2[0],a*p0[1]+b*c1[1]+c*p2[1]])}
+      F.poly(pts,{w:4.4});F.poly(pts,{w:1.8,color:paper});F.zh('输水软管',W-126*u,yG-12*ut,{align:'right',size:13})}
+    // 支架：t = 0 时托住飞行器
+    if(t===0)for(const s of[-1,1]){const x=cx+s*(bw-12*u);F.line(x,yG,x,yb,{w:2.2});F.line(x-9*u,yG,x+9*u,yG,{w:2.2});F.line(x-8*u,yb,x+8*u,yb,{w:2.2})}
+    // 水柱：竖直向下喷到地面后向两侧溅开；短线随水流向下移动
+    if(t>0){const df=Math.min(S.h,K.v*t+.5*g*t*t)*sc,ye=ym+df;
+      F.line(cx-rj,ym,cx-rj,ye,{w:1.6});F.line(cx+rj,ym,cx+rj,ye,{w:1.6});
+      if(ye<yG-1*u)F.line(cx-rj,ye,cx+rj,ye,{w:1.6});
+      else for(const s of[-1,1])F.poly([[cx+s*rj,yG-1*u],[cx+s*(rj+10*u),yG-7*u],[cx+s*(rj+24*u),yG-9*u],[cx+s*(rj+36*u),yG-5*u]],{w:1.4});
+      const sp=28*u,ph=(t*Math.min(240*u,Math.max(40*u,(K.v-S.u)*sc)))%sp;
+      for(let y=ym+4*u+ph;y<ye-2*u;y+=sp)F.line(cx-rj*.6,y,cx+rj*.6,y,{w:1.2,color:cX})}
+    // 飞行器：墨线箱体 + 喷管；喷口截面小椭圆标 S
+    F.rect(cx-bw,ytop,2*bw,bH,{w:1.8,fill:paper});
+    F.poly([[cx-16*u,yb],[cx-rj-1.5*u,ym],[cx+rj+1.5*u,ym],[cx+16*u,yb]],{w:1.8,fill:paper});
+    ellipse(G,cx,ym,rj+1.5*u,3*u,{w:1.4,fill:paper});
+    F.label('S',cx+rj+10*u+4*ut,ym-8*ut);F.label('M',cx-bw+14*u,ytop+15*u,{size:17});
+    // 离地高度 h
+    {const xh=cx-92*u;F.aux(xh-6*u,ym,cx-rj-4*u,ym,{dash:[3,4]});F.dim(xh,yG,xh,ym,null);
+      run([['h'],[` = ${sf(S.h)} m`,{i:false,s:15}]],xh-8*u,(yG+ym)/2,{align:'right'})}
+    // 取柱：紧贴喷口下方长 vτ 的一段水，就是 τ 内喷出的水
+    if(t>0){const bh=Math.min(Math.max(K.v*K.tau*sc,30*u*k),Math.max(0,Math.min(S.h,K.v*t)*sc));
+      if(bh>6*u){F.rect(cx-rj-6*u,ym,2*rj+12*u,bh,{w:1.3,color:cX,dash:[5,4]});
+        F.label('Δm',cx-rj-10*u,ym+bh/2+4*u,{align:'right'});
+        const xd=cx+rj+12*u;F.dim(xd,ym,xd,ym+bh,null);run([['v'],['τ'],[` = ${sf(K.v*K.tau)} m`,{i:false,s:15}]],xd+8*u,ym+bh/2+4*u);
+        const LFp=Math.min(36*u,yG-6*u-ym-bh/2);if(LFp>=12*u){F.arrow(cx,ym+bh/2,0,LFp,cN,null);run([['F′']],cx-14*ut,ym+bh/2+LFp,{color:cN,align:'center'})}
+        const yv=ym+bh+10*u,Lv=Math.min(46*u,yG-8*u-yv);if(Lv>=18*u)F.arrow(cx+rj+16*u,yv,0,Lv,cV,'v',{off:[14*k,-6]})}}
+    // 重力 Mg 与推力 F（同一比例尺，悬停时等长）；飞行器速度 u
+    const Lg=42*u,LF=Math.min(150*u,Lg*(t>0?S.Fm:K.F0)/K.W);
+    if(t>0&&LF>=2*u){F.arrow(cx,ycm,0,-LF,cN,null);F.label('F',cx+13*ut,ycm-LF+6*u,{color:cN})}
+    F.arrow(cx,ycm,0,Lg,cG,null);run([['M'],['g']],cx-10*u-12*ut,ycm+Lg-8*u,{color:cG,align:'center'});
+    F.dot(cx,ycm,2.6);
+    if(Math.abs(S.u)>.02){const L=clamp(S.u*20*u,-64*u,64*u);F.arrow(cx+bw+16*u,ycm,0,-L,cV,null);F.label('u',cx+bw+16*u+12*ut,ycm-L+(L>0?8:-8)*u,{color:cV})}
+    // 右侧标尺（比例尺）
+    {const xr=W-36*u,st=nice(K.Hv/5),Ht=Math.floor(K.Hv/st+1e-9)*st;F.line(xr,yG,xr,yG-Ht*sc,{w:1});
+      for(let i=1;i*st<=K.Hv+1e-9;i++){const y=yG-i*st*sc;F.line(xr,y,xr-5*u,y,{w:1});if(y>top+8*ut)F.label(tnum(i*st),xr-8*u,y,{italic:false,size:13,align:'right'})}
+      F.label('m',xr+8*u,yG-Ht*sc,{italic:false,size:13,align:'left'})}
+    /* ---------- F–t 图：墨线为实测推力，虚线为 Mg ---------- */
+    const gx0=66*u,gxR=W-20*u,gx1=W-46*u,gyO=H-14*u-16*ut,gyT=gTop+24*ut+6*u;
+    const Fax=1.35*Math.max(K.F0,K.W),TX=tt=>gx0+tt/K.T*(gx1-gx0),FY=f=>gyO-f/Fax*(gyO-gyT-6*u);
+    F.zh('推力 F 随时间 t 变化（实时）',gx0-30*u,gTop+8*ut,{align:'left',color:ink});
+    const yW=FY(K.W);F.aux(gx0,yW,gx1+8*u,yW);
+    const hov=K.hover,up=K.F0>K.W;
+    run([['M'],['g'],[` = ${sf(K.W)} N`,{i:false,s:15}]],gx0+8*u,yW+(up||hov?14:-14)*ut,{color:cX});
+    if(S.hist.length){const pts=S.hist.map(([tt,f])=>[TX(tt),FY(f)]);F.poly(pts,{w:2});F.dot(TX(t),FY(S.Fm),3);
+      const ny=FY(S.Fm)+(up||hov?-14:14)*ut;F.zh(hov?'悬停：F = Mg':up?'F > Mg，加速上升':'F < Mg，下落',Math.max(gx0+70*u,TX(t)-8*u),ny,{align:'right',color:ink})}
+    axes(G,{x0:gx0,yO:gyO,yT:gyT,xR:gxR,ylab:[['F'],['/N',{i:false,s:15}]],xlab:[['t'],['/s',{i:false,s:15}]]});
+    tticks(G,{x0:gx0,x1:gx1,xR:gxR,yO:gyO,tMax:K.T,TX,scale:1,ulab:'/s'});
+  }
+
+  /* ---------- 物体撞击的画面 ---------- */
+  function drawImpact(G,S,P){
+    const{F,u,ut,k,run,wid,pw,y0,gTop,ink,cX,cG,cN,cV,cW,W,H,paper}=G,K=S.K,t=S.t,e=K.e;
+    const yG=gTop-26*u,Tc=60*u,yC=yG-Tc,xc0=250*u,xc1=470*u,cx=360*u,rb=14*u;
+    const yTopB=y0+22*u+12*ut,sc=(yC-rb-(yTopB+rb))/K.H;                 // 下落段：H 映射到画面
+    const xd=z=>clamp(z/K.zm,0,1.05)*.5*Tc;                                 // 压缩量放大画出
+    const ph=S.ph,surf=ph==='fall'?0:ph==='load'||ph==='unload'?xd(S.z):xd(ph==='rest'?S.zm:S.zr);
+    const yb=ph==='fall'?yC+S.z*sc:ph==='load'||ph==='unload'||ph==='rest'?yC+surf:yC+surf+(S.z-S.zr)*sc;   // 物体底部
+    const by=yb-rb;
+    // 地面与缓冲垫（上表面随压缩下移）
+    F.line(40*u,yG,W-40*u,yG,{w:2});F.hatch(40*u,yG,W-40*u,yG,1);
+    F.rect(xc0,yC+surf,xc1-xc0,Tc-surf,{w:1.8,fill:paper});
+    for(const f of[1/3,2/3]){const y=yC+surf+(Tc-surf)*f;F.line(xc0+6*u,y,xc1-6*u,y,{w:1,color:cX,dash:[6,5]})}
+    F.zh('缓冲垫',xc0-10*u,yC+Tc/2,{align:'right'});
+    if(surf>5*u){F.aux(xc1,yC,xc1+26*u,yC,{dash:[3,3]});F.dim(xc1+18*u,yC,xc1+18*u,yC+surf,null);
+      run([['x'],[` = ${sf(ph==='load'||ph==='unload'?S.z:ph==='rest'?S.zm:S.zr)} m`,{i:false,s:15}]],xc1+28*u,yC+surf/2);
+      F.zh('压缩量已放大',xc1+28*u,yC+surf/2+18*ut,{align:'left',size:13})}
+    // 下落高度 H（由静止落下）与弹起高度 e²H
+    const yS=yC-rb-K.H*sc,xh=cx-74*u;
+    F.aux(xh-6*u,yS+rb,cx-4*u,yS+rb,{dash:[3,4]});F.dim(xh,yC,xh,yS+rb,null);
+    run([['H'],[` = ${sf(K.H)} m`,{i:false,s:15}]],xh-8*u,(yC+yS+rb)/2,{align:'right'});
+    if(e>0&&(ph==='rise'||S.done)){const yR=yC+xd(S.zr)-e*e*K.H*sc;F.aux(cx+rb+4*u,yR,cx+96*u,yR);run([['e'],['²',{i:false}],['H'],[` = ${sf(e*e*K.H)} m`,{i:false,s:15}]],cx+100*u,yR)}
+    F.trail([[cx,yS],[cx,Math.max(yS,Math.min(by,yC-rb))]]);
+    // 物体与矢量：重力 mg、速度 v、缓冲垫的支持力 N（长度随 N 变化），都从球心画出
+    F.ball(cx,by,rb);
+    const Nax=Math.max(K.Nm,K.mg*1.3),Lmin=26*u,Lmax=110*u,fs=Lmax/Nax;
+    const len=f=>K.mg*fs>=Lmin?f*fs:(f<=K.mg?Lmin*f/K.mg:Lmin+(f-K.mg)/(Nax-K.mg)*(Lmax-Lmin));   // mg 太小时分段线性，保证 mg 可见
+    const Lv=-S.w/Math.max(K.v,1e-9)*58*u;
+    if(Math.abs(Lv)>=3*u){F.arrow(cx,by,0,-Lv,cV,null);F.label('v',cx-13*ut,by-Lv+(Lv<0?-6:6)*u,{color:cV})}
+    const Lg=len(K.mg);F.arrow(cx,by,0,Lg,cG,null);run([['m'],['g']],cx+18*ut,by+Lg-4*u,{color:cG,align:'center'});
+    if(S.N>0){const LN=len(S.N);F.arrow(cx,by,0,-LN,cN,null);F.label('N',cx+13*ut,by-LN+6*u,{color:cN})}
+    F.dot(cx,by,2.2);
+    {const sl=`接触段慢放 1/${Math.round(1/K.rC)}`;if(K.rC<.95)F.zh(sl,W-16*u,y0+6*u+8*ut,{align:'right',color:cW})}
+    /* ---------- 下部：N–t 图（左）与 p–t 图（右），从接触瞬间计时 ---------- */
+    const yh=gTop+8*ut;F.zh('从接触瞬间计时；取向上为正',40*u,yh,{align:'left',color:ink});
+    const gyT=gTop+24*ut+6*u,gyB=H-14*u-16*ut,Tw=1.25*K.dt,ms=Tw<.5,scT=ms?1e3:1,ul=ms?'/ms':'/s';
+    // N–t
+    {const x0=60*u,xR=342*u,x1=322*u,Nax2=1.15*Math.max(K.Nm,K.Fbar,1.3*K.mg),TX=tt=>x0+tt/Tw*(x1-x0),NY=n=>gyB-n/Nax2*(gyB-gyT-8*u);
+      const ym=NY(K.mg);F.aux(x0,ym,x1+6*u,ym);run([['m'],['g']],xR-2*u,ym-12*ut,{align:'right',color:cX});
+      const xD=TX(K.dt);F.line(xD,gyB,xD,gyB-5*u,{w:1});const wD=pw([['Δ',{i:false}],['t']]);run([['Δ',{i:false}],['t']],xD,gyB+15*ut,{align:'center'});
+      if(S.dtm!==null){const Fb=S.Ic/S.dtm,xr=TX(S.dtm);F.rect(x0,NY(Fb),xr-x0,gyB-NY(Fb),{w:1.2,color:cX,dash:[5,4]});F.label('F̄',xr+4*u+8*ut,NY(Fb))}
+      if(S.hN.length){const pts=[[x0,gyB],...S.hN.filter(p=>p[0]<=Tw).map(([tt,n])=>[TX(tt),NY(n)])];F.poly(pts,{w:2});
+        if(t>=S.tc&&t-S.tc<=Tw)F.dot(TX(t-S.tc),NY(S.N),3)}
+      axes(G,{x0,yO:gyB,yT:gyT,xR,ylab:[['N'],['/N',{i:false,s:15}]],xlab:[['t'],[ul,{i:false,s:15}]]});
+      tticks(G,{x0,x1,xR,yO:gyB,tMax:Tw,TX,scale:scT,ulab:ul,skip:[[xD-wD/2,xD+wD/2]]})}
+    // p–t
+    {const x0=420*u,xR=W-18*u,x1=W-58*u,mv=K.m*K.v,pT=Math.max(e*mv,0)+.2*mv,pB=-mv-.06*mv;
+      const yBot=gyB-14*ut,TX=tt=>x0+tt/Tw*(x1-x0),PY=p=>gyT+8*u+(pT-p)/(pT-pB)*(yBot-gyT-8*u),yO=PY(0);
+      F.aux(x0,PY(-mv),TX(K.dt),PY(-mv));run([['−',{i:false}],['m'],['v']],x0-5*u,PY(-mv),{align:'right'});
+      if(e>0){F.aux(x0,PY(e*mv),TX(K.dt),PY(e*mv));run([['e'],['m'],['v']],x0-5*u,PY(e*mv),{align:'right'})}
+      const xD=TX(1.1*K.dt);F.dim(xD,PY(-mv),xD,PY(e*mv),null);{const ym=(PY(-mv)+PY(e*mv))/2;run([['Δ',{i:false}],['p']],xD-6*u,Math.abs(ym-yO)<14*ut?yO+16*ut:ym,{align:'right'})}
+      if(S.hN.length){const pts=[[x0,PY(-mv)],...S.hN.filter(p=>p[0]<=Tw).map(([tt,,p])=>[TX(tt),PY(p)])];F.poly(pts,{w:2});
+        if(t>=S.tc&&t-S.tc<=Tw)F.dot(TX(t-S.tc),PY(-K.m*S.w),3)}
+      F.arrow(x0,yBot,0,gyT-yBot,ink,null,{w:1.3,head:10});F.arrow(x0,yO,xR-x0,0,ink,null,{w:1.3,head:10});
+      F.label('O',x0-10*ut,yO+12*ut);run([['p'],['/(kg·m·s⁻¹)',{i:false,s:15}]],x0+9*u,gyT+6*u);
+      run([['t'],[ul,{i:false,s:15}]],xR,yO+(e>0?17:-14)*ut,{align:'right'});
+      run([['斜率 = 合力 ',{zh:1,s:14}],['N'],[' − ',{i:false}],['m'],['g']],xR,gyB+4*ut,{align:'right'})}
+  }
+
+  return{
+    legend:[{label:'重力 mg、Mg',color:'--g'},{label:'作用力 F、F′、N',color:'--n'},{label:'速度 v、u',color:'--v'}],
+    init(P){const K=cfg(P);return K.mode==='jet'?initJet(K):K.mode==='thrust'?initThrust(K):initImpact(K)},
+    step(S,P,dt){if(S.done)return;const K=S.K;if(K.mode==='jet')stepJet(S,K,dt);else if(K.mode==='thrust')stepThrust(S,K,dt);else stepImpact(S,K,dt)},
+    readouts(S,P){
+      const K=S.K,t=S.t;
+      if(K.mode==='jet'){
+        const B=[...S.bx].reverse().find(b=>b.I0!==null),dm=B?B.dm:null;
+        return[['时间 t（真实）',sf(t,4)+' s'],['流量 q（实测）',t>0?sf(S.mOut/t,4)+' kg/s':'—'],
+          ['τ 内打到挡板的水 Δm',dm!==null?sf(dm,4)+' kg':sf(K.dm,4)+' kg（理论）'],['柱长 vτ',sf(K.v*K.tau,4)+' m'],
+          ['每段动量变化 Δm(1+e)v',sf(K.dm*(1+K.e)*K.v,4)+' kg·m/s'],['本段柱体的冲量（实测）',B?sf(B.I,4)+' N·s':'—'],
+          ['挡板受力 F（实测）',sf(S.Fp,4)+' N'],['F 理论 (1+e)ρSv²',sf(K.Fp,4)+' N'],['冲击压强 p = F/S',sf(S.I>0?S.Fp/K.S:K.Fp/K.S,4)+' Pa'],
+          ['水枪反冲力（实测）',t>0?sf(S.Fg,4)+' N':'—'],['反冲力理论 ρSv²',sf(K.F0,4)+' N'],
+          ['输出功率 P（实测）',t>0?sf(S.Ek/t,4)+' W':'—'],['P 理论 ½ρSv³',sf(K.Pw,4)+' W'],['已喷出的水',sf(S.mOut,4)+' kg']];
+      }
+      if(K.mode==='thrust'){
+        const dir=x=>Math.abs(x)<1e-9?'':x>0?'，向上':'，向下';
+        return[['时间 t',sf(t,4)+' s'],['离地高度 h',sf(S.h,4)+' m'],['速度 u',sf(Math.abs(S.u),3)+' m/s'+dir(S.u)],
+          ['加速度 a',t>0?sf(Math.abs(S.a),4)+' m/s²'+dir(S.a):'—'],['推力 F（实测）',t>0?sf(S.Fm,4)+' N':'—'],['推力理论 ρSv²',sf(K.F0,4)+' N'],
+          ['重力 Mg',sf(K.W,4)+' N'],['流量 q（实测）',t>0?sf(S.mOut/t,4)+' kg/s':'—'],['τ 内喷出的水 Δm',sf(K.dm,4)+' kg'],
+          ['悬停所需喷速 v₀',sf(K.v0,4)+' m/s'],['水获得动能的功率（实测）',t>0?sf(S.Ek/t,4)+' W':'—'],['功率理论 ½ρSv³',sf(K.Pw,4)+' W']];
+      }
+      const has=S.dtm!==null,Fb=has?S.Ic/S.dtm:null,vo=S.vout;
+      return[['时间 t（从释放算起）',sf(t,4)+' s'],['速度（向下为正）',sf(S.w,3)+' m/s'],['支持力 N',sf(S.N,4)+' N'],
+        ['撞击速度 v（实测）',S.vin!==null?sf(S.vin,4)+' m/s':'—'],['离开速度（实测）',has?(K.e>0?sf(vo,4)+' m/s':'0（停住）'):'—'],
+        ['作用时间 Δt（实测）',has?sf(S.dtm,4)+' s':'—'],['动量变化 Δp（向上）',has?sf(K.m*(S.vin+vo),4)+' kg·m/s':'—'],
+        ['缓冲垫的冲量 I（实测）',has?sf(S.Ic,4)+' N·s':S.tc!==null?sf(S.I,4)+' N·s':'—'],['平均作用力 F̄ = I/Δt',has?sf(Fb,4)+' N':'—'],
+        ['公式 mg + m(1+e)v/Δt',sf(K.Fbar,4)+' N'],['不计重力 m(1+e)v/Δt',sf(K.Fng,4)+' N'],['偏小 mg/F̄',pc(K.mg/(has?Fb:K.Fbar))],
+        ['F̄/mg',sf((has?Fb:K.Fbar)/K.mg,4)+' 倍'],['峰值 N_max',S.zm!==null?sf(S.Nmax,4)+' N':'—'],
+        ['最大压缩量 x_m（模型值）',S.zm!==null?sf(S.zm,3)+' m':'—'],['损失的动能',has?sf(.5*K.m*(S.vin*S.vin-vo*vo),4)+' J':'—']];
+    },
+    draw(ctx,S,P,W,H,tok){
+      const G=mk(ctx,W,H,tok);G.F.clear();
+      if(S.K.mode==='jet')drawJet(G,S,P);else if(S.K.mode==='thrust')drawThrust(G,S,P);else drawImpact(G,S,P);
+    },
+    verdict(P){
+      const K=cfg(P),b=x=>`<b>${x}</b>`;
+      if(K.mode==='jet'){
+        let h=`流量 q = ρSv = ${b(sf(K.q)+' kg/s')}；取 τ = ${sf(K.tau*1e3)} ms，这段时间内打到挡板的水 Δm = ρSvτ = ${b(sf(K.dm)+' kg')}，水柱长 vτ = ${b(sf(K.v*K.tau)+' m')}（C4）。<br>`;
+        h+=`挡板受到的平均冲击力 F = Δm(1 + e)v/τ = (1 + e)ρSv² = ${b(sf(K.Fp)+' N')}（C5），τ 约掉了，与所取的 τ 无关；冲击压强 p = F/S = ${b(sf(K.Fp/K.S)+' Pa')}。`;
+        if(K.e>0)h+=`凹形挡板 e = ${sf(K.e,2)}：Δv = (1 + e)v，F 是平板的 ${sf(1+K.e)} 倍。`;
+        h+=`<br>水枪受到的反冲力 ρSv² = ${b(sf(K.F0)+' N')}，方向与喷水方向相反（C6）；输出功率 P = ½ρSv³ = ${b(sf(K.Pw)+' W')}。<br>`;
+        h+=`柱体自身的重力冲量与 Δm·v 之比为 gτ/v = ${sf(g*K.tau/K.v,2)}，可略（C5）。`;
+        return h;
+      }
+      if(K.mode==='thrust'){
+        const a=K.a;let h=`推力 F = ρSv² = ${b(sf(K.F0)+' N')}（C6），重力 Mg = ${b(sf(K.W)+' N')}：`;
+        h+=K.hover?`${b('F = Mg，恰好悬停')}。`:a>0?`F > Mg，${b('加速上升')}，a = (F − Mg)/M = ${b(sf(a)+' m/s²')}。`:`F < Mg，${b('下落')}，加速度 ${b(sf(-a)+' m/s²')}，向下。`;
+        h+=`<br>悬停所需喷速 v₀ = √(Mg/(ρS)) = ${b(sf(K.v0)+' m/s')}；喷出的水每秒获得的动能 P = ½ρSv³ = ${b(sf(K.Pw)+' W')}`;
+        h+=`${K.hover?`（= ½Mg·v₀）`:`，悬停时为 ½Mg·v₀ = ${sf(.5*K.W*K.v0)} W`}。<br>`;
+        h+=`流量 q = ρSv = ${sf(K.q)} kg/s；τ 内喷出的水 Δm = ρSvτ = ${sf(K.dm)} kg，喷口对它的力 F′ = Δm·v/τ = ρSv²，由牛顿第三定律得推力（C1、C6）。`;
+        return h;
+      }
+      const ratio=K.mg/K.Fbar;
+      let h=`物体从 H = v²/(2g) = ${b(sf(K.H)+' m')} 处落下。取向上为正，Δp = m(1 + e)v = ${b(sf(K.dp)+' kg·m/s')}（C2）${K.e>0?`，离开速度 ev = ${sf(K.e*K.v)} m/s，弹起 e²H = ${sf(K.e*K.e*K.H)} m`:''}。<br>`;
+      h+=`F̄ = mg + m(1 + e)v/Δt = ${sf(K.mg)} N + ${sf(K.Fng)} N = ${b(sf(K.Fbar)+' N')}（= ${sf(K.Fbar/K.mg)}mg）（C3）；缓冲垫的冲量 I = F̄Δt = ${sf(K.I)} N·s。<br>`;
+      h+=`不计重力得 ${b(sf(K.Fng)+' N')}，偏小 mg/F̄ = ${b(pc(ratio))}：${ratio<.02?'作用时间短，重力可以略去':ratio<.05?'重力占比小，按精度要求决定是否略去':'作用时间不算短，重力不能略'}。<br>`;
+      h+=`动画中缓冲垫用双劲度模型（压缩时 N = k₁x，回弹时 k₂ = k₁/e²），k₁ = ${sf(K.k1)} N/m 由 Δt 反算，峰值约 ${sf(K.Nm)} N；F̄ 与曲线形状无关。`;
+      return h;
+    },
+    _cfg:cfg
+  };
+})();
+
+/* ================= 通用渲染引擎（所有母题共用，不改） ================= */
+(()=>{
+const D=JSON.parse(document.getElementById('data').textContent);
+const PLAY=D.playLabel||'发射';   // 播放按钮上的动词，数据里可用 playLabel 改写（如「碰撞」「转动」）
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const root=document.documentElement;
+const tok=n=>getComputedStyle(root).getPropertyValue(n).trim();
+const PS=D.problem.params;
+const P={};PS.forEach(p=>P[p.key]=p.def);
+const unitSep=u=>/^[°′″]/.test(u)?'':' ';   // 角度单位紧贴数字：90°
+const fmtP=p=>p.type==='choice'?p.options.find(o=>o.value===P[p.key]).label:(+P[p.key]).toFixed(p.dec??2)+(p.unit?unitSep(p.unit)+p.unit:'');
+
+/* 静态内容 */
+document.title=`格物 ${D.id} ${D.name.replace(/（.*）/,'')}`;
+$('hName').textContent=D.name;
+$('hSub').textContent=`${D.module} · ${D.chapter}　关联：${D.related.join('、')}`;
+$('hTable').innerHTML=`<tr><th>编号</th><th>考查频率</th><th>难度</th><th>版本</th></tr>
+<tr><td class="code">${esc(D.id)}</td><td>${esc(D.freq)}</td><td title="${D.difficulty} / 5">${'●'.repeat(D.difficulty)}${'○'.repeat(5-D.difficulty)}</td><td>${esc(D.version)}</td></tr>`;
+$('foot').textContent=`格物 Gewu · ${D.id} · ${D.version} · ${D.footer??'g 取 10 m/s²'}`;   // 数据里可用 footer 改写页脚常量
+$('tags').innerHTML=D.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('');
+$('stemNote').textContent=D.problem.note||'';
+$('bCond').innerHTML=D.boundary.conditions.map(c=>`<li><span>${esc(c)}</span></li>`).join('');
+$('bBack').innerHTML=D.boundary.fallback.map(c=>`<li><span>${esc(c)}</span></li>`).join('');
+$('legend').innerHTML=SIM.legend.map(l=>`<span><i style="background:var(${l.color})"></i>${esc(l.label)}</span>`).join('');
+$('concl').innerHTML=D.conclusions.map(c=>`<details><summary><span class="badge">${c.id}</span><span class="t">${esc(c.title)}</span><span class="f">${esc(c.formula)}</span><span class="chev" aria-hidden="true"></span></summary><div class="deriv">${esc(c.derivation)}</div></details>`).join('');
+const qCard=(q,isVar)=>`<article class="q">
+  <div class="head"><span class="badge">${q.id}</span><h3>${esc(q.title)}</h3>${isVar?q.cs.map(c=>`<span class="chip">${c}</span>`).join(''):`<span class="chip">${q.anim?'计划做动画':'不做动画'}</span>`}</div>
+  <p>${esc(q.stem)}</p>
+  ${isVar?'':`<p class="map">映射：<b>${esc(q.map)}</b></p>`}
+  <details><summary><span class="chev" aria-hidden="true"></span>答案与解析</summary><div class="ans"><p class="a">答案：${esc(q.answer)}</p><p>${esc(q.analysis)}</p></div></details>
+  <div class="foot"><span class="src">${esc(q.source)}</span>${isVar?`<button data-load="${q.id}">加载到动画 ↑</button>`:''}</div>
+</article>`;
+$('variants').innerHTML=D.variants.map(v=>qCard(v,true)).join('');
+$('reskins').innerHTML=D.reskins.map(r=>qCard(r,false)).join('');
+$('sources').innerHTML=D.sources.map(s=>`<li><b>${esc(s.src)}</b><span>${esc(s.desc)}</span></li>`).join('');
+
+/* 参数控件 */
+const box=$('params');
+PS.forEach(p=>{
+  if(p.type==='choice'){
+    const d=document.createElement('div');d.className='seg';d.id=`f-${p.key}`;d.setAttribute('role','group');d.setAttribute('aria-label',p.label);
+    d.innerHTML=p.options.map(o=>`<button id="opt-${p.key}-${o.value}" data-k="${p.key}" data-v="${o.value}">${esc(o.label)}${o.hint?`<small>${esc(o.hint)}</small>`:""}</button>`).join('');
+    box.appendChild(d);
+  }else{
+    const d=document.createElement('div');d.className='field';d.id=`f-${p.key}`;
+    d.innerHTML=`<label for="num-${p.key}"><span class="s">${esc(p.sym)}</span><span class="note">${esc(p.label)}</span></label><span class="numin"><input type="number" id="num-${p.key}" min="${p.min}" max="${p.max}" step="any" inputmode="decimal" aria-label="${esc(p.label)}"><span class="u">${esc(p.unit||'')}</span></span><input type="range" id="in-${p.key}" min="${p.min}" max="${p.max}" step="${p.step}" value="${p.def}" aria-label="${esc(p.label)} 滑块">`;
+    box.appendChild(d);
+    d.querySelector('input[type=range]').addEventListener('input',e=>{P[p.key]=+e.target.value;active=-1;sync();reset()});
+    const num=d.querySelector('input[type=number]');
+    num.addEventListener('change',()=>{let v=parseFloat(num.value);
+      if(Number.isFinite(v)){v=Math.min(p.max,Math.max(p.min,v));P[p.key]=v;active=-1;reset()}sync()});
+    num.addEventListener('keydown',e=>{if(e.key==='Enter')num.blur()});
+  }
+});
+box.addEventListener('click',e=>{const b=e.target.closest('[data-k]');if(!b)return;P[b.dataset.k]=b.dataset.v;active=-1;sync();reset()});
+let active=-1;
+const shown=w=>!w||Object.entries(w).every(([k,v])=>[].concat(v).includes(P[k]));
+const CH0=PS.find(p=>p.type==='choice');   // 预设只按第一个选项参数（情境 / 模式）分组，其余选项由预设的 load 带过去
+const chosen=o=>!CH0||o[CH0.key]===undefined||o[CH0.key]===P[CH0.key];
+const numTxt=(p,v)=>String(+(+v).toFixed(Math.max(p.dec??2,4)));
+function sync(){
+  PS.forEach(p=>{
+    if(p.type==='choice'){p.options.forEach(o=>$(`opt-${p.key}-${o.value}`).setAttribute('aria-pressed',P[p.key]===o.value));if(p.when)$(`f-${p.key}`).hidden=!shown(p.when)}
+    else{$(`in-${p.key}`).value=P[p.key];const n=$(`num-${p.key}`);if(document.activeElement!==n)n.value=numTxt(p,P[p.key]);$(`f-${p.key}`).hidden=!shown(p.when)}
+  });
+  const fill=s=>esc(s).replace(/\{(\w+)\}/g,(m,k)=>{
+    if(k==='constraint'){const p=PS.find(x=>x.type==='choice');return esc(p.options.find(o=>o.value===P[p.key]).text)}
+    const p=PS.find(x=>x.key===k);return p?`<span class="num">${esc(fmtP(p))}</span>`:m});
+  const [lead,ask='']=D.problem.stem.split(/问[:：]/);
+  $('stem').innerHTML=fill(lead.trim());
+  const qs=ask.split(/[①②③④⑤⑥]/).map(s=>s.trim()).filter(Boolean);
+  $('asks').innerHTML=qs.map((q,i)=>`<li><b>${i+1}</b><span>${fill(q)}</span></li>`).join('');
+  $('asks').hidden=!qs.length;
+  $('verdict').innerHTML=SIM.verdict(P);
+  const ch=PS.find(p=>p.type==='choice');
+  $('presetMode').textContent=ch?`· ${ch.options.find(o=>o.value===P[ch.key]).label}`:'';
+  $('presets').innerHTML=D.presets.map((p,i)=>chosen(p.load)?`<button data-preset="${i}" aria-pressed="${i===active}" title="${esc(p.note||'')}">${esc(p.label)}</button>`:'').join('');
+  const pn=$('pnote'),ap=D.presets[active];pn.hidden=!(ap&&ap.note);if(ap&&ap.note)pn.innerHTML=`<b>${esc(ap.label)}</b>：${esc(ap.note)}`;
+}
+function load(o,i=-1){Object.assign(P,o);active=i;sync();reset()}
+$('presets').addEventListener('click',e=>{const b=e.target.closest('[data-preset]');if(b)load(D.presets[+b.dataset.preset].load,+b.dataset.preset)});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-load]');if(!b)return;
+  load(D.variants.find(v=>v.id===b.dataset.load).load);
+  show('pane-lab');document.querySelector('.board').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})});
+
+/* 画布与循环 */
+const cv=$('cv'),ctx=cv.getContext('2d');let S,running=false,speed=1,lastT=0;
+function size(){const r=cv.getBoundingClientRect(),dpr=Math.min(2,window.devicePixelRatio||1);const w=Math.max(200,Math.round(r.width*dpr));if(cv.width!==w){cv.width=w;cv.height=w}}
+function render(){size();SIM.draw(ctx,S,P,cv.width,cv.height,tok);
+  $('readout').innerHTML=SIM.readouts(S,P).map(([k,v])=>`<div class="ro"><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('');
+  const st=$('status');st.textContent=S.status.text;st.className='status '+S.status.cls}
+function reset(){running=false;S=SIM.init(P);$('play').textContent=`▶ ${PLAY}`;render()}
+function loop(t){if(!running)return;const real=Math.min(.05,(t-lastT)/1000);lastT=t;
+  const sim=real*speed,n=Math.max(1,Math.ceil(sim/5e-4));for(let i=0;i<n;i++)SIM.step(S,P,sim/n);
+  render();if(S.done){running=false;$('play').textContent=`▶ 再${PLAY}`;return}requestAnimationFrame(loop)}
+$('play').onclick=()=>{if(running){running=false;$('play').textContent='▶ 继续';return}
+  if(S.done)S=SIM.init(P);running=true;$('play').textContent='❚❚ 暂停';lastT=performance.now();requestAnimationFrame(loop)};
+$('reset').onclick=reset;
+$('slow').onclick=()=>{speed=speed===1?.25:1;$('slow').textContent=speed===1?'慢放 ×0.25':'正常速度'};
+new ResizeObserver(render).observe(cv);
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',render);
+new MutationObserver(render).observe(root,{attributes:true,attributeFilter:['data-theme']});
+/* 选项卡 */
+const tabs=[...document.querySelectorAll('[role=tab]')];
+function show(id){tabs.forEach(t=>{const on=t.dataset.pane===id;t.setAttribute('aria-selected',on);t.tabIndex=on?0:-1;$(t.dataset.pane).hidden=!on});
+  if(id==='pane-lab')requestAnimationFrame(render)}
+tabs.forEach((t,i)=>{t.addEventListener('click',()=>show(t.dataset.pane));
+  t.addEventListener('keydown',e=>{const d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;if(!d)return;e.preventDefault();
+    const n=tabs[(i+d+tabs.length)%tabs.length];n.focus();show(n.dataset.pane)})});
+$('nConcl').textContent=D.conclusions.length;$('nVar').textContent=D.variants.length;$('nSkin').textContent=D.reskins.length;$('nSrc').textContent=D.sources.length;
+show('pane-lab');
+sync();reset();
+})();
+</script>
