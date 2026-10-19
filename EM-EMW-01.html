@@ -900,11 +900,11 @@ input[type=range]{width:100%;accent-color:var(--accent);margin:4px 0}
 .cl{display:flex;flex-direction:column}
 .cl details{border-top:1px solid var(--hair)}
 .cl details:last-child{border-bottom:1px solid var(--hair)}
-.cl summary{display:grid;grid-template-columns:2.6em minmax(0,1fr) minmax(0,auto) 1em;gap:6px 14px;align-items:center;padding:12px 4px;cursor:pointer;list-style:none}
+.cl summary{display:grid;grid-template-columns:2.6em minmax(12em,1fr) fit-content(55%) 1em;gap:6px 14px;align-items:center;padding:12px 4px;cursor:pointer;list-style:none}
 .cl summary::-webkit-details-marker{display:none}
 .cl summary:hover .t{color:var(--accent)}
 .badge{display:inline-grid;place-items:center;min-width:2.3em;height:1.7em;padding:0 6px;border-radius:6px;background:var(--accent-soft);color:var(--accent);font-family:var(--f-mono);font-weight:600;font-size:13px}
-.cl .f{font-family:var(--f-mono);font-size:14px;background:var(--sunk);border:1px solid var(--hair);border-radius:6px;padding:2px 10px;justify-self:end;text-align:right}
+.cl .f{font-family:var(--f-mono);font-size:14px;background:var(--sunk);border:1px solid var(--hair);border-radius:6px;padding:2px 10px;justify-self:end;text-align:left;overflow-wrap:anywhere}
 .chev{width:8px;height:8px;border-right:2px solid var(--faint);border-bottom:2px solid var(--faint);transform:rotate(45deg);transition:transform .2s;justify-self:center}
 details[open]>summary .chev{transform:rotate(225deg)}
 @media (max-width:640px){.cl summary{grid-template-columns:2.6em minmax(0,1fr) 1em}.cl .f{grid-column:2;grid-row:2;justify-self:start;text-align:left}.chev{grid-column:3;grid-row:1}}
