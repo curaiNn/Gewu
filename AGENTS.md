@@ -21,3 +21,4 @@
 ## 页面质量
 - 页面基于 `template.html`，只替换数据 JSON 与 SIM 模块；CSS、通用渲染引擎、FIG 线稿工具在所有页面里逐字节一致，改动要同步到全部页面。
 - 改了共用代码或物理后，做读数回归（新旧版本同参数同时刻的 readouts 对比）和全部预设的实际播放检查（桌面与 360px 手机宽度、浅色与深色）。
+- 自查脚本在 [`tools/`](tools/README.md)：`smoke.mjs`（全部预设实际播放）、`readout.mjs`（读数与回归）、`simshot.mjs` + `montage.py`（截图）、`shared.py`（共用代码一致性）。
