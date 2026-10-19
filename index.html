@@ -82,6 +82,7 @@ const ITEMS=[
   {mod:'力学',id:'MEC-CIR-01',name:'轻绳模型与轻杆模型',sub:'竖直面内圆周运动',desc:'小球能不能转过最高点？脱轨位置、两点弹力差 6mg、轻杆模型推拉判断。',tags:['最高点临界','脱轨判断','机械能守恒'],url:'https://claude.ai/artifact/VZ4UGrUj6Y2LJkEAcXcCMw',file:'MEC-CIR-01.html'},
   {mod:'力学',id:'MEC-GRV-01',name:'卫星运行参量的比较',sub:'高轨低速长周期',desc:'两颗卫星同屏对比 v、ω、T、a 与能量；高轨低速长周期，可切到椭圆与逃逸。',tags:['万有引力','黄金代换','开普勒第三定律'],url:'https://claude.ai/artifact/1KPpyax8eazq7WgP7hsobL',file:'MEC-GRV-01.html'},
   {mod:'力学',id:'MEC-GRV-02',name:'卫星变轨问题',sub:'霍曼转移、椭圆轨道与逃逸',desc:'点火加速离心、减速近心；近地点与远地点速度、开普勒第二与第三定律；两次点火转移与对接，第二宇宙速度。',tags:['霍曼转移','面积定律','逃逸速度'],url:'',file:'MEC-GRV-02.html'},
+  {mod:'力学',id:'MEC-NEW-01',name:'牛顿第二定律的多过程问题',sub:'斜面模型、先加速后减速、传送带模型',desc:'在力突变处分段，每段 a = F合/m，上一段末速度是下一段初速度；斜面上滑再下滑、撤去拉力后减速、与传送带共速时摩擦力突变，v–t 图与受力分析图同步。',tags:['a = F合/m','μ 与 tanθ','划痕 = 相对位移'],url:'',file:'MEC-NEW-01.html'},
   {mod:'力学',id:'MEC-PRJ-01',name:'平抛运动的临界问题',sub:'过网不出界 / 斜面上的平抛',desc:'擦网与压线定出 v₀ 的范围，落回斜面与离斜面最远，垂直打在斜面上；tanα = 2tanφ。',tags:['x = v₀t','速度偏角与位移偏角','临界轨迹'],url:'',file:'MEC-PRJ-01.html'},
   {mod:'力学',id:'MEC-MOM-01',name:'碰撞模型',sub:'弹性碰撞与完全非弹性碰撞',desc:'一动碰一静：等质量交换速度，大碰小、小碰大；完全非弹性共速、动能损失最大；判断碰撞的可能性。',tags:['动量守恒','交换速度','碰撞三原则'],url:'',file:'MEC-MOM-01.html'},
   {mod:'力学',id:'MEC-MOM-02',name:'动量定理的应用',sub:'流体类问题（柱体模型）',desc:'取 Δt 内的柱体求冲击力，停住还是反弹；喷气悬停的推力；落地缓冲的平均力，重力何时不能略。',tags:['FΔt = Δp','柱体微元','平均作用力'],url:'',file:'MEC-MOM-02.html'},
@@ -99,7 +100,7 @@ const ITEMS=[
   {mod:'光学',id:'OPT-LGT-01',name:'双缝干涉',sub:'杨氏双缝实验',desc:'由光程差判断明暗纹，Δx = Lλ/d；数条纹测波长，换单缝看衍射，红光与紫光对比。',tags:['Δx = Lλ/d','光程差','单缝衍射对照'],url:'',file:'OPT-LGT-01.html'},
   {mod:'光学',id:'OPT-LGT-02',name:'光的折射与全反射',sub:'玻璃砖、光导纤维',desc:'折射定律与 n = c/v；光密到光疏、入射角达到临界角时全反射；半圆形与平行玻璃砖、光导纤维、圆筒，色散。',tags:['折射定律','临界角','全反射'],url:'',file:'OPT-LGT-02.html'},
 ];
-const NEXT=['MEC-NEW-01 牛顿第二定律的多过程问题（含传送带）','MEC-ENG-02 动能定理的多过程问题'];
+const NEXT=['MEC-ENG-02 动能定理的多过程问题'];
 // 在 claude.ai 上打开时用发布链接（没有发布链接的用同目录文件）；从代码仓本地打开或在自建服务器上时用同目录文件
 const SELF_HOSTS=['8.133.160.230'];
 const local=location.protocol==='file:'||/github\.io$/.test(location.hostname)||SELF_HOSTS.includes(location.hostname);
