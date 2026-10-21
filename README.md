@@ -19,3 +19,9 @@
 - 母题总表与章节代码：见 [`index.md`](index.md)
 - 生产流程与规范：见 [`project-instructions.md`](project-instructions.md)
 - 页面均为单文件 HTML，直接用浏览器打开即可
+
+## 许可
+
+- 代码（页面样式、渲染引擎、`FIG` 线稿工具、`SIM` 动画模块、`template.html`、`tools/`）：[MIT](LICENSE)
+- 内容（母题卡、文档，以及页面中的题目、结论、推导、变式、换皮题文字）：[CC BY-NC-SA 4.0](LICENSE-CONTENT.md)，转载请署名「格物 Gewu」，不得商用，改编后以相同协议共享
+- 题源清单中摘录的原题只用于标注出处，版权归原作者与命题单位；母题、变式、换皮题均为改编
